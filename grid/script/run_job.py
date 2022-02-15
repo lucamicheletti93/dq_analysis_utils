@@ -4,6 +4,9 @@ import argparse
 import yaml
 
 def run_on_grid(inputCfg, mode):
+    '''
+    function for run jobs on alien grid
+    '''
     if not os.path.isdir(inputCfg["output"]["output_dir"]) :
         print("the directory does not exist, creating %s" % (inputCfg["output"]["output_dir"]))
         os.system("mkdir -p %s" % (inputCfg["output"]["output_dir"]))
@@ -14,7 +17,7 @@ def run_on_grid(inputCfg, mode):
 
     if mode == "terminate" :
         if not os.path.isfile("%s/%s" % (inputCfg["output"]["output_dir"], inputCfg["output"]["submitted_output_file"])) :
-            print('Submitted job file does not exist! Do --full before')
+            print('Submitted jobs file does not exist! Do --full before')
             return
         fIn  = open("%s/%s" % (inputCfg["output"]["output_dir"], inputCfg["output"]["submitted_output_file"]), "r")
         fOut = open("%s/%s" % (inputCfg["output"]["output_dir"], inputCfg["output"]["terminated_output_file"]), "w")
@@ -24,6 +27,17 @@ def run_on_grid(inputCfg, mode):
         #os.system(fr"aliroot -b -q ReadMCJPsi_Grid.C\(\"%s\",%i\)" % (mode, int(run))) // enable if you want to run on grid
         fOut.write(run)
 
+def copy_from_grid(inputCfg):
+    '''
+    function for downloading files from alien grid
+    '''
+    if not os.path.isfile("%s/%s" % (inputCfg["output"]["output_dir"], inputCfg["output"]["terminated_output_file"])) :
+        print('Terminated jobs file does not exist! Do --terminate before')
+        return
+    fIn  = open("%s/%s" % (inputCfg["output"]["output_dir"], inputCfg["output"]["terminated_output_file"]), "r")
+    for run in fIn:
+        print("alien_cp alien://%s/AO2D.root file:%s" % (inputCfg["input"]["alien_input_path"], inputCfg["output"]["alien_output_path"]))
+        #os.system("alien_cp alien://%s/AO2D.root file:%s" % (inputCfg["input"]["alien_input_path"], inputCfg["output"]["alien_output_path"])) // enable if you want to run on grid
 
 
 def main():
@@ -31,6 +45,7 @@ def main():
     parser.add_argument('cfgFileName', metavar='text', default='config.yml', help='config file name')
     parser.add_argument("--full", help="submit your task in full mode", action="store_true")
     parser.add_argument("--terminate", help="terminate your task", action="store_true")
+    parser.add_argument("--copy", help="download files from alien grid", action="store_true")
     args = parser.parse_args()
 
     print('Loading task configuration: ...', end='\r')
@@ -41,5 +56,7 @@ def main():
         run_on_grid(inputCfg, "full")
     if args.terminate:
         run_on_grid(inputCfg, "terminate")
+    if args.copy:
+        copy_from_grid(inputCfg)
 
 main()
