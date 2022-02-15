@@ -1,0 +1,7 @@
+input:
+  run_list_file: run_list.txt
+
+output:
+  output_dir: task_list
+  submitted_output_file: submitted_jobs.txt
+  terminated_output_file: terminated_jobs.txt
