@@ -46,11 +46,15 @@ def merge_files(inputCfg):
     if not os.path.isfile("%s/%s" % (inputCfg["output"]["output_dir"], inputCfg["output"]["terminated_output_file"])) :
         print('Terminated jobs file does not exist! Do --terminate before')
         return
-    mergeCommand = "hadd %s.root " % (inputCfg["merging"]["output_file_prefix"])
+    mergeCommand = "hadd -f %s.root " % (inputCfg["merging"]["output_file_prefix"])
     fIn  = open("%s/%s" % (inputCfg["output"]["output_dir"], inputCfg["output"]["terminated_output_file"]), "r")
     for run in fIn:
         mergeCommand += "%s/%s%i.root " % (inputCfg["merging"]["output_path"], inputCfg["merging"]["input_file_prefix"], int(run))
     print(mergeCommand)
+    print('Proceed with the merging? (true / false)')
+    merge_exec = input()
+    if merge_exec == 'true' :
+        os.system(mergeCommand)
 
 
 def main():
