@@ -7,3 +7,9 @@ output:
   submitted_output_file: submitted_jobs.txt
   terminated_output_file: terminated_jobs.txt
   alien_output_path: .
+
+merging:
+  input_path: /home/luca/GITHUB/dq_analysis_utils/grid/script
+  input_file_prefix: AliAnalysis_results_
+  output_path: /home/luca/GITHUB/dq_analysis_utils/grid/script
+  output_file_prefix: AliAnalysis_results_merged

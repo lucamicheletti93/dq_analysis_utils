@@ -39,6 +39,19 @@ def copy_from_grid(inputCfg):
         print("alien_cp alien://%s/AO2D.root file:%s" % (inputCfg["input"]["alien_input_path"], inputCfg["output"]["alien_output_path"]))
         #os.system("alien_cp alien://%s/AO2D.root file:%s" % (inputCfg["input"]["alien_input_path"], inputCfg["output"]["alien_output_path"])) // enable if you want to run on grid
 
+def merge_files(inputCfg):
+    '''
+    function for merging files
+    '''
+    if not os.path.isfile("%s/%s" % (inputCfg["output"]["output_dir"], inputCfg["output"]["terminated_output_file"])) :
+        print('Terminated jobs file does not exist! Do --terminate before')
+        return
+    mergeCommand = "hadd %s.root " % (inputCfg["merging"]["output_file_prefix"])
+    fIn  = open("%s/%s" % (inputCfg["output"]["output_dir"], inputCfg["output"]["terminated_output_file"]), "r")
+    for run in fIn:
+        mergeCommand += "%s/%s%i.root " % (inputCfg["merging"]["output_path"], inputCfg["merging"]["input_file_prefix"], int(run))
+    print(mergeCommand)
+
 
 def main():
     parser = argparse.ArgumentParser(description='Arguments to pass')
@@ -46,6 +59,7 @@ def main():
     parser.add_argument("--full", help="submit your task in full mode", action="store_true")
     parser.add_argument("--terminate", help="terminate your task", action="store_true")
     parser.add_argument("--copy", help="download files from alien grid", action="store_true")
+    parser.add_argument("--merge", help="merge output files", action="store_true")
     args = parser.parse_args()
 
     print('Loading task configuration: ...', end='\r')
@@ -58,5 +72,7 @@ def main():
         run_on_grid(inputCfg, "terminate")
     if args.copy:
         copy_from_grid(inputCfg)
+    if args.merge:
+        merge_files(inputCfg)
 
 main()
