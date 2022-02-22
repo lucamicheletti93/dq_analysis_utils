@@ -2,6 +2,7 @@ import os
 import sys
 import argparse
 import yaml
+import random
 
 def run_on_grid(inputCfg, mode):
     '''
@@ -10,6 +11,9 @@ def run_on_grid(inputCfg, mode):
     if not os.path.isdir(inputCfg["output"]["output_dir"]) :
         print("the directory does not exist, creating %s" % (inputCfg["output"]["output_dir"]))
         os.system("mkdir -p %s" % (inputCfg["output"]["output_dir"]))
+
+    if mode == "test" :
+        fIn  = open(inputCfg["input"]["run_list_file"], "r")
 
     if mode == "full" :
         fIn  = open(inputCfg["input"]["run_list_file"], "r")
@@ -23,8 +27,10 @@ def run_on_grid(inputCfg, mode):
         fOut = open("%s/%s" % (inputCfg["output"]["output_dir"], inputCfg["output"]["terminated_output_file"]), "w")
 
     for run in fIn:
-        print(fr"aliroot -b -q ReadMCJPsi_Grid.C\(\"%s\",%i\)" % (mode, int(run)))
-        #os.system(fr"aliroot -b -q ReadMCJPsi_Grid.C\(\"%s\",%i\)" % (mode, int(run))) // enable if you want to run on grid
+        print(fr"aliroot -b -q %s\(\"%s\",%i\)" % (inputCfg["input"]["macro_to_run"], mode, int(run)))
+        #os.system(fr"aliroot -b -q %s\(\"%s\",%i\)" % (inputCfg["input"]["macro_to_run"], mode, int(run))) // enable if you want to run on grid
+        if mode == "test" :
+            break
         fOut.write(run)
 
 def copy_from_grid(inputCfg):
@@ -60,6 +66,7 @@ def merge_files(inputCfg):
 def main():
     parser = argparse.ArgumentParser(description='Arguments to pass')
     parser.add_argument('cfgFileName', metavar='text', default='config.yml', help='config file name')
+    parser.add_argument("--test", help="test your task", action="store_true")
     parser.add_argument("--full", help="submit your task in full mode", action="store_true")
     parser.add_argument("--terminate", help="terminate your task", action="store_true")
     parser.add_argument("--copy", help="download files from alien grid", action="store_true")
@@ -70,6 +77,8 @@ def main():
     with open(args.cfgFileName, 'r') as ymlCfgFile:
         inputCfg = yaml.load(ymlCfgFile, yaml.FullLoader)
     print('Loading task configuration: Done!')
+    if args.test:
+        run_on_grid(inputCfg, "test")
     if args.full:
         run_on_grid(inputCfg, "full")
     if args.terminate:
