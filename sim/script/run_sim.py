@@ -1,7 +1,7 @@
 import os
 import sys
 import argparse
-import yaml
+import json
 import random
 
 def run_sim(inputCfg, mode):
@@ -31,8 +31,8 @@ def main():
     args = parser.parse_args()
 
     print('Loading task configuration: ...', end='\r')
-    with open(args.cfgFileName, 'r') as ymlCfgFile:
-        inputCfg = yaml.load(ymlCfgFile, yaml.FullLoader)
+    with open(args.cfgFileName, 'r') as jsonCfgFile:
+        inputCfg = json.load(jsonCfgFile)
     print('Loading task configuration: Done!')
     if args.config:
         run_sim(inputCfg, "config")

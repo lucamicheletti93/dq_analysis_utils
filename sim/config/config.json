@@ -1,0 +1,16 @@
+{
+  "input": {
+    "n_sim": 10,
+    "mode": "MuonOnly,full",
+    "seed": 1,
+    "n_events": 100
+  },
+  "output": {
+    "output_dir": "pythia",
+    "output_file": "sim_list.txt"
+  },
+  "parallel": {
+    "n_jobs": 10,
+    "timeout": 600
+  }
+}
