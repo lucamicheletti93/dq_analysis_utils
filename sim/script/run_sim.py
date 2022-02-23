@@ -20,8 +20,10 @@ def run_sim(inputCfg, mode):
             fOut.write("$ALIDPG_ROOT/bin/aliroot_dpgsim.sh --debug --run 289971 --mode %s --uid %d --seed %d --generator Custom --nevents %d \n" % (inputCfg["input"]["mode"], id, id, inputCfg["input"]["n_events"]))
 
     if mode == "run" :
-        print("parallel -j %d --timeout %d < %s/%s" % (inputCfg["parallel"]["n_jobs"], inputCfg["parallel"]["timeout"], inputCfg["output"]["output_dir"], inputCfg["output"]["output_file"]))
-        os.system("parallel -j %d --timeout %d < %s/%s" % (inputCfg["parallel"]["n_jobs"], inputCfg["parallel"]["timeout"], inputCfg["output"]["output_dir"], inputCfg["output"]["output_file"]))
+        if not os.path.isfile("OCDBsim.root") or os.path.isfile("OCDBrec.root") :
+            os.system("$ALIDPG_ROOT/bin/aliroot_dpgsim.sh --debug --run 289971 --mode OCDB --uid %d --seed %d --generator Custom --nevents %d \n" % (inputCfg["input"]["mode"], 999, 999, inputCfg["input"]["n_events"]))
+        #print("parallel -j %d --timeout %d < %s/%s" % (inputCfg["parallel"]["n_jobs"], inputCfg["parallel"]["timeout"], inputCfg["output"]["output_dir"], inputCfg["output"]["output_file"]))
+        #os.system("parallel -j %d --timeout %d < %s/%s" % (inputCfg["parallel"]["n_jobs"], inputCfg["parallel"]["timeout"], inputCfg["output"]["output_dir"], inputCfg["output"]["output_file"]))
 
 def main():
     parser = argparse.ArgumentParser(description='Arguments to pass')
