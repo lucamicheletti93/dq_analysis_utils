@@ -53,7 +53,7 @@ specificTables = {
   "processBarrelOnlyWithEventFilter" : [],
   "processBarrelOnlyWithCent" : [],
   "processMuonOnly" : [],
-  "processMuonOnlyWithCov" : ["ReducedMuonsCov"],
+  "processMuonOnlyWithCov" : ["ReducedMuonsCov","ReducedTracks","ReducedTracksBarrel","ReducedTracksBarrelPID","ReducedMuonsLabels","ReducedTracksBarrelLabels"],
   "processMuonOnlyWithCent" : [],
   "processMuonOnlyWithFilter" : []
 }
