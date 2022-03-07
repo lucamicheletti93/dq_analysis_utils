@@ -4,6 +4,10 @@
   ```ruby
   python runTableMaker.py configTableMakerMCRun3.json runMC table-maker-m-c:processMuonOnlyWithCov:true
   ```
+- TableMaker with converter (if mcparticles_001 not found)
+  ```ruby
+  python runTableMaker2.py configTableMakerMCRun3.json runMCwithConverter table-maker-m-c:processMuonOnlyWithCov:true
+  ```
 
 - TableReader:
   ```ruby
