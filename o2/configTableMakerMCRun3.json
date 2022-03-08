@@ -7,7 +7,7 @@
         "start-value-enumeration": "0",
         "end-value-enumeration": "-1",
         "step-value-enumeration": "1",
-        "aod-file": "data/AO2D_NonPromptJpsi.root"
+        "aod-file": "data/AO2D_PromptJpsi.root"
     },
     "internal-dpl-aod-spawner": "",
     "internal-dpl-aod-index-builder": "",
@@ -96,7 +96,7 @@
         "cfgMuonCuts": "matchedGlobal",
         "cfgBarrelLowPt": "0.1",
         "cfgMuonLowPt": "0.0",
-        "cfgMCsignals": "muFromJpsi",
+        "cfgMCsignals": "muFromJpsi,Jpsi,nonPromptJpsi,promptJpsi",
         "cfgIsRun2": "false",
         "cfgNoQA": "false",
         "cfgDetailedQA": "true",
