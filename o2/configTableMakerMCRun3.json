@@ -96,7 +96,7 @@
         "cfgMuonCuts": "matchedGlobal",
         "cfgBarrelLowPt": "0.1",
         "cfgMuonLowPt": "0.0",
-        "cfgMCsignals": "mumuFromJps,Jpsi,promptJpsi,nonPromptJpsi",
+        "cfgMCsignals": "mumuFromJpsi,Jpsi,promptJpsi,nonPromptJpsi",
         "cfgIsRun2": "false",
         "cfgNoQA": "false",
         "cfgDetailedQA": "true",
