@@ -21,9 +21,11 @@ def copy_from_grid():
         for iter in range(1, nFiles):
             if iter < 10 :
                 print("alien_cp alien://%s/%s/00%d/AO2D.root file:%s/00%d/." % (alienPrefix, alienDirName, iter, alienDirName, iter))
+                os.system("alien_cp alien://%s/%s/00%d/AO2D.root file:%s/00%d/." % (alienPrefix, alienDirName, iter, alienDirName, iter))
                 fOut.write("%s/%s/00%d/AO2D.root\n" % (workDir, alienDirName, iter))
             if iter >= 10 :
                 print("alien_cp alien://%s/%s/0%d/AO2D.root file:%s/0%d/." % (alienPrefix, alienDirName, iter, alienDirName, iter))
+                os.system("alien_cp alien://%s/%s/0%d/AO2D.root file:%s/0%d/." % (alienPrefix, alienDirName, iter, alienDirName, iter))
                 fOut.write("%s/%s/0%d/AO2D.root\n" % (workDir, alienDirName, iter))
 
 def main():
