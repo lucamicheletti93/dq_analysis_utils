@@ -31,6 +31,7 @@ void read_dilepton_table(const char *fileName = "dileptons_NonPromptJpsi.root", 
     TTreeReader treeReaderDileptons("Dileptons", dir);
     TTreeReaderValue<Float_t>   fMass(treeReaderDileptons, "fMass");
     TTreeReaderValue<Float_t>   fPt(treeReaderDileptons, "fPt");
+    TTreeReaderValue<Float_t>   fEta(treeReaderDileptons, "fEta");
     TTreeReaderValue<Int_t>     fSign(treeReaderDileptons, "fSign");
     TTreeReaderValue<uint32_t>  fFilterMap(treeReaderDileptons, "fFilterMap");
 
@@ -40,6 +41,7 @@ void read_dilepton_table(const char *fileName = "dileptons_NonPromptJpsi.root", 
     while (treeReaderDileptons.Next() && treeReaderDileptonsExtra.Next()) {
        (*fSign != 0) ? LSCounter++ : OSCounter++;
        if (*fSign != 0) continue;
+       if (TMath::Abs(*fEta) > 2.5 && TMath::Abs(*fEta) < 4.) continue;
        histMass -> Fill(*fMass);
        histTauz -> Fill(*fTauz);
        (*fFilterMap > 0) ? histMass_sig -> Fill(*fMass) : histMass_bkg -> Fill(*fMass);
