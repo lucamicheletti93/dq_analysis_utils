@@ -7,14 +7,13 @@ TH1D *histTauz_bkg;
 
 void LoadStyle();
 void BookHistograms();
-void read_dilepton_table(Bool_t cross_check = kFALSE){
+void read_dilepton_table(const char *fileName = "dileptons_NonPromptJpsi.root", Bool_t cross_check = kFALSE){
 
   LoadStyle();
   BookHistograms();
 
   // Set paths and plot configurations
   const char *pathIn = "/home/luca/GITHUB/dq_analysis_utils/macro/data";
-  const char *fileName = "dileptons_PromptJpsi.root";
   const int rebin = 2;
 
   TFile *fIn = new TFile(Form("%s/%s", pathIn, fileName), "READ");
