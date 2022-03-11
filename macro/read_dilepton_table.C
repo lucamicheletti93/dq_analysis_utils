@@ -7,7 +7,7 @@ TH1D *histTauz_bkg;
 
 void LoadStyle();
 void BookHistograms();
-void read_dilepton_table(const char *fileName = "dileptons_NonPromptJpsi.root", Bool_t cross_check = kFALSE){
+void read_dilepton_table(const char *fileSuffix = "NonPromptJpsi", Bool_t cross_check = kFALSE){
 
   LoadStyle();
   BookHistograms();
@@ -16,7 +16,7 @@ void read_dilepton_table(const char *fileName = "dileptons_NonPromptJpsi.root", 
   const char *pathIn = "/home/luca/GITHUB/dq_analysis_utils/macro/data";
   const int rebin = 2;
 
-  TFile *fIn = new TFile(Form("%s/%s", pathIn, fileName), "READ");
+  TFile *fIn = new TFile(Form("%s/dileptons_%s.root", pathIn, fileSuffix), "READ");
   TIter keyList(fIn->GetListOfKeys());
   TKey *key;
   Int_t dirCounter = 0;
@@ -39,17 +39,17 @@ void read_dilepton_table(const char *fileName = "dileptons_NonPromptJpsi.root", 
     TTreeReaderValue<Float_t> fTauz(treeReaderDileptonsExtra, "fTauz");
 
     while (treeReaderDileptons.Next() && treeReaderDileptonsExtra.Next()) {
-       (*fSign != 0) ? LSCounter++ : OSCounter++;
        if (*fSign != 0) continue;
        if (TMath::Abs(*fEta) > 2.5 && TMath::Abs(*fEta) < 4.) continue;
+       (*fSign != 0) ? LSCounter++ : OSCounter++;
        histMass -> Fill(*fMass);
        histTauz -> Fill(*fTauz);
        (*fFilterMap > 0) ? histMass_sig -> Fill(*fMass) : histMass_bkg -> Fill(*fMass);
        (*fFilterMap > 0) ? histTauz_sig -> Fill(*fTauz) : histTauz_bkg -> Fill(*fTauz);
     }
     dirCounter++;
-    cout << "OS: " << OSCounter << " - LS: " << LSCounter << endl;
   }
+  cout << "OS: " << OSCounter << " - LS: " << LSCounter << endl;
 
   // Histogram rebin
   histMass -> Rebin(rebin);
@@ -87,11 +87,10 @@ void read_dilepton_table(const char *fileName = "dileptons_NonPromptJpsi.root", 
   histTauz_sig -> Draw("Hsame");
   histTauz_bkg -> Draw("Hsame");
 
-
   if (cross_check){
-    TFile *fIn_test = new TFile(Form("%s/AnalysisResults_test.root", pathIn), "READ");
+    TFile *fIn_test = new TFile(Form("%s/AnalysisResults_%s.root", pathIn, fileSuffix), "READ");
     auto hlist_test = (THashList*) fIn_test -> Get("analysis-same-event-pairing/output");
-    auto list_test = (TList*) hlist_test -> FindObject("PairsMuonSEPM_matchedGlobal");
+    auto list_test = (TList*) hlist_test -> FindObject("PairsMuonSEPM_matchedGlobal_mumuFromJpsi");
     auto histMass_test = (TH1F*) list_test -> FindObject("Mass");
     histMass_test -> SetLineColor(kRed);
     auto histTauz_test = (TH1F*) list_test -> FindObject("Tauz");
