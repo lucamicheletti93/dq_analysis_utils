@@ -1,27 +1,48 @@
 TH1D *histMass;
 TH1D *histMass_sig;
+TH1D *histMassPromptJpsi_sig;
+TH1D *histMassNonPromptJpsi_sig;
 TH1D *histMass_bkg;
 TH1D *histTauz;
 TH1D *histTauz_sig;
+TH1D *histTauzPromptJpsi_sig;
+TH1D *histTauzNonPromptJpsi_sig;
 TH1D *histTauz_bkg;
+TH1D *histPt;
+TH1D *histPt_sig;
+TH1D *histPtPromptJpsi_sig;
+TH1D *histPtNonPromptJpsi_sig;
+TH1D *histPt_bkg;
 
 void LoadStyle();
 void BookHistograms();
-void read_dilepton_table(const char *fileSuffix = "NonPromptJpsi", Bool_t cross_check = kFALSE){
+void read_dilepton_table(const char *fileSuffix = "NonPromptJpsi",const char *fOutName = "NonPromptJpsi", Bool_t cross_check = kFALSE){
 
   LoadStyle();
   BookHistograms();
 
   // Set paths and plot configurations
   const char *pathIn = "/home/luca/GITHUB/dq_analysis_utils/macro/data";
-  const int rebin = 2;
+  const int rebin = 1;
+
+  TFile *fOut = new TFile(fOutName, "RECREATE");
+  // Tree variables
+  Float_t mass, pt, tauz;
+
+  TTree *tree_sig = new TTree("tree_sig", "tree_sig");
+  tree_sig -> Branch("fMass", &mass, "mass/F");
+  tree_sig -> Branch("fPt", &pt, "pt/F");
+  tree_sig -> Branch("fTauz", &tauz, "tauz/F");
+
+  TTree *tree_bkg = new TTree("tree_bkg", "tree_bkg");
+  tree_bkg -> Branch("fMass", &mass, "mass/F");
+  tree_bkg -> Branch("fPt", &pt, "pt/F");
+  tree_bkg -> Branch("fTauz", &tauz, "tauz/F");
 
   TFile *fIn = new TFile(Form("%s/dileptons_%s.root", pathIn, fileSuffix), "READ");
   TIter keyList(fIn->GetListOfKeys());
   TKey *key;
   Int_t dirCounter = 0;
-  Int_t LSCounter = 0;
-  Int_t OSCounter = 0;
 
   while ((key = (TKey*)keyList())) {
     TClass *cl = gROOT->GetClass(key->GetClassName());
@@ -34,22 +55,36 @@ void read_dilepton_table(const char *fileSuffix = "NonPromptJpsi", Bool_t cross_
     TTreeReaderValue<Float_t>   fEta(treeReaderDileptons, "fEta");
     TTreeReaderValue<Int_t>     fSign(treeReaderDileptons, "fSign");
     TTreeReaderValue<uint32_t>  fFilterMap(treeReaderDileptons, "fFilterMap");
+    TTreeReaderValue<uint32_t>  fMcDecision(treeReaderDileptons, "fMcDecision");
 
     TTreeReader treeReaderDileptonsExtra("DileptonsExtra", dir);
     TTreeReaderValue<Float_t> fTauz(treeReaderDileptonsExtra, "fTauz");
 
     while (treeReaderDileptons.Next() && treeReaderDileptonsExtra.Next()) {
        if (*fSign != 0) continue;
-       if (TMath::Abs(*fEta) > 2.5 && TMath::Abs(*fEta) < 4.) continue;
-       (*fSign != 0) ? LSCounter++ : OSCounter++;
+       //if (TMath::Abs(*fEta) > 2.5 && TMath::Abs(*fEta) < 4.) continue;
+
+       mass = *fMass;
+       pt = *fPt;
+       tauz = *fTauz;
+
        histMass -> Fill(*fMass);
        histTauz -> Fill(*fTauz);
-       (*fFilterMap > 0) ? histMass_sig -> Fill(*fMass) : histMass_bkg -> Fill(*fMass);
-       (*fFilterMap > 0) ? histTauz_sig -> Fill(*fTauz) : histTauz_bkg -> Fill(*fTauz);
+       histPt -> Fill(*fPt);
+       // Fill control histograms
+       (*fMcDecision > 0) ? histMass_sig -> Fill(*fMass) : histMass_bkg -> Fill(*fMass);
+       (*fMcDecision > 0) ? histTauz_sig -> Fill(*fTauz) : histTauz_bkg -> Fill(*fTauz);
+       (*fMcDecision > 0) ? histPt_sig -> Fill(*fPt) : histPt_bkg -> Fill(*fPt);
+       // Fill trees
+       (*fMcDecision > 0) ? tree_sig -> Fill() : tree_bkg -> Fill();
     }
     dirCounter++;
   }
-  cout << "OS: " << OSCounter << " - LS: " << LSCounter << endl;
+
+  fOut -> cd();
+  tree_sig -> Write();
+  tree_bkg -> Write();
+  fOut -> Close();
 
   // Histogram rebin
   histMass -> Rebin(rebin);
@@ -60,10 +95,10 @@ void read_dilepton_table(const char *fileSuffix = "NonPromptJpsi", Bool_t cross_
   histTauz_bkg -> Rebin(rebin);
 
   // Draw results
-  TCanvas *canvasMassTauz = new TCanvas("canvasMassTauz", "", 1200, 600);
-  canvasMassTauz -> Divide(2,1);
+  TCanvas *canvasMassTauzPt = new TCanvas("canvasMassTauzPt", "", 1800, 600);
+  canvasMassTauzPt -> Divide(3,1);
 
-  canvasMassTauz -> cd(1);
+  canvasMassTauzPt -> cd(1);
   histMass -> Draw("EP");
   histMass_sig -> Draw("Hsame");
   histMass_bkg -> Draw("Hsame");
@@ -81,66 +116,244 @@ void read_dilepton_table(const char *fileSuffix = "NonPromptJpsi", Bool_t cross_
   legendMassTauz -> AddEntry(histMass_bkg,"Bkg.","L");
   legendMassTauz -> Draw("same");
 
-  canvasMassTauz -> cd(2);
+  canvasMassTauzPt -> cd(2);
   gPad -> SetLogy();
   histTauz -> Draw("EP");
   histTauz_sig -> Draw("Hsame");
   histTauz_bkg -> Draw("Hsame");
+
+  canvasMassTauzPt -> cd(3);
+  gPad -> SetLogy();
+  histPt -> Draw("EP");
+  histPt_sig -> Draw("Hsame");
+  histPt_bkg -> Draw("Hsame");
 
   if (cross_check){
     TFile *fIn_test = new TFile(Form("%s/AnalysisResults_%s.root", pathIn, fileSuffix), "READ");
     auto hlist_test = (THashList*) fIn_test -> Get("analysis-same-event-pairing/output");
     auto list_test = (TList*) hlist_test -> FindObject("PairsMuonSEPM_matchedGlobal_mumuFromJpsi");
     auto histMass_test = (TH1F*) list_test -> FindObject("Mass");
-    histMass_test -> SetLineColor(kRed);
+    histMass_test -> SetLineColor(kBlack);
+    histMass_test -> SetLineWidth(2);
+    histMass_test -> SetMarkerColor(kBlack);
     auto histTauz_test = (TH1F*) list_test -> FindObject("Tauz");
-    histTauz_test -> SetLineColor(kRed);
+    histTauz_test -> SetLineColor(kBlack);
+    histTauz_test -> SetLineWidth(2);
+    histTauz_test -> SetMarkerColor(kBlack);
 
-    TCanvas *canvasMassTauz_test = new TCanvas("canvasMassTauz_test", "", 1200, 600);
-    canvasMassTauz_test -> Divide(2,1);
+    TLegend *legendMassTauz_test = new TLegend(0.20,0.65,0.40,0.85," ","brNDC");
+    legendMassTauz_test -> SetBorderSize(0);
+    legendMassTauz_test -> SetFillColor(10);
+    legendMassTauz_test -> SetFillStyle(1);
+    legendMassTauz_test -> SetLineStyle(0);
+    legendMassTauz_test -> SetLineColor(0);
+    legendMassTauz_test -> SetTextFont(42);
+    legendMassTauz_test -> SetTextSize(0.033);
+    legendMassTauz_test -> AddEntry(histMass_sig,"Dilepton table","F");
+    legendMassTauz_test -> AddEntry(histMass_test,"Analysis results","PE");
 
-    canvasMassTauz_test -> cd(1);
-    histMass -> Draw("EP");
-    histMass_test -> Draw("Hsame");
+    auto canvasRpMass = new TCanvas("canvasRpMass", "canvasRpMass");
+    canvasRpMass -> cd();
+    auto rpMass = new TRatioPlot(histMass_sig, histMass_test);
+    canvasRpMass -> SetTicks(0, 1);
+    rpMass -> Draw();
+    legendMassTauz_test -> Draw("same");
+    canvasRpMass -> Update();
 
-    canvasMassTauz_test -> cd(2);
-    gPad -> SetLogy();
-    histTauz -> Draw("EP");
-    histTauz_test -> Draw("Hsame");
+    auto canvasRpTauz = new TCanvas("canvasRpTauz", "canvasRpTauz");
+    canvasRpTauz -> cd();
+    auto rpTauz = new TRatioPlot(histTauz_sig, histTauz_test);
+    canvasRpTauz -> SetTicks(0, 1);
+    rpTauz -> Draw();
+    legendMassTauz_test -> Draw("same");
+    canvasRpTauz -> Update();
   }
 
 }
 ////////////////////////////////////////////////////////////////////////////////
+void combine_datasets(){
+  LoadStyle();
+  BookHistograms();
+
+  TFile *fInPromptJpsi = new TFile("promptJpsi.root", "READ");
+
+  TTreeReader treeReaderPromptJpsi_sig("tree_sig", fInPromptJpsi);
+  TTreeReaderValue<Float_t>   fMassPromptJpsi_sig(treeReaderPromptJpsi_sig, "fMass");
+  TTreeReaderValue<Float_t>   fPtPromptJpsi_sig(treeReaderPromptJpsi_sig, "fPt");
+  TTreeReaderValue<Float_t>   fTauzPromptJpsi_sig(treeReaderPromptJpsi_sig, "fTauz");
+
+  while (treeReaderPromptJpsi_sig.Next()) {
+    histMassPromptJpsi_sig -> Fill(*fMassPromptJpsi_sig);
+    histPtPromptJpsi_sig -> Fill(*fPtPromptJpsi_sig);
+    histTauzPromptJpsi_sig -> Fill(*fTauzPromptJpsi_sig);
+    histMass -> Fill(*fMassPromptJpsi_sig);
+    histPt -> Fill(*fPtPromptJpsi_sig);
+    histTauz -> Fill(*fTauzPromptJpsi_sig);
+  }
+
+  TTreeReader treeReaderPromptJpsi_bkg("tree_bkg", fInPromptJpsi);
+  TTreeReaderValue<Float_t>   fMassPromptJpsi_bkg(treeReaderPromptJpsi_bkg, "fMass");
+  TTreeReaderValue<Float_t>   fPtPromptJpsi_bkg(treeReaderPromptJpsi_bkg, "fPt");
+  TTreeReaderValue<Float_t>   fTauzPromptJpsi_bkg(treeReaderPromptJpsi_bkg, "fTauz");
+
+  while (treeReaderPromptJpsi_bkg.Next()) {
+    histMass_bkg -> Fill(*fMassPromptJpsi_bkg);
+    histPt_bkg -> Fill(*fPtPromptJpsi_bkg);
+    histTauz_bkg -> Fill(*fTauzPromptJpsi_bkg);
+    histMass -> Fill(*fMassPromptJpsi_bkg);
+    histPt -> Fill(*fPtPromptJpsi_bkg);
+    histTauz -> Fill(*fTauzPromptJpsi_bkg);
+  }
+
+  TFile *fInNonPromptJpsi = new TFile("nonPromptJpsi.root", "READ");
+
+  TTreeReader treeReaderNonPromptJpsi_sig("tree_sig", fInNonPromptJpsi);
+  TTreeReaderValue<Float_t>   fMassNonPromptJpsi_sig(treeReaderNonPromptJpsi_sig, "fMass");
+  TTreeReaderValue<Float_t>   fPtNonPromptJpsi_sig(treeReaderNonPromptJpsi_sig, "fPt");
+  TTreeReaderValue<Float_t>   fTauzNonPromptJpsi_sig(treeReaderNonPromptJpsi_sig, "fTauz");
+
+  while (treeReaderNonPromptJpsi_sig.Next()) {
+    histMassNonPromptJpsi_sig -> Fill(*fMassNonPromptJpsi_sig);
+    histPtNonPromptJpsi_sig -> Fill(*fPtNonPromptJpsi_sig);
+    histTauzNonPromptJpsi_sig -> Fill(*fTauzNonPromptJpsi_sig);
+    histMass -> Fill(*fMassNonPromptJpsi_sig);
+    histPt -> Fill(*fPtNonPromptJpsi_sig);
+    histTauz -> Fill(*fTauzNonPromptJpsi_sig);
+  }
+
+  TTreeReader treeReaderNonPromptJpsi_bkg("tree_bkg", fInNonPromptJpsi);
+  TTreeReaderValue<Float_t>   fMassNonPromptJpsi_bkg(treeReaderNonPromptJpsi_bkg, "fMass");
+  TTreeReaderValue<Float_t>   fPtNonPromptJpsi_bkg(treeReaderNonPromptJpsi_bkg, "fPt");
+  TTreeReaderValue<Float_t>   fTauzNonPromptJpsi_bkg(treeReaderNonPromptJpsi_bkg, "fTauz");
+
+  while (treeReaderNonPromptJpsi_bkg.Next()) {
+    histMass_bkg -> Fill(*fMassNonPromptJpsi_bkg);
+    histPt_bkg -> Fill(*fPtNonPromptJpsi_bkg);
+    histTauz_bkg -> Fill(*fTauzNonPromptJpsi_bkg);
+    histMass -> Fill(*fMassNonPromptJpsi_bkg);
+    histPt -> Fill(*fPtNonPromptJpsi_bkg);
+    histTauz -> Fill(*fTauzNonPromptJpsi_bkg);
+  }
+
+
+  // Draw results
+  TCanvas *canvasMassTauzPt = new TCanvas("canvasMassTauzPt", "", 1800, 600);
+  canvasMassTauzPt -> Divide(3,1);
+
+  canvasMassTauzPt -> cd(1);
+  histMass -> Draw("EP");
+  histMassPromptJpsi_sig -> Draw("Hsame");
+  histMassNonPromptJpsi_sig -> Draw("Hsame");
+  histMass_bkg -> Draw("Hsame");
+
+  TLegend *legendMassTauz = new TLegend(0.20,0.65,0.40,0.85," ","brNDC");
+  legendMassTauz -> SetBorderSize(0);
+  legendMassTauz -> SetFillColor(10);
+  legendMassTauz -> SetFillStyle(1);
+  legendMassTauz -> SetLineStyle(0);
+  legendMassTauz -> SetLineColor(0);
+  legendMassTauz -> SetTextFont(42);
+  legendMassTauz -> SetTextSize(0.033);
+  legendMassTauz -> AddEntry(histMass,"Data","PE");
+  legendMassTauz -> AddEntry(histMassPromptJpsi_sig,"J/#psi prompt","F");
+  legendMassTauz -> AddEntry(histMassNonPromptJpsi_sig,"J/#psi from B","F");
+  legendMassTauz -> AddEntry(histMass_bkg,"Bakground","L");
+  legendMassTauz -> Draw("same");
+
+  canvasMassTauzPt -> cd(2);
+  gPad -> SetLogy();
+  histTauz -> Draw("EP");
+  histTauzPromptJpsi_sig -> Draw("Hsame");
+  histTauzNonPromptJpsi_sig -> Draw("Hsame");
+  histTauz_bkg -> Draw("Hsame");
+
+  canvasMassTauzPt -> cd(3);
+  gPad -> SetLogy();
+  histPt -> Draw("EP");
+  histPtPromptJpsi_sig -> Draw("Hsame");
+  histPtNonPromptJpsi_sig -> Draw("Hsame");
+  histPt_bkg -> Draw("Hsame");
+
+}
+////////////////////////////////////////////////////////////////////////////////
 void BookHistograms(){
-  histMass = new TH1D("histMass", "", 120, 0., 5.);
+  histMass = new TH1D("histMass", "", 125, 0., 5.);
   histMass -> GetXaxis() -> SetTitle("#it{M} (GeV/c^{2})");
   histMass -> SetMarkerStyle(20);
   histMass -> SetMarkerColor(kBlack);
   histMass -> SetLineColor(kBlack);
-  histMass_sig = new TH1D("histMass_sig", "", 120, 0., 5.);
+  histMass -> SetLineColor(kBlack);
+  histMass -> GetYaxis() -> SetRangeUser(0., 2.e4);
+  histMass_sig = new TH1D("histMass_sig", "", 125, 0., 5.);
   histMass_sig -> GetXaxis() -> SetTitle("#it{M} (GeV/c^{2})");
-  histMass_sig -> SetLineColor(kRed);
+  histMass_sig -> SetLineColor(kOrange+7);
   histMass_sig -> SetLineWidth(2);
-  histMass_sig -> SetFillColorAlpha(kRed, 0.3);
-  histMass_bkg = new TH1D("histMass_bkg", "", 120, 0., 5.);
+  histMass_sig -> SetFillColorAlpha(kOrange+7, 0.3);
+  histMassPromptJpsi_sig = new TH1D("histMassPromptJpsi_sig", "", 125, 0., 5.);
+  histMassPromptJpsi_sig -> GetXaxis() -> SetTitle("#it{M} (GeV/c^{2})");
+  histMassPromptJpsi_sig -> SetLineColor(kOrange+7);
+  histMassPromptJpsi_sig -> SetLineWidth(2);
+  histMassPromptJpsi_sig -> SetFillColorAlpha(kOrange+7, 0.3);
+  histMassNonPromptJpsi_sig = new TH1D("histMassNonPromptJpsi_sig", "", 125, 0., 5.);
+  histMassNonPromptJpsi_sig -> GetXaxis() -> SetTitle("#it{M} (GeV/c^{2})");
+  histMassNonPromptJpsi_sig -> SetLineColor(kAzure+7);
+  histMassNonPromptJpsi_sig -> SetLineWidth(2);
+  histMassNonPromptJpsi_sig -> SetFillColorAlpha(kAzure+7, 0.3);
+  histMass_bkg = new TH1D("histMass_bkg", "", 125, 0., 5.);
   histMass_bkg -> GetXaxis() -> SetTitle("#it{M} (GeV/c^{2})");
-  histMass_bkg -> SetLineColor(kBlue);
+  histMass_bkg -> SetLineColor(kRed);
   histMass_bkg -> SetLineWidth(2);
 
   histTauz = new TH1D("histTauz", "", 100, -0.01, 0.01);
-  histTauz -> GetXaxis() -> SetTitle("#it{#tau}_{z}");
+  histTauz -> GetXaxis() -> SetTitle("#it{#tau}_{z} (ps)");
   histTauz -> SetMarkerStyle(20);
   histTauz -> SetMarkerColor(kBlack);
   histTauz -> SetLineColor(kBlack);
+  histTauz -> GetYaxis() -> SetRangeUser(1., 2e5);
   histTauz_sig = new TH1D("histTauz_sig", "", 100, -0.01, 0.01);
-  histTauz_sig -> GetXaxis() -> SetTitle("#it{#tau}_{z}");
-  histTauz_sig -> SetLineColor(kRed);
+  histTauz_sig -> GetXaxis() -> SetTitle("#it{#tau}_{z} (ps)");
+  histTauz_sig -> SetLineColor(kOrange+7);
   histTauz_sig -> SetLineWidth(2);
-  histTauz_sig -> SetFillColorAlpha(kRed, 0.3);
+  histTauz_sig -> SetFillColorAlpha(kOrange+7, 0.3);
+  histTauzPromptJpsi_sig = new TH1D("histTauzPromptJpsi_sig", "", 100, -0.01, 0.01);
+  histTauzPromptJpsi_sig -> GetXaxis() -> SetTitle("#it{#tau}_{z} (ps)");
+  histTauzPromptJpsi_sig -> SetLineColor(kOrange+7);
+  histTauzPromptJpsi_sig -> SetLineWidth(2);
+  histTauzPromptJpsi_sig -> SetFillColorAlpha(kOrange+7, 0.3);
+  histTauzNonPromptJpsi_sig = new TH1D("histTauzNonPromptJpsi_sig", "", 100, -0.01, 0.01);
+  histTauzNonPromptJpsi_sig -> GetXaxis() -> SetTitle("#it{#tau}_{z} (ps)");
+  histTauzNonPromptJpsi_sig -> SetLineColor(kAzure+7);
+  histTauzNonPromptJpsi_sig -> SetLineWidth(2);
+  histTauzNonPromptJpsi_sig -> SetFillColorAlpha(kAzure+7, 0.3);
   histTauz_bkg = new TH1D("histTauz_bkg", "", 100, -0.01, 0.01);
-  histTauz_bkg -> GetXaxis() -> SetTitle("#it{#tau}_{z}");
-  histTauz_bkg -> SetLineColor(kBlue);
+  histTauz_bkg -> GetXaxis() -> SetTitle("#it{#tau}_{z} (ps)");
+  histTauz_bkg -> SetLineColor(kRed);
   histTauz_bkg -> SetLineWidth(2);
+
+  histPt = new TH1D("histPt", "", 200, 0., 20.);
+  histPt -> GetXaxis() -> SetTitle("#it{p}_{T} (GeV/#it{c})");
+  histPt -> SetMarkerStyle(20);
+  histPt -> SetMarkerColor(kBlack);
+  histPt -> SetLineColor(kBlack);
+  histPt_sig = new TH1D("histPt_sig", "", 200, 0., 20.);
+  histPt_sig -> GetXaxis() -> SetTitle("#it{p}_{T} (GeV/#it{c})");
+  histPt_sig -> SetLineColor(kOrange+7);
+  histPt_sig -> SetLineWidth(2);
+  histPt_sig -> SetFillColorAlpha(kOrange+7, 0.3);
+  histPtPromptJpsi_sig = new TH1D("histPtPromptJpsi_sig", "", 200, 0., 20.);
+  histPtPromptJpsi_sig -> GetXaxis() -> SetTitle("#it{p}_{T} (GeV/#it{c})");
+  histPtPromptJpsi_sig -> SetLineColor(kOrange+7);
+  histPtPromptJpsi_sig -> SetLineWidth(2);
+  histPtPromptJpsi_sig -> SetFillColorAlpha(kOrange+7, 0.3);
+  histPtNonPromptJpsi_sig = new TH1D("histPtNonPromptJpsi_sig", "", 200, 0., 20.);
+  histPtNonPromptJpsi_sig -> GetXaxis() -> SetTitle("#it{p}_{T} (GeV/#it{c})");
+  histPtNonPromptJpsi_sig -> SetLineColor(kAzure+7);
+  histPtNonPromptJpsi_sig -> SetLineWidth(2);
+  histPtNonPromptJpsi_sig -> SetFillColorAlpha(kAzure+7, 0.3);
+  histPt_bkg = new TH1D("histPt_bkg", "", 200, 0., 20.);
+  histPt_bkg -> GetXaxis() -> SetTitle("#it{p}_{T} (GeV/#it{c})");
+  histPt_bkg -> SetLineColor(kRed);
+  histPt_bkg -> SetLineWidth(2);
 }
 ////////////////////////////////////////////////////////////////////////////////
 void LoadStyle(){
