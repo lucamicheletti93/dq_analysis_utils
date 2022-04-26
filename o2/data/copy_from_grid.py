@@ -6,15 +6,15 @@ def copy_from_grid():
         function for downloading files from alien grid
         '''
         # Path of the alien directory
-        alienPrefix = "/alice/sim/2021";
+        alienPrefix = "/alice/sim/2022";
         # Path of the local directory
-        alienDirName = "LHC21i3g/301005"
+        alienDirName = "LHC22c5/505673"
         # working directory
         workDir = os.getcwd()
         # output file name
-        fOutName = "LHC21i3g_301005.txt"
+        fOutName = "LHC22c5_505673.txt"
         # Number of files to download
-        nFiles = 100
+        nFiles = 10
 
         fOut = open("%s" % (fOutName), "w")
 

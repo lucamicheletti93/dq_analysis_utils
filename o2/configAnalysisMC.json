@@ -34,9 +34,9 @@
     "analysis-same-event-pairing": {
         "cfgTrackCuts": "jpsiO2MCdebugCuts",
         "cfgMuonCuts": "matchedGlobal",
-        "cfgBarrelMCRecSignals": "mumuFromJpsi",
-        "cfgBarrelMCGenSignals": "Jpsi,nonPromptJpsi,promptJpsi",
-	"cfgMuonMCGenSignals": "muon,mumuFromJpsi,nonPromptJpsi,Jpsi,promptJpsi",
+        "cfgBarrelMCRecSignals": "mumuFromJpsi,mumuFromPsi2S",
+        "cfgBarrelMCGenSignals": "Psi2S,Jpsi,nonPromptJpsi,promptJpsi",
+	"cfgMuonMCGenSignals": "muon,mumuFromJpsi,nonPromptJpsi,Jpsi,promptJpsi,Psi2S",
 	"processJpsiToEESkimmed": "false",
         "processJpsiToMuMuSkimmed": "false",
         "processJpsiToMuMuVertexingSkimmed": "true",
