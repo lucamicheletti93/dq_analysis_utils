@@ -7,17 +7,16 @@
         "start-value-enumeration": "0",
         "end-value-enumeration": "-1",
         "step-value-enumeration": "1",
-        "aod-file": "@data/LHC22c5_505673.txt"
+        "aod-file": "@data/OCT_505548_apass3.txt"
     },
     "internal-dpl-aod-spawner": "",
     "internal-dpl-aod-index-builder": "",
-    "mc-converter": "",
-    "timestamp-task": {
+    "TimestampTask": {
         "verbose": "false",
         "rct-path": "RCT\/RunInformation\/",
         "start-orbit-path": "GRP\/StartOrbit",
         "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
-        "isRun2MC": "false"
+        "isMC": "false"
     },
     "tof-pid-full": {
         "param-file": "",
@@ -37,13 +36,11 @@
     },
     "tpc-pid-full": {
         "param-file": "",
+        "param-signal": "BetheBloch",
+        "param-sigma": "TPCReso",
         "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
         "ccdbPath": "Analysis\/PID\/TPC\/Response",
-        "ccdb-timestamp": "0",
-        "useNetworkCorrection": 0,
-        "downloadNetworkFromAlien": 0,
-        "networkPathAlien": "alien:///alice/cern.ch/user/c/csonnabe/tpc_network_testing/net_onnx_0.onnx",
-        "networkPathLocally": "network.onnx",
+        "ccdb-timestamp": "-1",
         "pid-el": "1",
         "pid-mu": "1",
         "pid-pi": "1",
@@ -58,22 +55,24 @@
         "processRun2": "false",
         "processRun3": "true"
     },
-    "tof-signal": "",
-    "track-extension": {
+    "multiplicity-table": {
         "processRun2": "false",
         "processRun3": "true"
     },
+    "tof-signal": "",
+    "track-extension": "",
+    "weak-decay-indices-v0": "",
     "tof-pid": {
         "param-file": "",
         "param-sigma": "TOFReso",
         "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
         "ccdbPath": "Analysis\/PID\/TOF",
         "ccdb-timestamp": "-1",
-        "pid-el": "1",
-        "pid-mu": "1",
-        "pid-pi": "1",
-        "pid-ka": "1",
-        "pid-pr": "1",
+        "pid-el": "-1",
+        "pid-mu": "-1",
+        "pid-pi": "-1",
+        "pid-ka": "-1",
+        "pid-pr": "-1",
         "pid-de": "-1",
         "pid-tr": "-1",
         "pid-he": "-1",
@@ -82,39 +81,61 @@
     "event-selection-task": {
         "syst": "pp",
         "muonSelection": "0",
-        "customDeltaBC": "300",
-        "isMC": "true",
-        "processRun2": "false",
+        "isMC":  "false",
+	"processRun2": "false",
         "processRun3": "true"
     },
-    "tof-pid-beta": {
+    "pid-t-o-f-task-beta": {
         "tof-expreso": "80"
     },
     "track-selection": {
         "isRun3": "true"
     },
-    "table-maker-m-c": {
+    "weak-decay-indices-cascades": "",
+    "v0-selector": {
+        "d_bz": "-5",
+        "v0cospa": "0.998",
+        "dcav0dau": "0.300000012",
+        "v0Rmin": "3",
+        "v0Rmax": "60",
+        "dcamin": "0",
+        "dcamax": "1e+10",
+        "mincrossedrows": "70",
+        "maxchi2tpc": "4"
+    },
+    "d-q-barrel-track-selection-task": {
+        "cfgBarrelTrackCuts": "jpsiO2MCdebugCuts"
+    },
+    "d-q-event-selection-task": {
+        "cfgEventCuts": "eventStandard"
+    },
+    "d-q-filter-p-p-task": {
+        "cfgBarrelTrackCuts": "jpsiO2MCdebugCuts",
+        "cfgPairCuts": "pairMassLow"
+    },
+    "track-pid-qa": "",
+    "v0-gamma-qa": "",
+    "table-maker": {
         "cfgEventCuts": "eventStandardNoINT7",
         "cfgBarrelTrackCuts": "jpsiO2MCdebugCuts",
-        "cfgMuonCuts": "muonQualityCuts,muonTightQualityCutsForTests",
-        "cfgBarrelLowPt": "1.0",
-        "cfgMuonLowPt": "1.0",
-        "cfgMCsignals": "electronPrimary,eFromLMeeLFQ,eFromLMeeLF,muFromJpsi,Jpsi",
-        "cfgIsRun2": "false",
+        "cfgMuonCuts": "muonQualityCuts",
+        "cfgBarrelLowPt": "1",
+        "cfgMuonLowPt": "0.5",
         "cfgNoQA": "false",
         "cfgDetailedQA": "true",
-        "processFull": "false",
-        "processFullWithCov": "false",
-        "processBarrelOnly": "false",
+        "cfgIsRun2": "false",
+        "processFullWithCent": "false",
+        "processFullWithCentWithV0Bits": "false",
+        "processFull": "true",
+        "processFullWithV0Bits": "false",
+        "processFullWithEventFilter": "false",
+        "processFullWithEventFilterWithV0Bits": "false",
         "processBarrelOnlyWithCent": "false",
-        "processBarrelOnlyWithCov": "false",
-        "processMuonOnlyWithCov": "false",
+        "processBarrelOnly": "false",
         "processMuonOnlyWithCent": "false",
+        "processMuonOnly": "false",
+        "processMuonOnlyWithFilter": "false",
         "processOnlyBCs": "true"
-    },
-    "multiplicity-table": {
-        "processRun2": "false",
-        "processRun3": "true"
     },
     "internal-dpl-aod-global-analysis-file-sink": "",
     "internal-dpl-aod-writer": ""
