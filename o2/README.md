@@ -1,5 +1,6 @@
 ## List of commands to run
 
+# General MC processing
 - TableMaker:
   ```ruby
   python runTableMaker.py configTableMakerMCRun3.json runMC table-maker-m-c:processMuonOnlyWithCov:true
@@ -12,4 +13,14 @@
 - TableReader:
   ```ruby
   o2-analysis-dq-efficiency --configuration json://configAnalysisMC.json --aod-writer-json writerConfiguration_dileptons.json -b
+  ```
+# QC MC processing
+- Load O2 via cvmfs (temporary issue with fdd):
+  ```ruby
+  /cvmfs/alice.cern.ch/bin/alienv enter VO_ALICE@O2Physics::nightly-20220421-1
+  ```
+  
+- Run table maker without converter (specific for GP MC pp@99GeV):
+  ```ruby
+  python runTableMaker_QC.py configTableMakerMCRun3_QC.json runMC table-maker-m-c:processBarrelOnlyWithCov:true
   ```
