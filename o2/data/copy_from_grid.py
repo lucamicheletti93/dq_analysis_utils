@@ -14,7 +14,7 @@ def copy_from_grid():
         # output file name
         fOutName = "LHC22c5_505673.txt"
         # Number of files to download
-        nFiles = 10
+        nFiles = 100
 
         fOut = open("%s" % (fOutName), "w")
 
