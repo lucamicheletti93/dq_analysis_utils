@@ -14,7 +14,7 @@
   ```ruby
   o2-analysis-dq-efficiency --configuration json://configAnalysisMC.json --aod-writer-json writerConfiguration_dileptons.json -b
   ```
-# QC MC processing
+# QC MC / Data processing
 - Load O2 via cvmfs (temporary issue with fdd):
   ```ruby
   /cvmfs/alice.cern.ch/bin/alienv enter VO_ALICE@O2Physics::nightly-20220421-1
@@ -23,4 +23,9 @@
 - Run table maker without converter (specific for GP MC pp@99GeV):
   ```ruby
   python runTableMaker_QC.py configTableMakerMCRun3_QC.json runMC table-maker-m-c:processBarrelOnlyWithCov:true
+  ```
+  
+- Run table maker on pilot beam data
+  ```ruby
+  python runTableMaker_QC.py configTableMakerDataRun3_QC.json runData table-maker:processBarrelOnlyWithCov:true
   ```
