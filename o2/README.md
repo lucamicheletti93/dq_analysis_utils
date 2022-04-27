@@ -20,7 +20,7 @@
   /cvmfs/alice.cern.ch/bin/alienv enter VO_ALICE@O2Physics::nightly-20220421-1
   ```
   
-- Run table maker without converter (specific for GP MC pp@99GeV):
+- Run table maker without converter (specific for GP MC pp@900GeV):
   ```ruby
   python runTableMaker_QC.py configTableMakerMCRun3_QC.json runMC table-maker-m-c:processBarrelOnlyWithCov:true
   ```
