@@ -4,7 +4,7 @@ void LoadStyle();
 Long_t *dummy1 = 0, *dummy2 = 0, *dummy3 = 0, *dummy4 = 0;
 TString output_dir_name = "figures/qc";
 
-void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_505673.root", const char *name_fInData = "AnalysisResultsTM_OCT_505548_apass3.root"){
+void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_505548.root", const char *name_fInData = "AnalysisResultsTM_OCT_505548_apass3.root"){
   LoadStyle();
   const char *path_fIn = "/Users/lucamicheletti/GITHUB/dq_analysis_utils/o2/output";
 
@@ -51,11 +51,13 @@ void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_5056
 
       hist1dVarMC[iDir][iHist1d] -> Scale(1. / hist1dVarMC[iDir][iHist1d] -> Integral());
       hist1dVarMC[iDir][iHist1d] -> SetMarkerStyle(20);
+      hist1dVarMC[iDir][iHist1d] -> SetMarkerSize(0.8);
       hist1dVarMC[iDir][iHist1d] -> SetMarkerColor(kRed);
       hist1dVarMC[iDir][iHist1d] -> SetLineColor(kRed);
 
       hist1dVarData[iDir][iHist1d] -> Scale(1. / hist1dVarData[iDir][iHist1d] -> Integral());
       hist1dVarData[iDir][iHist1d] -> SetMarkerStyle(20);
+      hist1dVarData[iDir][iHist1d] -> SetMarkerSize(0.8);
       hist1dVarData[iDir][iHist1d] -> SetMarkerColor(kBlue);
       hist1dVarData[iDir][iHist1d] -> SetLineColor(kBlue);
     }
@@ -70,6 +72,7 @@ void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_5056
       hist2dVarMCProj[iDir][iHist2d] -> SetName(Form("MC_proj_%s", dirName[iDir].Data()));
       hist2dVarMCProj[iDir][iHist2d] -> Scale(1. / hist2dVarMCProj[iDir][iHist2d] -> Integral());
       hist2dVarMCProj[iDir][iHist2d] -> SetMarkerStyle(20);
+      hist2dVarMCProj[iDir][iHist2d] -> SetMarkerSize(0.8);
       hist2dVarMCProj[iDir][iHist2d] -> SetMarkerColor(kRed);
       hist2dVarMCProj[iDir][iHist2d] -> SetLineColor(kRed);
 
@@ -77,6 +80,7 @@ void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_5056
       hist2dVarDataProj[iDir][iHist2d] -> SetName(Form("Data_proj_%s", dirName[iDir].Data()));
       hist2dVarDataProj[iDir][iHist2d] -> Scale(1. / hist2dVarDataProj[iDir][iHist2d] -> Integral());
       hist2dVarDataProj[iDir][iHist2d] -> SetMarkerStyle(20);
+      hist2dVarDataProj[iDir][iHist2d] -> SetMarkerSize(0.8);
       hist2dVarDataProj[iDir][iHist2d] -> SetMarkerColor(kBlue);
       hist2dVarDataProj[iDir][iHist2d] -> SetLineColor(kBlue);
     }
@@ -177,7 +181,7 @@ void LoadStyle(){
   gStyle -> SetTitleOffset(0.9,"x");
   gStyle -> SetTitleOffset(1.02,"y");
   gStyle -> SetTitleSize(0.04,"xyz");
-  gStyle -> SetMarkerSize(1.3);
+  gStyle -> SetMarkerSize(0.5);
   gStyle -> SetOptStat(111111);
   gStyle -> SetEndErrorSize(0);
   gStyle -> SetCanvasPreferGL(kTRUE);
