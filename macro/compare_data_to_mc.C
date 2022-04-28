@@ -93,6 +93,7 @@ void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_5056
       hist2dVarMC[iDir][iHist2d] -> Draw("COLZ");
     }
     canvasVar -> SaveAs(Form("%s/%s_MC.pdf", output_dir_name.Data(), hist2dName[iHist2d].Data()));
+    //canvasVar -> SaveAs(Form("%s/%s_MC.png", output_dir_name.Data(), hist2dName[iHist2d].Data()));
     delete canvasVar;
   }
 
@@ -107,6 +108,7 @@ void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_5056
       hist2dVarData[iDir][iHist2d] -> Draw("COLZ");
     }
     canvasVar -> SaveAs(Form("%s/%s_Data.pdf", output_dir_name.Data(), hist2dName[iHist2d].Data()));
+    //canvasVar -> SaveAs(Form("%s/%s_Data.png", output_dir_name.Data(), hist2dName[iHist2d].Data()));
     delete canvasVar;
   }
 
@@ -140,6 +142,7 @@ void DrawRatioPlot(TH1F *hist1, TH1F *hist2, TString dirName, TString plotName){
   }
   canvas -> Update();
   canvas -> SaveAs(Form("%s/ratio_%s.pdf", dirName.Data(), plotName.Data()));
+  //canvas -> SaveAs(Form("%s/ratio_%s.png", dirName.Data(), plotName.Data()));
   delete canvas;
   delete ratioPlot;
 }
