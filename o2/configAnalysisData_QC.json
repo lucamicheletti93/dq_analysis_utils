@@ -1,0 +1,60 @@
+{
+    "internal-dpl-clock": "",
+    "internal-dpl-aod-reader": {
+        "time-limit": "0",
+        "orbit-offset-enumeration": "0",
+        "orbit-multiplier-enumeration": "0",
+        "start-value-enumeration": "0",
+        "end-value-enumeration": "-1",
+        "step-value-enumeration": "1",
+        "aod-file": "reducedAod.root",
+        "aod-reader-json": "readerConfiguration_reducedEvent.json"
+    },
+    "analysis-event-selection": {
+        "cfgMixingVars": "",
+        "cfgEventCuts": "eventStandardNoINT7",
+        "cfgQA": "true",
+        "processSkimmed": "true",
+        "processDummy": "false"
+    },
+    "analysis-muon-selection": {
+        "cfgMuonCuts": "muonQualityCuts",
+        "cfgQA": "true",
+        "processSkimmed": "true",
+        "processDummy": "false"
+    },
+    "analysis-track-selection": {
+        "cfgTrackCuts": "jpsiO2MCdebugCuts",
+        "cfgQA": "true",
+        "processSkimmed": "true",
+        "processDummy": "false"
+    },
+    "analysis-same-event-pairing": {
+        "cfgTrackCuts": "jpsiO2MCdebugCuts",
+        "cfgMuonCuts": "",
+        "ccdb-url": "http:\/\/ccdb-test.cern.ch:8080",
+        "ccdb-path": "Users\/lm",
+        "ccdb-no-later-than": "1638543968354",
+        "processJpsiToEESkimmed": "true",
+        "processJpsiToMuMuSkimmed": "false",
+        "processJpsiToMuMuVertexingSkimmed": "false",
+        "processElectronMuonSkimmed": "false",
+        "processAllSkimmed": "false",
+        "processDummy": "false"
+    },
+    "analysis-event-mixing": {
+        "cfgTrackCuts": "jpsiO2MCdebugCuts",
+        "cfgMuonCuts": "",
+        "processBarrelSkimmed": "false",
+        "processMuonSkimmed": "false",
+        "processBarrelMuonSkimmed": "false",
+        "processDummy": "true"
+    },
+    "analysis-dilepton-hadron": {
+        "cfgLeptonCuts": "",
+        "processSkimmed": "false",
+        "processDummy": "true"
+    },
+    "internal-dpl-aod-global-analysis-file-sink": "",
+    "internal-dpl-aod-writer": ""
+}
