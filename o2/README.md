@@ -1,6 +1,6 @@
-## List of commands to run
+# List of commands to run
 
-# General MC processing
+## General MC processing
 - TableMaker:
   ```ruby
   python runTableMaker.py configTableMakerMCRun3.json runMC table-maker-m-c:processMuonOnlyWithCov:true
@@ -14,7 +14,7 @@
   ```ruby
   o2-analysis-dq-efficiency --configuration json://configAnalysisMC.json --aod-writer-json writerConfiguration_dileptons.json -b
   ```
-# QC MC / Data processing
+## QC MC processing
 - Load O2 via cvmfs (temporary issue with fdd):
   ```ruby
   /cvmfs/alice.cern.ch/bin/alienv enter VO_ALICE@O2Physics::nightly-20220421-1
@@ -25,7 +25,23 @@
   python runTableMaker_QC.py configTableMakerMCRun3_QC.json runMC table-maker-m-c:processBarrelOnlyWithCov:true
   ```
   
+- Run dq Efficiency:
+  ```ruby
+  o2-analysis-dq-efficiency --configuration json://configAnalysisMC_QC.json -b
+  ```
+  
+## QC Data processing
+- Load O2 via cvmfs (temporary issue with fdd):
+  ```ruby
+  /cvmfs/alice.cern.ch/bin/alienv enter VO_ALICE@O2Physics::nightly-20220421-1
+  ```
+  
 - Run table maker on pilot beam data
   ```ruby
   python runTableMaker_QC.py configTableMakerDataRun3_QC.json runData table-maker:processBarrelOnlyWithCov:true
+  ```
+
+- Run table reader:
+  ```ruby
+  o2-analysis-dq-table-reader --configuration json://configAnalysisData_QC.json -b
   ```
