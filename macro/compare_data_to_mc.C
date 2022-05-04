@@ -4,7 +4,7 @@ void LoadStyle();
 Long_t *dummy1 = 0, *dummy2 = 0, *dummy3 = 0, *dummy4 = 0;
 TString output_dir_name = "figures/qc";
 
-void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_505548.root", const char *name_fInData = "AnalysisResultsTM_OCT_505548_apass3.root"){
+void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_HL.root", const char *name_fInData = "AnalysisResultsTM_OCT_apass3_HL.root"){
   //LoadStyle();
   const char *path_fIn = "/Users/lucamicheletti/GITHUB/dq_analysis_utils/o2/output";
 
@@ -101,7 +101,7 @@ void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_5055
     hist_dEdx_Data[iPt] -> SetMarkerSize(0.8);
     hist_dEdx_Data[iPt] -> SetMarkerColor(kRed);
     hist_dEdx_Data[iPt] -> SetLineColor(kRed);
-    hist_dEdx_Data[iPt] -> Rebin(2);
+    //hist_dEdx_Data[iPt] -> Rebin(2);
 
     hist_dEdx_MC[iPt] = (TH1F*) hist2dVarMC[0][0] -> ProjectionY(Form("hist_dEdx_MC_Pt_%2.1f_%2.1f", pinProj[iPt], pinProj[iPt+1]), hist2dVarMC[0][0] -> GetXaxis() -> FindBin(pinProj[iPt]), hist2dVarMC[0][0] -> GetXaxis() -> FindBin(pinProj[iPt+1]));
     hist_dEdx_MC[iPt] -> SetTitle(Form("%2.1f < p_{in} < %2.1f GeV/c", pinProj[iPt], pinProj[iPt+1]));
@@ -110,7 +110,7 @@ void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_5055
     hist_dEdx_MC[iPt] -> SetMarkerSize(0.8);
     hist_dEdx_MC[iPt] -> SetMarkerColor(kBlue);
     hist_dEdx_MC[iPt] -> SetLineColor(kBlue);
-    hist_dEdx_MC[iPt] -> Rebin(2);
+    //hist_dEdx_MC[iPt] -> Rebin(2);
 
     DrawRatioPlot(hist_dEdx_Data[iPt], hist_dEdx_MC[iPt], output_dir_name, Form("hist_dEdx_Pt_%2.1f_%2.1f", pinProj[iPt], pinProj[iPt+1]));
   }
