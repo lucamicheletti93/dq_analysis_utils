@@ -23,8 +23,8 @@ void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_HL.r
   int hist2dNum;
 
   TString initDirName[] = {"TrackBarrel_jpsiO2MCdebugCuts"};
-  TString initHist1dName[] = {"Pt", "Eta", "Phi", "DCAxy", "DCAz"};
-  TString initHist2dName[] = {"TPCdedx_pIN"};
+  TString initHist1dName[] = {"Pt", "Eta", "Phi", "DCAxy", "DCAz", "DCAsigXY", "DCAsigZ", "ITSncls", "ITSchi2", "TPCncls", "TPCchi2"};
+  TString initHist2dName[] = {"TPCdedx_pIN", "TOFbeta_pIN"};
   dirNum = sizeof(initDirName)/sizeof(initDirName[0]);
   hist1dNum = sizeof(initHist1dName)/sizeof(initHist1dName[0]);
   hist2dNum = sizeof(initHist2dName)/sizeof(initHist2dName[0]);
@@ -52,16 +52,16 @@ void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_HL.r
       //hist1dVarMC[iDir][iHist1d] -> Rebin(2);
       hist1dVarMC[iDir][iHist1d] -> Scale(1. / hist1dVarMC[iDir][iHist1d] -> Integral());
       hist1dVarMC[iDir][iHist1d] -> SetMarkerStyle(20);
-      hist1dVarMC[iDir][iHist1d] -> SetMarkerSize(0.8);
-      hist1dVarMC[iDir][iHist1d] -> SetMarkerColor(kRed);
-      hist1dVarMC[iDir][iHist1d] -> SetLineColor(kRed);
+      hist1dVarMC[iDir][iHist1d] -> SetMarkerSize(0.6);
+      hist1dVarMC[iDir][iHist1d] -> SetMarkerColor(kRed+1);
+      hist1dVarMC[iDir][iHist1d] -> SetLineColor(kRed+1);
 
       //hist1dVarData[iDir][iHist1d] -> Rebin(2);
       hist1dVarData[iDir][iHist1d] -> Scale(1. / hist1dVarData[iDir][iHist1d] -> Integral());
-      hist1dVarData[iDir][iHist1d] -> SetMarkerStyle(20);
-      hist1dVarData[iDir][iHist1d] -> SetMarkerSize(0.8);
-      hist1dVarData[iDir][iHist1d] -> SetMarkerColor(kBlue);
-      hist1dVarData[iDir][iHist1d] -> SetLineColor(kBlue);
+      hist1dVarData[iDir][iHist1d] -> SetMarkerStyle(24);
+      hist1dVarData[iDir][iHist1d] -> SetMarkerSize(0.6);
+      hist1dVarData[iDir][iHist1d] -> SetMarkerColor(kBlue+1);
+      hist1dVarData[iDir][iHist1d] -> SetLineColor(kBlue+1);
     }
     for(int iHist2d = 0;iHist2d < hist2dNum;iHist2d++){
       hist2dVarMC[iDir][iHist2d] = (TH2F*) listMC -> FindObject(hist2dName[iHist2d].Data());
@@ -74,46 +74,55 @@ void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_HL.r
       hist2dVarMCProj[iDir][iHist2d] -> SetName(Form("MC_proj_%s", dirName[iDir].Data()));
       hist2dVarMCProj[iDir][iHist2d] -> Scale(1. / hist2dVarMCProj[iDir][iHist2d] -> Integral());
       hist2dVarMCProj[iDir][iHist2d] -> SetMarkerStyle(20);
-      hist2dVarMCProj[iDir][iHist2d] -> SetMarkerSize(0.8);
-      hist2dVarMCProj[iDir][iHist2d] -> SetMarkerColor(kRed);
-      hist2dVarMCProj[iDir][iHist2d] -> SetLineColor(kRed);
+      hist2dVarMCProj[iDir][iHist2d] -> SetMarkerSize(0.6);
+      hist2dVarMCProj[iDir][iHist2d] -> SetMarkerColor(kRed+1);
+      hist2dVarMCProj[iDir][iHist2d] -> SetLineColor(kRed+1);
 
       hist2dVarDataProj[iDir][iHist2d] = (TH1F*) hist2dVarData[iDir][iHist2d] -> ProjectionY();
       hist2dVarDataProj[iDir][iHist2d] -> SetName(Form("Data_proj_%s", dirName[iDir].Data()));
       hist2dVarDataProj[iDir][iHist2d] -> Scale(1. / hist2dVarDataProj[iDir][iHist2d] -> Integral());
-      hist2dVarDataProj[iDir][iHist2d] -> SetMarkerStyle(20);
-      hist2dVarDataProj[iDir][iHist2d] -> SetMarkerSize(0.8);
-      hist2dVarDataProj[iDir][iHist2d] -> SetMarkerColor(kBlue);
-      hist2dVarDataProj[iDir][iHist2d] -> SetLineColor(kBlue);
+      hist2dVarDataProj[iDir][iHist2d] -> SetMarkerStyle(24);
+      hist2dVarDataProj[iDir][iHist2d] -> SetMarkerSize(0.6);
+      hist2dVarDataProj[iDir][iHist2d] -> SetMarkerColor(kBlue+1);
+      hist2dVarDataProj[iDir][iHist2d] -> SetLineColor(kBlue+1);
     }
   }
 
   // dE/dx projections
   Double_t pinProj[] = {0, 0.6, 2, 10};
-  TH1F *hist_dEdx_Data[3];
-  TH1F *hist_dEdx_MC[3];
+  Int_t    pinNum = sizeof(pinProj)/sizeof(pinProj[0]);
+  Int_t    pinMin, pinMax;
 
-  for(int iPt = 0;iPt < 3;iPt++){
-    hist_dEdx_Data[iPt] = (TH1F*) hist2dVarData[0][0] -> ProjectionY(Form("hist_dEdx_Data_Pt_%2.1f_%2.1f", pinProj[iPt], pinProj[iPt+1]), hist2dVarData[0][0] -> GetXaxis() -> FindBin(pinProj[iPt]), hist2dVarData[0][0] -> GetXaxis() -> FindBin(pinProj[iPt+1]));
-    hist_dEdx_Data[iPt] -> SetTitle(Form("%2.1f < p_{in} < %2.1f GeV/c", pinProj[iPt], pinProj[iPt+1]));
-    hist_dEdx_Data[iPt] -> Scale(1. / hist_dEdx_Data[iPt] -> Integral());
-    hist_dEdx_Data[iPt] -> SetMarkerStyle(20);
-    hist_dEdx_Data[iPt] -> SetMarkerSize(0.8);
-    hist_dEdx_Data[iPt] -> SetMarkerColor(kRed);
-    hist_dEdx_Data[iPt] -> SetLineColor(kRed);
-    //hist_dEdx_Data[iPt] -> Rebin(2);
+  vector <TH1F*> histProjData[hist2dNum];
+  vector <TH1F*> histProjMC[hist2dNum];
 
-    hist_dEdx_MC[iPt] = (TH1F*) hist2dVarMC[0][0] -> ProjectionY(Form("hist_dEdx_MC_Pt_%2.1f_%2.1f", pinProj[iPt], pinProj[iPt+1]), hist2dVarMC[0][0] -> GetXaxis() -> FindBin(pinProj[iPt]), hist2dVarMC[0][0] -> GetXaxis() -> FindBin(pinProj[iPt+1]));
-    hist_dEdx_MC[iPt] -> SetTitle(Form("%2.1f < p_{in} < %2.1f GeV/c", pinProj[iPt], pinProj[iPt+1]));
-    hist_dEdx_MC[iPt] -> Scale(1. / hist_dEdx_MC[iPt] -> Integral());
-    hist_dEdx_MC[iPt] -> SetMarkerStyle(20);
-    hist_dEdx_MC[iPt] -> SetMarkerSize(0.8);
-    hist_dEdx_MC[iPt] -> SetMarkerColor(kBlue);
-    hist_dEdx_MC[iPt] -> SetLineColor(kBlue);
-    //hist_dEdx_MC[iPt] -> Rebin(2);
+  for(int iHist2d = 0;iHist2d < hist2dNum;iHist2d++){
+    for(int iPin = 0;iPin < pinNum-1;iPin++){
+      pinMin = hist2dVarData[0][iHist2d] -> GetXaxis() -> FindBin(pinProj[iPin]);
+      pinMax = hist2dVarData[0][iHist2d] -> GetXaxis() -> FindBin(pinProj[iPin+1]);
 
-    DrawRatioPlot(hist_dEdx_Data[iPt], hist_dEdx_MC[iPt], output_dir_name, Form("hist_dEdx_Pt_%2.1f_%2.1f", pinProj[iPt], pinProj[iPt+1]));
+      histProjData[iHist2d].push_back((TH1F*) hist2dVarData[0][iHist2d] -> ProjectionY(Form("hist_%s_Data_Pt_%2.1f_%2.1f", hist2dName[iHist2d].Data(), pinProj[iPin], pinProj[iPin+1]), pinMin, pinMax));
+      histProjData[iHist2d][iPin] -> SetTitle(Form("%2.1f < p_{in} < %2.1f GeV/c", pinProj[iPin], pinProj[iPin+1]));
+      histProjData[iHist2d][iPin] -> Scale(1. / histProjData[iHist2d][iPin] -> Integral());
+      histProjData[iHist2d][iPin] -> SetMarkerStyle(20);
+      histProjData[iHist2d][iPin] -> SetMarkerSize(0.6);
+      histProjData[iHist2d][iPin] -> SetMarkerColor(kRed+1);
+      histProjData[iHist2d][iPin] -> SetLineColor(kRed+1);
+      histProjData[iHist2d][iPin] -> Rebin(1);
+
+      histProjMC[iHist2d].push_back((TH1F*) hist2dVarMC[0][iHist2d] -> ProjectionY(Form("hist_%s_MC_Pt_%2.1f_%2.1f", hist2dName[iHist2d].Data(), pinProj[iPin], pinProj[iPin+1]), pinMin, pinMax));
+      histProjMC[iHist2d][iPin] -> SetTitle(Form("%2.1f < p_{in} < %2.1f GeV/c", pinProj[iPin], pinProj[iPin+1]));
+      histProjMC[iHist2d][iPin] -> Scale(1. / histProjMC[iHist2d][iPin] -> Integral());
+      histProjMC[iHist2d][iPin] -> SetMarkerStyle(24);
+      histProjMC[iHist2d][iPin] -> SetMarkerSize(0.6);
+      histProjMC[iHist2d][iPin] -> SetMarkerColor(kBlue+1);
+      histProjMC[iHist2d][iPin] -> SetLineColor(kBlue+1);
+      histProjMC[iHist2d][iPin] -> Rebin(1);
+
+      DrawRatioPlot(histProjData[iHist2d][iPin], histProjMC[iHist2d][iPin], output_dir_name, Form("hist_%s_Pt_%2.1f_%2.1f", hist2dName[iHist2d].Data(), pinProj[iPin], pinProj[iPin+1]));
+    }
   }
+
 
   for(int iHist2d = 0;iHist2d < hist2dNum;iHist2d++){
     auto canvasVar = new TCanvas("canvasVar", "",  600*dirNum, 600);
@@ -168,12 +177,11 @@ void DrawRatioPlot(TH1F *hist1, TH1F *hist2, TString dirName, TString plotName){
     gPad -> SetLogy(1);
   }
   ratioPlot -> Draw();
-  if(plotName.Contains("Pt")){
-    ratioPlot -> GetLowerRefYaxis() -> SetRangeUser(0.,2.);
-  }
+  ratioPlot -> GetLowerRefYaxis() -> SetRangeUser(0.,2.);
+  ratioPlot -> GetLowerRefYaxis() -> SetLabelSize(0.025);
+
   canvas -> Update();
   canvas -> SaveAs(Form("%s/ratio_%s.pdf", dirName.Data(), plotName.Data()));
-  //canvas -> SaveAs(Form("%s/ratio_%s.png", dirName.Data(), plotName.Data()));
   delete canvas;
   delete ratioPlot;
 }
