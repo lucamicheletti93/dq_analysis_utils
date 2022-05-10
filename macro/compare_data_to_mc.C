@@ -4,7 +4,7 @@ void LoadStyle();
 Long_t *dummy1 = 0, *dummy2 = 0, *dummy3 = 0, *dummy4 = 0;
 TString output_dir_name = "figures/qc";
 
-void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_HL.root", const char *name_fInData = "AnalysisResultsTM_OCT_apass3_HL.root"){
+void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_HL.root", const char *name_fInData = "AnalysisResultsTM_OCT_apass3_HL_2.root"){
   //LoadStyle();
   const char *path_fIn = "/Users/lucamicheletti/GITHUB/dq_analysis_utils/o2/output";
 
@@ -104,22 +104,22 @@ void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_HL.r
       histProjData[iHist2d].push_back((TH1F*) hist2dVarData[0][iHist2d] -> ProjectionY(Form("hist_%s_Data_Pt_%2.1f_%2.1f", hist2dName[iHist2d].Data(), pinProj[iPin], pinProj[iPin+1]), pinMin, pinMax));
       histProjData[iHist2d][iPin] -> SetTitle(Form("%2.1f < p_{in} < %2.1f GeV/c", pinProj[iPin], pinProj[iPin+1]));
       histProjData[iHist2d][iPin] -> Scale(1. / histProjData[iHist2d][iPin] -> Integral());
-      histProjData[iHist2d][iPin] -> SetMarkerStyle(20);
+      histProjData[iHist2d][iPin] -> SetMarkerStyle(24);
       histProjData[iHist2d][iPin] -> SetMarkerSize(0.6);
-      histProjData[iHist2d][iPin] -> SetMarkerColor(kRed+1);
-      histProjData[iHist2d][iPin] -> SetLineColor(kRed+1);
+      histProjData[iHist2d][iPin] -> SetMarkerColor(kBlue+1);
+      histProjData[iHist2d][iPin] -> SetLineColor(kBlue+1);
       histProjData[iHist2d][iPin] -> Rebin(1);
 
       histProjMC[iHist2d].push_back((TH1F*) hist2dVarMC[0][iHist2d] -> ProjectionY(Form("hist_%s_MC_Pt_%2.1f_%2.1f", hist2dName[iHist2d].Data(), pinProj[iPin], pinProj[iPin+1]), pinMin, pinMax));
       histProjMC[iHist2d][iPin] -> SetTitle(Form("%2.1f < p_{in} < %2.1f GeV/c", pinProj[iPin], pinProj[iPin+1]));
       histProjMC[iHist2d][iPin] -> Scale(1. / histProjMC[iHist2d][iPin] -> Integral());
-      histProjMC[iHist2d][iPin] -> SetMarkerStyle(24);
+      histProjMC[iHist2d][iPin] -> SetMarkerStyle(20);
       histProjMC[iHist2d][iPin] -> SetMarkerSize(0.6);
-      histProjMC[iHist2d][iPin] -> SetMarkerColor(kBlue+1);
-      histProjMC[iHist2d][iPin] -> SetLineColor(kBlue+1);
+      histProjMC[iHist2d][iPin] -> SetMarkerColor(kRed+1);
+      histProjMC[iHist2d][iPin] -> SetLineColor(kRed+1);
       histProjMC[iHist2d][iPin] -> Rebin(1);
 
-      DrawRatioPlot(histProjData[iHist2d][iPin], histProjMC[iHist2d][iPin], output_dir_name, Form("hist_%s_Pt_%2.1f_%2.1f", hist2dName[iHist2d].Data(), pinProj[iPin], pinProj[iPin+1]));
+      DrawRatioPlot(histProjMC[iHist2d][iPin], histProjData[iHist2d][iPin], output_dir_name, Form("hist_%s_Pt_%2.1f_%2.1f", hist2dName[iHist2d].Data(), pinProj[iPin], pinProj[iPin+1]));
     }
   }
 
@@ -173,12 +173,31 @@ void DrawRatioPlot(TH1F *hist1, TH1F *hist2, TString dirName, TString plotName){
   gStyle->SetOptStat(0);
   auto canvas = new TCanvas("canvas", "A ratio example");
   auto ratioPlot = new TRatioPlot(hist1, hist2);
-  if(plotName.Contains("Pt")){
-    gPad -> SetLogy(1);
-  }
   ratioPlot -> Draw();
   ratioPlot -> GetLowerRefYaxis() -> SetRangeUser(0.,2.);
   ratioPlot -> GetLowerRefYaxis() -> SetLabelSize(0.025);
+
+  TPad *tmpPad = ratioPlot -> GetUpperPad();
+
+  TLegend *legend = new TLegend(0.15, 0.75, 0.35, 0.89, " ", "brNDC");
+  legend -> SetBorderSize(0);
+  legend -> SetFillColor(10);
+  legend -> SetFillStyle(1);
+  legend -> SetLineStyle(0);
+  legend -> SetLineColor(0);
+  legend -> SetTextFont(42);
+  legend -> SetTextSize(0.03);
+  if(plotName.Contains("DCA")){
+    legend -> AddEntry(hist1, Form("MC (mean = %3.2f)", hist1 -> GetMean()), "PL");
+    legend -> AddEntry(hist2, Form("Data (mean = %3.2f)", hist2 -> GetMean()), "PL");
+  } else {
+    legend -> AddEntry(hist1, "MC", "PL");
+    legend -> AddEntry(hist2, "Data", "PL");
+  }
+  legend -> Draw();
+
+  tmpPad -> Modified(); 
+  tmpPad -> Update(); 
 
   canvas -> Update();
   canvas -> SaveAs(Form("%s/ratio_%s.pdf", dirName.Data(), plotName.Data()));
