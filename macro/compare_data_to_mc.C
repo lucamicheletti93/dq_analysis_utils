@@ -4,7 +4,7 @@ void LoadStyle();
 Long_t *dummy1 = 0, *dummy2 = 0, *dummy3 = 0, *dummy4 = 0;
 TString output_dir_name = "figures/qc";
 
-void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_HL.root", const char *name_fInData = "AnalysisResultsTM_OCT_apass3_HL_2.root"){
+void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_HL.root", const char *name_fInData = "AnalysisResultsTM_OCT_apass3_HL.root"){
   //LoadStyle();
   const char *path_fIn = "/Users/lucamicheletti/GITHUB/dq_analysis_utils/o2/output";
 
@@ -24,7 +24,7 @@ void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_HL.r
 
   TString initDirName[] = {"TrackBarrel_jpsiO2MCdebugCuts"};
   TString initHist1dName[] = {"Pt", "Eta", "Phi", "DCAxy", "DCAz", "DCAsigXY", "DCAsigZ", "ITSncls", "ITSchi2", "TPCncls", "TPCchi2"};
-  TString initHist2dName[] = {"TPCdedx_pIN", "TOFbeta_pIN"};
+  TString initHist2dName[] = {"TPCdedx_pIN", "TOFbeta_pIN", "TPCnSigEle_pIN", "TOFnSigEle_pIN"};
   dirNum = sizeof(initDirName)/sizeof(initDirName[0]);
   hist1dNum = sizeof(initHist1dName)/sizeof(initHist1dName[0]);
   hist2dNum = sizeof(initHist2dName)/sizeof(initHist2dName[0]);
