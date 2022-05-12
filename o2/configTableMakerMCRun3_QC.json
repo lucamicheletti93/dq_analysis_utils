@@ -7,7 +7,7 @@
         "start-value-enumeration": "0",
         "end-value-enumeration": "-1",
         "step-value-enumeration": "1",
-        "aod-file": "@data/LHC22c5_505548.txt"
+        "aod-file": "@data/LHC22c5_505673.txt"
     },
     "internal-dpl-aod-spawner": "",
     "internal-dpl-aod-index-builder": "",
