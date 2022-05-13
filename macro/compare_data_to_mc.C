@@ -8,8 +8,8 @@ void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_HL.r
   //LoadStyle();
   const char *path_fIn = "/Users/lucamicheletti/GITHUB/dq_analysis_utils/o2/output";
 
-  if(gSystem -> GetPathInfo(Form("%s",output_dir_name.Data()),dummy1,dummy2,dummy3,dummy4) != 0){
-    gSystem -> Exec(Form("mkdir -p %s",output_dir_name.Data()));
+  if(gSystem -> GetPathInfo(Form("%s", output_dir_name.Data()), dummy1, dummy2, dummy3, dummy4) != 0){
+    gSystem -> Exec(Form("mkdir -p %s", output_dir_name.Data()));
   }
 
   TH1F *hist1dVarMC[10][10], *hist1dVarData[10][10];
@@ -22,7 +22,7 @@ void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_HL.r
   int hist1dNum;
   int hist2dNum;
 
-  TString initDirName[] = {"TrackBarrel_jpsiO2MCdebugCuts"};
+  TString initDirName[] = {"TrackBarrel_BeforeCuts", "TrackBarrel_jpsiO2MCdebugCuts"};
   TString initHist1dName[] = {"Pt", "Eta", "Phi", "DCAxy", "DCAz", "DCAsigXY", "DCAsigZ", "ITSncls", "ITSchi2", "TPCncls", "TPCchi2"};
   TString initHist2dName[] = {"TPCdedx_pIN", "TOFbeta_pIN", "TPCnSigEle_pIN", "TOFnSigEle_pIN", "Pt_DCAsigXY", "Pt_DCAsigZ"};
   dirNum = sizeof(initDirName)/sizeof(initDirName[0]);
@@ -49,14 +49,12 @@ void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_HL.r
       hist1dVarData[iDir][iHist1d] = (TH1F*) listData -> FindObject(hist1dName[iHist1d].Data());
       hist1dVarData[iDir][iHist1d] -> SetName(dirName[iDir]);
 
-      //hist1dVarMC[iDir][iHist1d] -> Rebin(2);
       hist1dVarMC[iDir][iHist1d] -> Scale(1. / hist1dVarMC[iDir][iHist1d] -> Integral());
       hist1dVarMC[iDir][iHist1d] -> SetMarkerStyle(20);
       hist1dVarMC[iDir][iHist1d] -> SetMarkerSize(0.6);
       hist1dVarMC[iDir][iHist1d] -> SetMarkerColor(kRed+1);
       hist1dVarMC[iDir][iHist1d] -> SetLineColor(kRed+1);
 
-      //hist1dVarData[iDir][iHist1d] -> Rebin(2);
       hist1dVarData[iDir][iHist1d] -> Scale(1. / hist1dVarData[iDir][iHist1d] -> Integral());
       hist1dVarData[iDir][iHist1d] -> SetMarkerStyle(24);
       hist1dVarData[iDir][iHist1d] -> SetMarkerSize(0.6);
@@ -129,7 +127,7 @@ void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_HL.r
     canvasVar -> Divide(dirNum,1);
     for(int iDir = 0;iDir < dirNum;iDir++){
       canvasVar -> cd(iDir+1);
-      if(hist2dName[iHist2d].Contains("dedx")){
+      if(hist2dName[iHist2d].Contains("TPCdedx") || hist2dName[iHist2d].Contains("TOFbeta")){
         gPad -> SetLogx(1);
       }
       hist2dVarMC[iDir][iHist2d] -> Draw("COLZ");
@@ -143,7 +141,7 @@ void compare_data_to_mc(const char *name_fInMC = "AnalysisResultsTM_LHC22c5_HL.r
     canvasVar -> Divide(dirNum,1);
     for(int iDir = 0;iDir < dirNum;iDir++){
       canvasVar -> cd(iDir+1);
-      if(hist2dName[iHist2d].Contains("dedx")){
+      if(hist2dName[iHist2d].Contains("TPCdedx") || hist2dName[iHist2d].Contains("TOFbeta")){
         gPad -> SetLogx(1);
       }
       hist2dVarData[iDir][iHist2d] -> Draw("COLZ");
