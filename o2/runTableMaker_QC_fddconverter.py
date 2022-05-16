@@ -185,8 +185,8 @@ for dep in depsToRun.keys():
   commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
 
 if sys.argv[2] == "runMCwithConverter" :
-  commandToRun += " | o2-analysis-fdd-converter --configuration json://" + updatedConfigFileName + " -b" 
-  #commandToRun += " | o2-analysis-mc-converter --configuration json://" + updatedConfigFileName + " -b" 
+  commandToRun += " | o2-analysis-mc-converter --configuration json://" + updatedConfigFileName + " -b" 
+commandToRun += " | o2-analysis-fdd-converter --configuration json://" + updatedConfigFileName + " -b"
 
 print("====================================================================================================================")
 print("Command to run:")
