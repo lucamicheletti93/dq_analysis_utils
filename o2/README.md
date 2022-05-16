@@ -14,6 +14,12 @@
   ```ruby
   o2-analysis-dq-efficiency --configuration json://configAnalysisMC.json --aod-writer-json writerConfiguration_dileptons.json -b
   ```
+  
+- if it complains about fdd run this command:
+  ```ruby
+  python runTableMaker_QC_fddconverter.py configTableMakerDataRun3_QC.json runData table-maker:processBarrelOnlyWithCov:true
+  ```
+  
 ## QC MC processing
 - Load O2 via cvmfs (temporary issue with fdd):
   ```ruby
