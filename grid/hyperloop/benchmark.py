@@ -9,6 +9,7 @@ from os import path
 from ROOT import TCanvas, TF1, TFile, TPaveText, TMath
 from ROOT import gROOT, gBenchmark, gPad, gStyle
 from ctypes import cdll
+sys.path.append('../../utils/')
 from function_library import Func_Tot_ee, Func_Tot_mumu
 
 def params():
