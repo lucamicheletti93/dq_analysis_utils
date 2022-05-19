@@ -1,0 +1,5 @@
+input:
+  input_file_name: ../o2/output/AnalysisResultsTR_OCT_apass3.root
+
+output:
+  output_plot_neme: OCT_apass3.pdf

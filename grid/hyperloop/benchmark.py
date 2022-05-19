@@ -10,6 +10,7 @@ from ROOT import TCanvas, TF1, TFile, TPaveText, TMath
 from ROOT import gROOT, gBenchmark, gPad, gStyle
 from ctypes import cdll
 sys.path.append('../../utils/')
+from plot_library import Load_Style, Draw_Ratio_Plot
 from function_library import Func_Tot_ee, Func_Tot_mumu
 
 def params():
@@ -63,7 +64,7 @@ def params():
 
 
 def fit():
-    fIn_ee = TFile.Open("AnalysisResults_LHC18_dielectron.root")
+    fIn_ee = TFile.Open("../../o2/output/AnalysisResults_LHC18_dielectron.root")
     hlist_ee = fIn_ee.Get("analysis-same-event-pairing/output")
     list_ee = hlist_ee.FindObject("PairsBarrelSEPM_jpsiO2MCdebugCuts")
     histMass_ee = list_ee.FindObject("Mass")
@@ -90,7 +91,7 @@ def fit():
     funcMass_ee.FixParameter(6,par_signal_ee[4])
     histMass_ee.Fit(funcMass_ee, "R")
 
-    fIn_mumu = TFile.Open("AnalysisResults_LHC18_dimuon.root")
+    fIn_mumu = TFile.Open("../../o2/output/AnalysisResults_LHC18_dimuon.root")
     hlist_mumu = fIn_mumu.Get("analysis-same-event-pairing/output")
     list_mumu = hlist_mumu.FindObject("PairsMuonSEPM_muonQualityCuts")
     histMass_mumu = list_mumu.FindObject("Mass")
