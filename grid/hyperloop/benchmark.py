@@ -17,47 +17,72 @@ def params():
     production = ['LHC15o_test', 'LHC18_pp_test', 'LHC18_pp_benchmark']
 
     # Derived data tables
-    reduction_factor_fwd = arr.array('d', [2333, 299, 812])
-    pss_memory_fwd = arr.array('d', [2.2, 2.3, 2.3]) # GB
-    timing_fwd = arr.array('d', [2.62, 2.62, 2.6]) # min
-    throughtput_fwd = arr.array('d', [34.5, 17.5, 32.2]) # MB/s
-    procData_fwd = arr.array('d', [0 ,0 ,0])
+    reduction_factor_fwd_TM = arr.array('d', [2347, 298, 810])
+    pss_memory_fwd_TM = arr.array('d', [2.2, 2.3, 2.3]) # GB
+    throughtput_fwd_TM = arr.array('d', [42.8, 23.7, 32.9]) # MB/s
+    events_fwd_TM = arr.array('d', [67356, 449384, 207607]) # Number of events in 3 minutes
+    procData_fwd_TM = arr.array('d', [0 ,0 ,0])
 
-    reduction_factor_barrel = arr.array('d', [805, 272, 621])
-    pss_memory_barrel = arr.array('d', [3.3, 3.9, 3.6]) # GB
-    timing_barrel = arr.array('d', [2.6, 2.96, 2.6]) # min
-    throughtput_barrel = arr.array('d', [4.2, 3.9, 4.6]) # MB/s
-    procData_barrel = arr.array('d', [0 ,0 ,0])
+    reduction_factor_barrel_TM = arr.array('d', [837, 271, 637])
+    pss_memory_barrel_TM = arr.array('d', [3.6, 3.1, 2.9]) # GB
+    throughtput_barrel_TM = arr.array('d', [4.9, 5.0, 5.3]) # MB/s
+    events_barrel_TM = arr.array('d', [8672, 110937, 37597]) # Number of events in 3 minutes
+    procData_barrel_TM = arr.array('d', [0 ,0 ,0])
+
+    reduction_factor_fwd_TR = arr.array('d', [1980, 294, 764])
+    pss_memory_fwd_TR = arr.array('d', [2.8, 2.8, 2.8]) # GB
+    throughtput_fwd_TR = arr.array('d', [25.6, 16.2, 22.9]) # MB/s
+    events_fwd_TR = arr.array('d', [43877, 317666, 153007]) # Number of events in 3 minutes
+    procData_fwd_TR = arr.array('d', [0 ,0 ,0])
+
+    reduction_factor_barrel_TR = arr.array('d', [634, 256, 558])
+    pss_memory_barrel_TR = arr.array('d', [3.9, 4.6, 4.2]) # GB
+    throughtput_barrel_TR = arr.array('d', [3.9, 3.4, 4.2]) # MB/s
+    events_barrel_TR = arr.array('d', [7266, 73050, 31691]) # Number of events in 3 minutes
+    procData_barrel_TR = arr.array('d', [0 ,0 ,0])
 
     print("Processed data")
     for iIndex in range(0, len(production)) :
         print("----> %s" % production[iIndex])
-        procData_fwd[iIndex] = 3. *  throughtput_fwd[iIndex]
-        print("fwd = %f" % procData_fwd[iIndex])
-        procData_barrel[iIndex] = 3. *  throughtput_barrel[iIndex]
-        print("barrel = %f" % procData_barrel[iIndex])
+        procData_fwd_TM[iIndex] = events_fwd_TM[iIndex]/180
+        print("fwd skimming = %f" % procData_fwd_TM[iIndex])
+        procData_barrel_TM[iIndex] = events_barrel_TM[iIndex]/180
+        print("barrel skimming = %f" % procData_barrel_TM[iIndex])
+        print("----> %s" % production[iIndex])
+        procData_fwd_TR[iIndex] = events_fwd_TR[iIndex]/180
+        print("fwd analysis = %f" % procData_fwd_TR[iIndex])
+        procData_barrel_TR[iIndex] = events_barrel_TR[iIndex]/180
+        print("barrel analysis = %f" % procData_barrel_TR[iIndex])
 
 
     figure, axis = plt.subplots(2, 2, figsize=(20, 8))
 
-    axis[0, 0].plot(production, reduction_factor_fwd, 'r', marker = "o", label = "fwd")
-    axis[0, 0].plot(production, reduction_factor_barrel, 'b', marker = "o", label = "barrel")
+    axis[0, 0].plot(production, reduction_factor_fwd_TM, 'ro-', label = "fwd skim")
+    axis[0, 0].plot(production, reduction_factor_barrel_TM, 'bo-', label = "barrel skim")
+    axis[0, 0].plot(production, reduction_factor_fwd_TR, 'rs--', label = "fwd analysis")
+    axis[0, 0].plot(production, reduction_factor_barrel_TR, 'bs--', label = "barrel analysis")
     axis[0, 0].set_title("Reduction factor")
     axis[0, 0].legend()
 
-    axis[1, 0].plot(production, pss_memory_fwd, 'r', marker = "o", label = "fwd")
-    axis[1, 0].plot(production, pss_memory_barrel, 'b', marker = "o", label = "barrel")
+    axis[1, 0].plot(production, pss_memory_fwd_TM, 'ro-', label = "fwd skim")
+    axis[1, 0].plot(production, pss_memory_barrel_TM, 'bo-', label = "barrel skim")
+    axis[1, 0].plot(production, pss_memory_fwd_TR, 'rs--', label = "fwd analysis")
+    axis[1, 0].plot(production, pss_memory_barrel_TR, 'bs--', label = "barrel analysis")
     axis[1, 0].set_title("PSS memory (GB)")
     axis[1, 0].legend()
 
-    axis[0, 1].plot(production, procData_fwd, 'r', marker = "o", label = "fwd")
-    axis[0, 1].plot(production, procData_barrel, 'b', marker = "o", label = "barrel")
-    axis[0, 1].set_title("Processed data in 3 min (MB)")
+    axis[0, 1].plot(production, procData_fwd_TM, 'ro-', label = "fwd skim")
+    axis[0, 1].plot(production, procData_barrel_TM, 'bo-', label = "barrel skim")
+    axis[0, 1].plot(production, procData_fwd_TR, 'rs--', label = "fwd analysis")
+    axis[0, 1].plot(production, procData_barrel_TR, 'bs--', label = "barrel analysis")
+    axis[0, 1].set_title("Events/s")
     axis[0, 1].legend()
 
-    axis[1, 1].plot(production, throughtput_fwd, 'r', marker = "o", label = "fwd")
-    axis[1, 1].plot(production, throughtput_barrel, 'b', marker = "o", label = "barrel")
-    axis[1, 1].set_title("Throughtput")
+    axis[1, 1].plot(production, throughtput_fwd_TM, 'ro-', label = "fwd skim")
+    axis[1, 1].plot(production, throughtput_barrel_TM, 'bo-', label = "barrel skim")
+    axis[1, 1].plot(production, throughtput_fwd_TR, 'rs--', label = "fwd analysis")
+    axis[1, 1].plot(production, throughtput_barrel_TR, 'bs--', label = "barrel analysis")
+    axis[1, 1].set_title("Throughtput (MB/s)")
     axis[1, 1].legend()
 
     plt.show()

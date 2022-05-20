@@ -14,15 +14,8 @@ sys.path.append('../utils/')
 from plot_library import Load_Style, Draw_Ratio_Plot
 from function_library import Func_Exp, Func_Tot_ee
 
-def comp():
-    name_fInMC = "AnalysisResultsTM_LHC22c5_HL.root"
-    name_fInData = "AnalysisResultsTM_OCT_apass3_HL.root"
-    path_fIn = "/Users/lucamicheletti/GITHUB/dq_analysis_utils/o2/output"
-
 def fit(inputCfg, mode):
     Load_Style()
-    #fIn = TFile.Open("../grid/hyperloop/AnalysisResults_LHC18_dielectron.root")    # run2 converted data
-    #fIn = TFile.Open("../o2/output/AnalysisResultsTR_OCT_apass3.root")             # apass3 pilot run
     fIn = TFile.Open(inputCfg["input"]["input_file_name"])
     hlist = fIn.Get("analysis-same-event-pairing/output")
     list = hlist.FindObject("PairsBarrelSEPM_jpsiO2MCdebugCuts")
@@ -73,7 +66,6 @@ def fit(inputCfg, mode):
 def main():
     parser = argparse.ArgumentParser(description='Arguments to pass')
     parser.add_argument('cfgFileName', metavar='text', default='config.yml', help='config file name')
-    parser.add_argument("--comp", help="compare data to mc", action="store_true")
     parser.add_argument("--fit_bkg_only", help="plot and fit the dilepton distribution background only", action="store_true")
     parser.add_argument("--fit_full", help="plot and fit the dilepton distribution", action="store_true")
     args = parser.parse_args()
@@ -83,8 +75,6 @@ def main():
         inputCfg = yaml.load(ymlCfgFile, yaml.FullLoader)
     print('Loading task configuration: Done!')
 
-    if args.comp:
-        comp()
     if args.fit_bkg_only:
         fit(inputCfg, "bkg_only")
     if args.fit_full:
