@@ -1,5 +1,6 @@
 input:
   input_file_name: ../o2/output/AnalysisResultsTR_OCT_apass3.root
+  input_trigger_file_name: ../o2/output/AnalysisResults_ppFilter_OCT_apass3_HL.root
 
 output:
   output_plot_neme: OCT_apass3.pdf

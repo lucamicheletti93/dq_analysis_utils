@@ -8,11 +8,11 @@ def copy_from_grid():
         # Path of the alien directory
         alienPrefix = "/alice/data/2021";
         # Path of the local directory
-        alienDirName = "OCT/505658/apass4_noQC/AOD"
+        alienDirName = "OCT/505658/apass4/AOD"
         # working directory
         workDir = os.getcwd()
         # output file name
-        fOutName = "OCT_505658_apass4_noQC.txt" 
+        fOutName = "OCT_505658_apass4.txt" 
         # Number of files to download
         nFiles = 10
 

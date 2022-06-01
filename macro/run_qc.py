@@ -14,6 +14,16 @@ sys.path.append('../utils/')
 from plot_library import Load_Style, Draw_Ratio_Plot
 from function_library import Func_Exp, Func_Tot_ee
 
+def trigger(inputCfg):
+    fIn = TFile.Open(inputCfg["input"]["input_trigger_file_name"])
+    histStats = fIn.Get("d-q-filter-p-p-task/Statistics")
+
+    canvasStats = TCanvas("canvasStats", "canvasStats", 1000, 700)
+    gPad.SetLogy(1)
+    histStats.Draw("Hsame")
+    canvasStats.Update() 
+    input()
+
 def fit(inputCfg, mode):
     Load_Style()
     fIn = TFile.Open(inputCfg["input"]["input_file_name"])
@@ -66,6 +76,7 @@ def fit(inputCfg, mode):
 def main():
     parser = argparse.ArgumentParser(description='Arguments to pass')
     parser.add_argument('cfgFileName', metavar='text', default='config.yml', help='config file name')
+    parser.add_argument("--trigger", help="plot the trigger statistics", action="store_true")
     parser.add_argument("--fit_bkg_only", help="plot and fit the dilepton distribution background only", action="store_true")
     parser.add_argument("--fit_full", help="plot and fit the dilepton distribution", action="store_true")
     args = parser.parse_args()
@@ -75,6 +86,8 @@ def main():
         inputCfg = yaml.load(ymlCfgFile, yaml.FullLoader)
     print('Loading task configuration: Done!')
 
+    if args.trigger:
+        trigger(inputCfg)
     if args.fit_bkg_only:
         fit(inputCfg, "bkg_only")
     if args.fit_full:
