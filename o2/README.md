@@ -37,11 +37,15 @@
   /cvmfs/alice.cern.ch/bin/alienv enter VO_ALICE@O2Physics::nightly-20220421-1
   ```
   
-- Run table maker on pilot beam data
+- Run table maker on pilot beam data (until apass3)
   ```ruby
   python runTableMaker_QC.py configTableMakerDataRun3_QC.json runData table-maker:processBarrelOnlyWithCov:true
   ```
-
+- Run table maker on pilot beam data **apass4**
+  ```ruby
+  python runTableMaker_QC2.py configTableMakerDataRun3_QC.json runData table-maker:processBarrelOnly:true
+  ```
+  
 - Run table reader:
   ```ruby
   o2-analysis-dq-table-reader --configuration json://configAnalysisData_QC.json -b
