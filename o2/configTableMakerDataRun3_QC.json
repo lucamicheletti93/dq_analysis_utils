@@ -7,7 +7,7 @@
         "start-value-enumeration": "0",
         "end-value-enumeration": "-1",
         "step-value-enumeration": "1",
-        "aod-file": "@data/OCT_505658_apass4.txt"
+        "aod-file": "@data/OCT_505669_apass4.txt"
     },
     "internal-dpl-aod-spawner": "",
     "internal-dpl-aod-index-builder": "",
