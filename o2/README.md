@@ -41,7 +41,7 @@
   ```ruby
   python runTableMaker_QC.py configTableMakerDataRun3_QC.json runData table-maker:processBarrelOnlyWithCov:true
   ```
-- Run table maker on pilot beam data **apass4**
+- Run table maker on pilot beam data (**apass4**, WIP: issue with cov)
   ```ruby
   python runTableMaker_QC2.py configTableMakerDataRun3_QC.json runData table-maker:processBarrelOnly:true
   ```
