@@ -28,7 +28,7 @@ def fit(inputCfg, mode):
     Load_Style()
     fIn = TFile.Open(inputCfg["input"]["input_file_name"])
     hlist = fIn.Get("analysis-same-event-pairing/output")
-    list = hlist.FindObject("PairsBarrelSEPM_jpsiO2MCdebugCuts")
+    list = hlist.FindObject("PairsBarrelSEPM_jpsiO2MCdebugCuts3")
     histMass = list.FindObject("Mass")
     histMass.GetXaxis().SetRangeUser(2., 5.)
     histMass.SetMarkerStyle(24)

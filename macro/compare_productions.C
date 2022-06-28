@@ -11,10 +11,10 @@ TString name2;
 // TM_LHC22c5_HL_apass3.root
 // TM_LHC22c5_HL_apass4.root
 
-void compare_productions(const char *name_fIn1 = "TM_OCT_apass3_HL.root", const char *name_fIn2 = "TM_OCT_apass4_HL.root"){
+void compare_productions(const char *name_fIn1 = "TM_LHC22c5_HL.root", const char *name_fIn2 = "TM_OCT_apass4_HL.root"){
   //LoadStyle();
   const char *path_fIn = "/Users/lucamicheletti/GITHUB/dq_analysis_utils/o2/output";
-  TString prod_pass = "/apass3_apass4";
+  TString prod_pass = "/apass4";
   output_dir_name = output_dir_name + prod_pass;
   name1 = name_fIn1;
   name2 = name_fIn2;
@@ -33,7 +33,7 @@ void compare_productions(const char *name_fIn1 = "TM_OCT_apass3_HL.root", const 
   int hist1dNum;
   int hist2dNum;
 
-  TString initDirName[] = {"TrackBarrel_BeforeCuts", "TrackBarrel_jpsiO2MCdebugCuts"};
+  TString initDirName[] = {"TrackBarrel_BeforeCuts", "TrackBarrel_jpsiO2MCdebugCuts", "TrackBarrel_jpsiO2MCdebugCuts2", "TrackBarrel_jpsiO2MCdebugCuts3"};
   TString initHist1dName[] = {"Pt", "Eta", "Phi", "DCAxy", "DCAz", "DCAsigXY", "DCAsigZ", "ITSncls", "ITSchi2", "TPCncls", "TPCchi2"};
   TString initHist2dName[] = {"TPCdedx_pIN", "TOFbeta_pIN", "TPCnSigEle_pIN", "TOFnSigEle_pIN", "Pt_DCAsigXY", "Pt_DCAsigZ"};
   dirNum = sizeof(initDirName)/sizeof(initDirName[0]);
@@ -46,7 +46,7 @@ void compare_productions(const char *name_fIn1 = "TM_OCT_apass3_HL.root", const 
   TFile *fIn1   = new TFile(Form("%s/AnalysisResults%s", path_fIn, name_fIn1), "READ");
   TString mainDirName1 = "table-maker";
   if(!name1.Contains("apass")){
-    mainDirName1 += "-mc";
+    mainDirName1 += "-m-c";
   }
 
   TFile *fIn2 = new TFile(Form("%s/AnalysisResults%s", path_fIn, name_fIn2), "READ");
