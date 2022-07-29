@@ -1,0 +1,14 @@
+input:
+  input_file_name: ../o2/output/AnalysisResults_LHC22c_pass1_electrons.root
+  input_trigger_file_name: ../o2/output/AnalysisResults_ppFilter_OCT_apass3_HL.root
+
+  table_maker: table-maker/output
+  table_maker_dir: ["TrackBarrel_BeforeCuts", "TrackBarrel_jpsiO2MCdebugCuts", "TrackBarrel_jpsiO2MCdebugCuts2", "TrackBarrel_jpsiO2MCdebugCuts3"]
+  table_maker_obj: ["Pt", "Eta", "Phi", "TPCdedx_pIN", "TOFbeta_pIN", "DCAxy", "DCAz"]
+
+  table_reader: analysis-same-event-pairing/output
+  table_reader_dir: ["PairsBarrelSEPM_jpsiO2MCdebugCuts", "PairsBarrelSEPM_jpsiO2MCdebugCuts2", "PairsBarrelSEPM_jpsiO2MCdebugCuts3"]
+  table_reader_obj: ["Mass"]
+
+output:
+  output_fig_name: figures/qc/LHC22c_apass1

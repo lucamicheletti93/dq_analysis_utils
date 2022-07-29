@@ -1,0 +1,6 @@
+input:
+    input_file_name: ../o2/output/AnalysisResults_LHC18_dielectron.root
+  
+output:
+    output_plot_neme: LHC18_pp_dielectron.pdf
+  
