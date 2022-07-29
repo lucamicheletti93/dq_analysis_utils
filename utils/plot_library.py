@@ -9,6 +9,20 @@ from os import path
 from ROOT import TCanvas, TF1, TFile, TPaveText, TMath, TH1F, TString, TLegend, TRatioPlot, TGaxis
 from ROOT import gROOT, gBenchmark, gPad, gStyle, kTRUE, kFALSE
 
+def SetLatex(latex):
+    latex.SetTextSize(0.035)
+    latex.SetNDC()
+    latex.SetTextFont(42)
+
+def SetLegend(legend):
+    legend.SetBorderSize(0)
+    legend.SetFillColor(10)
+    legend.SetFillStyle(1)
+    legend.SetLineStyle(0)
+    legend.SetLineColor(0)
+    legend.SetTextFont(42)
+    legend.SetTextSize(0.03)
+    
 def Load_Style():
     font = 42
     TGaxis.SetMaxDigits(2)

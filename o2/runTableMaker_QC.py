@@ -87,11 +87,17 @@ print("runOverMC ",runOverMC)
 # Get all the user required modifications to the configuration file
 for count in range(3, len(sys.argv)):
   param = sys.argv[count].split(":")
+  print(param)
   if len(param) != 3:
     print("ERROR: Wrong parameter syntax: ", param)
     sys.exit()
   config[param[0]][param[1]] = param[2]
 
+print(param[0])
+print(param[1])
+print(param[2])
+#print(config)
+exit()
 
 taskNameInConfig = "table-maker"
 taskNameInCommandLine = "o2-analysis-dq-table-maker"
