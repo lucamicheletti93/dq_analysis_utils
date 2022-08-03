@@ -30,6 +30,14 @@
   ```ruby
   o2-analysis-dq-efficiency --configuration json://configAnalysisMC_QC.json -b
   ```
+- ### New!
+  ```ruby
+  python runTableMaker_new.py configTableMakerMCRun3_QC.json -runMC table-maker-m-c:processMuonOnlyWithCov:true --add_track_prop
+  ```
+  
+  ```ruby
+  o2-analysis-dq-efficiency --configuration json://configAnalysisMC.json -b
+  ```
   
 ## QC Data processing
 - Load O2 via cvmfs (temporary issue with fdd):
