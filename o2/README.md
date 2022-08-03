@@ -25,14 +25,18 @@
   ```ruby
   python runTableMaker_QC.py configTableMakerMCRun3_QC.json runMC table-maker-m-c:processBarrelOnlyWithCov:true
   ```
+  
+- Run dq Efficiency:
+  ```ruby
+  o2-analysis-dq-efficiency --configuration json://configAnalysisMC_QC.json -b
+  ```
 - ### New!
   ```ruby
   python runTableMaker_new.py configTableMakerMCRun3_QC.json -runMC table-maker-m-c:processMuonOnlyWithCov:true --add_track_prop
   ```
   
-- Run dq Efficiency:
   ```ruby
-  o2-analysis-dq-efficiency --configuration json://configAnalysisMC_QC.json -b
+  o2-analysis-dq-efficiency --configuration json://configAnalysisMC.json -b
   ```
   
 ## QC Data processing
