@@ -25,6 +25,10 @@
   ```ruby
   python runTableMaker_QC.py configTableMakerMCRun3_QC.json runMC table-maker-m-c:processBarrelOnlyWithCov:true
   ```
+- ### New!
+  ```ruby
+  python runTableMaker_new.py configTableMakerMCRun3_QC.json -runMC table-maker-m-c:processMuonOnlyWithCov:true --add_track_prop
+  ```
   
 - Run dq Efficiency:
   ```ruby
