@@ -21,14 +21,14 @@
         "cfgTrackCuts": "jpsiO2MCdebugCuts",
         "cfgTrackMCSignals": "eFromJpsi",
         "cfgQA": "false",
-        "processSkimmed": "true",
+        "processSkimmed": "false",
         "processDummy": "true"
     },
     "analysis-muon-selection": {
         "cfgMuonCuts": "muonQualityCuts",
         "cfgMuonMCSignals": "muFromJpsi",
         "cfgQA": "false",
-        "processSkimmed": "false",
+        "processSkimmed": "true",
         "processDummy": "true"
     },
     "analysis-same-event-pairing": {
@@ -36,8 +36,8 @@
         "cfgMuonCuts": "muonQualityCuts",
         "cfgBarrelMCRecSignals": "eeFromJpsi",
         "cfgBarrelMCGenSignals": "Jpsi,dielectron",
-        "processJpsiToEESkimmed": "true",
-        "processJpsiToMuMuSkimmed": "false",
+        "processJpsiToEESkimmed": "false",
+        "processJpsiToMuMuSkimmed": "true",
         "processJpsiToMuMuVertexingSkimmed": "false",
         "processElectronMuonSkimmed": "false",
         "processDummy": "false"
