@@ -27,9 +27,9 @@
     "analysis-muon-selection": {
         "cfgMuonCuts": "muonQualityCuts",
         "cfgMuonMCSignals": "muFromJpsi",
-        "cfgQA": "true",
+        "cfgQA": "false",
         "processSkimmed": "true",
-        "processDummy": "false"
+        "processDummy": "true"
     },
     "analysis-same-event-pairing": {
         "cfgTrackCuts": "jpsiO2MCdebugCuts",
