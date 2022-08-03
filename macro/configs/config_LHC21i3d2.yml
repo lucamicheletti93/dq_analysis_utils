@@ -4,7 +4,7 @@ input:
   
     table_maker: table-maker-m-c/output
     table_maker_gen_dir: ["MCTruth_muFromJpsi"]
-    table_maker_rec_dir: ["Muons_muonQualityCuts_muFromJpsi"]
+    table_maker_rec_dir: ["Muons_matchedGlobal_muFromJpsi"]
     table_maker_obj: ["Pt"]
   
     table_reader: analysis-same-event-pairing/output
