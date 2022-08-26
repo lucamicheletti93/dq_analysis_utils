@@ -8,13 +8,13 @@ def copy_from_grid():
         # Path of the alien directory
         alienPrefix = "/alice/sim/2021"
         # Path of the local directory
-        alienDirName = "LHC21i3g2/302004"
+        alienDirName = "LHC21k6/302024"
         # working directory
         workDir = os.getcwd()
         # output file name
-        fOutName = "LHC21i3g2_302004.txt" 
+        fOutName = "LHC21k6_302024.txt" 
         # Number of files to download
-        nFiles = 100
+        nFiles = 10
 
         fOut = open("%s" % (fOutName), "w")
 

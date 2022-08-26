@@ -96,10 +96,10 @@
     "table-maker-m-c": {
         "cfgEventCuts": "eventStandardNoINT7",
         "cfgBarrelTrackCuts": "jpsiO2MCdebugCuts",
-        "cfgMuonCuts": "muonQualityCuts,muonTightQualityCutsForTests,matchedFwd,matchedGlobal",
+        "cfgMuonCuts": "matchedGlobal,matchedFwd,mchTrack",
         "cfgBarrelLowPt": "1.0",
         "cfgMuonLowPt": "1.0",
-        "cfgMCsignals": "electronPrimary,eFromLMeeLFQ,eFromLMeeLF,muFromJpsi,Jpsi",
+        "cfgMCsignals": "muFromJpsi",
         "cfgIsRun2": "false",
         "cfgNoQA": "false",
         "cfgDetailedQA": "true",
@@ -110,6 +110,8 @@
         "processBarrelOnlyWithCov": "false",
         "processMuonOnlyWithCov": "false",
         "processMuonOnlyWithCent": "false",
+        "processAmbiguous": "true",
+        "processAmbiguousMFT": "false",
         "processOnlyBCs": "true"
     },
     "multiplicity-table": {

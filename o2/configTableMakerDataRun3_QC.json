@@ -7,7 +7,7 @@
         "start-value-enumeration": "0",
         "end-value-enumeration": "-1",
         "step-value-enumeration": "1",
-        "aod-file": "AO2D.root"
+        "aod-file": "AO2D_data.root"
     },
     "internal-dpl-aod-spawner": "",
     "internal-dpl-aod-index-builder": "",
@@ -57,7 +57,9 @@
     },
     "multiplicity-table": {
         "processRun2": "false",
-        "processRun3": "true"
+        "processRun3": "true",
+        "doVertexZeq": "0",
+        "doDummyZeq": "0"
     },
     "tof-signal": "",
     "track-extension": "",
