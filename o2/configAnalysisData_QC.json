@@ -25,8 +25,8 @@
     },
     "analysis-track-selection": {
         "cfgTrackCuts": "jpsiO2MCdebugCuts",
-        "cfgQA": "true",
-        "processSkimmed": "true",
+        "cfgQA": "false",
+        "processSkimmed": "false",
         "processDummy": "false"
     },
     "analysis-same-event-pairing": {
@@ -35,9 +35,9 @@
         "ccdb-url": "http:\/\/ccdb-test.cern.ch:8080",
         "ccdb-path": "Users\/lm",
         "ccdb-no-later-than": "1638543968354",
-        "processJpsiToEESkimmed": "true",
+        "processJpsiToEESkimmed": "false",
         "processJpsiToMuMuSkimmed": "false",
-        "processJpsiToMuMuVertexingSkimmed": "false",
+        "processJpsiToMuMuVertexingSkimmed": "true",
         "processElectronMuonSkimmed": "false",
         "processAllSkimmed": "false",
         "processDummy": "false"

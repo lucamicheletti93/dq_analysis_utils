@@ -137,7 +137,8 @@
         "processMuonOnlyWithCent": "false",
         "processMuonOnly": "false",
         "processMuonOnlyWithFilter": "false",
-        "processOnlyBCs": "true"
+        "processOnlyBCs": "true",
+        "processAmbiguous": "true"
     },
     "internal-dpl-aod-global-analysis-file-sink": "",
     "internal-dpl-aod-writer": ""
