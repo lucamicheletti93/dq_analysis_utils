@@ -1,0 +1,91 @@
+{
+  "internal-dpl-aod-reader": {
+    "time-limit": "0",
+    "orbit-offset-enumeration": "0",
+    "orbit-multiplier-enumeration": "0",
+    "start-value-enumeration": "0",
+    "end-value-enumeration": "-1",
+    "step-value-enumeration": "1",
+    "aod-file": "reducedAod.root",
+    "aod-reader-json": "readerConfiguration_reducedEvent.json"
+  },
+  "multiplicity-table": {
+    "doDummyZeq": "0",
+    "doVertexZeq": "0",
+    "processRun3": "1",
+    "processRun2": "0"
+  },
+  "timestamp-task": {
+    "rct-path": "RCT/Info/RunInformation",
+    "orbit-reset-path": "CTP/Calib/OrbitReset",
+    "ccdb-url": "http://alice-ccdb.cern.ch",
+    "verbose": "0",
+    "isRun2MC": "0"
+  },
+  "bc-selection-task": {
+    "processRun3": "1",
+    "processRun2": "0"
+  },
+  "event-selection-task": {
+    "syst": "pp",
+    "isMC": "0",
+    "processRun3": "1",
+    "processRun2": "0",
+    "muonSelection": "0",
+    "customDeltaBC": "300"
+  },
+  "analysis-track-selection": {
+    "cfgTrackCuts": "jpsiPID1",
+    "cfgQA": "0",
+    "processDummy": "1",
+    "processSkimmed": "0"
+  },
+  "analysis-event-selection": {
+    "cfgMixingVars": "",
+    "cfgQA": "0",
+    "processDummy": "0",
+    "cfgEventCuts": "eventStandardNoINT7",
+    "processSkimmed": "1"
+  },
+  "analysis-muon-selection": {
+    "cfgMuonCuts": "mchTrack,muonLowPt,matchedFwd",
+    "cfgQA": "1",
+    "processDummy": "0",
+    "processSkimmed": "1"
+  },
+  "analysis-same-event-pairing": {
+    "cfgTrackCuts": "",
+    "cfgMuonCuts": "mchTrack,muonLowPt",
+    "processJpsiToEESkimmed": "0",
+    "processJpsiToMuMuSkimmed": "1",
+    "ccdb-path": "Users/lm",
+    "ccdb-no-later-than": "1643763392142",
+    "processJpsiToMuMuVertexingSkimmed": "1",
+    "ccdb-url": "http://ccdb-test.cern.ch:8080",
+    "processAllSkimmed": "0",
+    "processDummy": "0",
+    "processElectronMuonSkimmed": "0"
+  },
+  "analysis-event-mixing": {
+    "cfgTrackCuts": "",
+    "processMuonSkimmed": "0",
+    "cfgMuonCuts": "",
+    "processBarrelMuonSkimmed": "0",
+    "processBarrelSkimmed": "0",
+    "processDummy": "1"
+  },
+  "analysis-dilepton-hadron": {
+    "cfgLeptonCuts": "",
+    "processDummy": "1",
+    "processSkimmed": "0"
+  },
+  "track-propagation": {
+    "lutPath": "GLO/Param/MatLUT",
+    "mVtxPath": "GLO/Calib/MeanVertex",
+    "geoPath": "GLO/Config/GeometryAligned",
+    "grpmagPath": "GLO/Config/GRPMagField",
+    "ccdb-url": "http://alice-ccdb.cern.ch",
+    "processStandard": "1",
+    "processCovariance": "0"
+  }
+}
