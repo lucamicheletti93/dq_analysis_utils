@@ -56,7 +56,7 @@
   o2-analysis-dq-table-reader --configuration json://configAnalysisData_QC.json -b
   ```
   
-- **Run pp@13TeV as HL**:
+- ### New!
   ```ruby
   o2-analysis-dq-table-reader --configuration json://configAnalysisDataRun3_HL.json -b
   ```
