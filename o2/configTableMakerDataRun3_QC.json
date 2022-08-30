@@ -120,7 +120,7 @@
     "table-maker": {
         "cfgEventCuts": "eventStandardNoINT7",
         "cfgBarrelTrackCuts": "jpsiO2MCdebugCuts",
-        "cfgMuonCuts": "muonQualityCuts,matchedGlobal,matchedFwd,mchTrack",
+        "cfgMuonCuts": "muonQualityCuts,matchedGlobal,matchedFwd,mchTrack,matchedMchMid",
         "cfgBarrelLowPt": "1",
         "cfgMuonLowPt": "0.5",
         "cfgNoQA": "false",

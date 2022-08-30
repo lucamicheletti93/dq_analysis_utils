@@ -48,14 +48,14 @@
     "processSkimmed": "1"
   },
   "analysis-muon-selection": {
-    "cfgMuonCuts": "mchTrack,muonLowPt,matchedFwd",
+    "cfgMuonCuts": "mchTrack,muonLowPt,matchedMchMid",
     "cfgQA": "1",
     "processDummy": "0",
     "processSkimmed": "1"
   },
   "analysis-same-event-pairing": {
     "cfgTrackCuts": "",
-    "cfgMuonCuts": "mchTrack,muonLowPt",
+    "cfgMuonCuts": "mchTrack,muonLowPt,matchedMchMid",
     "processJpsiToEESkimmed": "0",
     "processJpsiToMuMuSkimmed": "1",
     "ccdb-path": "Users/lm",
