@@ -1,3 +1,6 @@
+# Useful info
+- tableReader configuration: the cuts have to be the same in "analysis-muon-selection" and "analysis-same-event-pairing"
+
 # List of commands to run
 
 ## General MC processing
