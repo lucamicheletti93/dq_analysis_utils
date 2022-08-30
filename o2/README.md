@@ -56,6 +56,11 @@
   o2-analysis-dq-table-reader --configuration json://configAnalysisData_QC.json -b
   ```
   
+- Run pp@13TeV as HL:
+  ```ruby
+  o2-analysis-dq-table-reader --configuration json://configAnalysisDataRun3_HL.json -b
+  ```
+  
 - if it complains about fdd run this command:
   ```ruby
   python runTableMaker_QC_fddconverter.py configTableMakerDataRun3_QC.json runData table-maker:processBarrelOnlyWithCov:true
