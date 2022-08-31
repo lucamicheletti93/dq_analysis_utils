@@ -55,18 +55,20 @@ def plot(inputCfg):
             canvas.SaveAs("{}/{}_{}.pdf".format(inputCfg["output"]["output_fig_name"], cut, var))
 
     hlistTR = fIn.Get(inputCfg["input"]["table_reader"])
+    fOut = TFile.Open("%s/%s" % (inputCfg["output"]["output_dir_name"], inputCfg["output"]["output_file_name"]), "RECREATE")
     for cut in inputCfg["input"]["table_reader_dir"]:
         listTR = hlistTR.FindObject(cut)
         for var in inputCfg["input"]["table_reader_obj"]:
             hist = listTR.FindObject(var)
             canvas = TCanvas("canvas", "canvas", 600, 600)
-            hist.SetMarkerStyle(24)
-            hist.SetMarkerSize(0.8)
+            hist.SetMarkerStyle(20)
+            hist.SetMarkerSize(0.5)
             hist.SetMarkerColor(kBlack)
             hist.SetLineColor(kBlack)
             hist.GetXaxis().SetRangeUser(0, 5)
             hist.GetXaxis().SetTitleSize(0.05)
             if "Mass" in var:
+                hist.GetXaxis().SetRangeUser(2, 5)
                 hist.GetXaxis().SetTitle("#it{m} (Gev/#it{c}^{2})")
                 hist.GetYaxis().SetTitle("dN / d#it{m} (GeV/#it{c}^{2})^{-1}")
             hist.GetYaxis().SetTitleSize(0.05)
@@ -76,8 +78,13 @@ def plot(inputCfg):
             hist.Draw("EPsame")
             canvas.Update()
             canvas.SaveAs("{}/{}_{}.pdf".format(inputCfg["output"]["output_fig_name"], cut, var))
+            # Save the invariant mass spectra for fitting
+            if "Mass" in var:
+                fOut.cd()
+                hist.Write("Mass_{}".format(cut))
 
     input()
+    fOut.Close()
 
 ###
 def comparison(inputCfg):
