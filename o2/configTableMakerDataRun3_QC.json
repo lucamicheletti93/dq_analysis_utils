@@ -124,7 +124,7 @@
         "cfgBarrelLowPt": "1",
         "cfgMuonLowPt": "0.5",
         "cfgNoQA": "false",
-        "cfgDetailedQA": "true",
+        "cfgDetailedQA": "false",
         "cfgIsRun2": "false",
         "processFullWithCent": "false",
         "processFullWithCentWithV0Bits": "false",
@@ -137,8 +137,9 @@
         "processMuonOnlyWithCent": "false",
         "processMuonOnly": "false",
         "processMuonOnlyWithFilter": "false",
-        "processOnlyBCs": "true",
-        "processAmbiguous": "true"
+        "processOnlyBCs": "false",
+        "processAmbiguousMuonOnly": "false",
+        "processAmbiguousBarrelOnly": "false"
     },
     "internal-dpl-aod-global-analysis-file-sink": "",
     "internal-dpl-aod-writer": ""

@@ -1,0 +1,18 @@
+input:
+    input_file_name: ../o2/output/AnalysisResults_TR_LHC22m_apass1_trigger_HL_electrons.root
+  
+    input_table_maker_file_name: ../o2/output/AnalysisResults_TR_LHC22m_apass1_trigger_HL_electrons.root
+    table_maker: table-maker/output
+    table_maker_dir: ["TrackBarrel_jpsiO2MCdebugCuts"]
+    table_maker_obj: ["Pt"]
+
+    input_table_reader_file_name: ../o2/output/AnalysisResults_TR_LHC22m_apass1_trigger_HL_electrons.root
+    table_reader: analysis-same-event-pairing/output
+    table_reader_dir: ["PairsBarrelSEPM_jpsiO2MCdebugCuts", "PairsBarrelSEPP_jpsiO2MCdebugCuts", "PairsBarrelSEMM_jpsiO2MCdebugCuts"]
+    table_reader_obj: ["Mass"]
+
+output:
+    output_fig_name: figures/qc/LHC22m_apass1_trigger
+    output_dir_name: output/Data
+    output_file_name: LHC22m_apass1_trigger_electrons.root
+  

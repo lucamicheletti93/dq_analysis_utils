@@ -30,12 +30,16 @@ def trigger(inputCfg):
 def plot(inputCfg):
     Load_Style()
 
+    fOut = TFile.Open("%s/%s" % (inputCfg["output"]["output_dir_name"], inputCfg["output"]["output_file_name"]), "RECREATE")
     fIn = TFile.Open(inputCfg["input"]["input_file_name"])
+    fIn.ls()
     hlistTM = fIn.Get(inputCfg["input"]["table_maker"])
 
     for cut in inputCfg["input"]["table_maker_dir"]:
+        print("---------->", cut)
         listTM = hlistTM.FindObject(cut)
         for var in inputCfg["input"]["table_maker_obj"]:
+            print("---------->", var)
             hist = listTM.FindObject(var)
             print(var)
             canvas = TCanvas("canvas", "canvas", 600, 600)
@@ -55,10 +59,11 @@ def plot(inputCfg):
             canvas.SaveAs("{}/{}_{}.pdf".format(inputCfg["output"]["output_fig_name"], cut, var))
 
     hlistTR = fIn.Get(inputCfg["input"]["table_reader"])
-    fOut = TFile.Open("%s/%s" % (inputCfg["output"]["output_dir_name"], inputCfg["output"]["output_file_name"]), "RECREATE")
     for cut in inputCfg["input"]["table_reader_dir"]:
+        print("---------->", cut)
         listTR = hlistTR.FindObject(cut)
         for var in inputCfg["input"]["table_reader_obj"]:
+            print("---------->", var)
             hist = listTR.FindObject(var)
             canvas = TCanvas("canvas", "canvas", 600, 600)
             hist.SetMarkerStyle(20)
@@ -68,9 +73,12 @@ def plot(inputCfg):
             hist.GetXaxis().SetRangeUser(0, 5)
             hist.GetXaxis().SetTitleSize(0.05)
             if "Mass" in var:
-                hist.GetXaxis().SetRangeUser(2, 5)
+                #hist.GetXaxis().SetRangeUser(2, 5)
                 hist.GetXaxis().SetTitle("#it{m} (Gev/#it{c}^{2})")
                 hist.GetYaxis().SetTitle("dN / d#it{m} (GeV/#it{c}^{2})^{-1}")
+                print("Entering in the mass plot")
+                fOut.cd()
+                hist.Write("Mass_{}".format(cut))
             hist.GetYaxis().SetTitleSize(0.05)
             hist.GetXaxis().SetLabelSize(0.05)
             hist.GetYaxis().SetLabelSize(0.05)
@@ -79,9 +87,10 @@ def plot(inputCfg):
             canvas.Update()
             canvas.SaveAs("{}/{}_{}.pdf".format(inputCfg["output"]["output_fig_name"], cut, var))
             # Save the invariant mass spectra for fitting
-            if "Mass" in var:
-                fOut.cd()
-                hist.Write("Mass_{}".format(cut))
+            #if "Mass" in var:
+                #print("Entering in the mass plot")
+                #fOut.cd()
+                #hist.Write("Mass_{}".format(cut))
 
     input()
     fOut.Close()
@@ -440,6 +449,45 @@ def ambi_tracks(inputCfg):
 
     input()
     
+def bkg_subtr():
+    fIn = TFile.Open("output/Data/LHC22m_apass1_trigger_electrons.root")
+    histSEPM = fIn.Get("Mass_PairsBarrelSEPM_jpsiO2MCdebugCuts")
+    histSEPM.Rebin(2)
+    histSEPP = fIn.Get("Mass_PairsBarrelSEPP_jpsiO2MCdebugCuts")
+    histSEPP.Rebin(2)
+    histSEMM = fIn.Get("Mass_PairsBarrelSEMM_jpsiO2MCdebugCuts")
+    histSEMM.Rebin(2)
+
+    #minBin = histSEPP.GetXaxis().FindBin(2)
+    #maxBin = histSEPP.GetXaxis().FindBin(5)
+
+    #histBkg = ROOT.TH1D("histBkg", "", maxBin - minBin, 2, 5)
+    histBkg = ROOT.TH1D("histBkg", "", histSEPM.GetNbinsX(), 0, 5)
+    histBkg.SetMarkerColor(kBlue)
+    histBkg.SetLineColor(kBlue)
+    #histSig = ROOT.TH1D("histSig", "", maxBin - minBin, 2, 5)
+    histSig = ROOT.TH1D("histSig", "", histSEPM.GetNbinsX(), 0, 5)
+    histSig.SetMarkerColor(kRed)
+    histSig.SetLineColor(kRed)
+
+    #print(minBin, maxBin)
+
+    #for i in range(minBin, maxBin):
+        #histBkg.SetBinContent(i-minBin, 2 * TMath.Sqrt(histSEPP.GetBinContent(i) * histSEMM.GetBinContent(i)))
+        #histSig.SetBinContent(i-minBin, histSEPM.GetBinContent(i) - histBkg.GetBinContent(i-minBin))
+
+    for i in range(0, histSEPM.GetNbinsX()):
+        histBkg.SetBinContent(i+1, 2 * TMath.Sqrt(histSEPP.GetBinContent(i+1) * histSEMM.GetBinContent(i+1)))
+        histSig.SetBinContent(i+1, histSEPM.GetBinContent(i+1) - histBkg.GetBinContent(i+1))
+
+    canvas = TCanvas("canvas", "canvas", 600, 600)
+    gPad.SetLogy(1)
+    histSEPM.GetYaxis().SetRangeUser(10, 1e8)
+    histSEPM.Draw("EP")
+    histBkg.Draw("EPsame")
+    histSig.Draw("EPsame")
+    canvas.Update()
+    input()
 
 ### ### ###
 def main():
@@ -453,6 +501,7 @@ def main():
     parser.add_argument("--eval_eff", help="evaluate efficiency", action="store_true")
     parser.add_argument("--comp_eff", help="compare efficiency", action="store_true")
     parser.add_argument("--ambi_tracks", help="Study ambiguous tracks", action="store_true")
+    parser.add_argument("--bkg_subtr", help="Subtract bkg", action="store_true")
     args = parser.parse_args()
 
     print('Loading task configuration: ...', end='\r')
@@ -476,5 +525,7 @@ def main():
         comp_eff()
     if args.ambi_tracks:
         ambi_tracks(inputCfg)
+    if args.bkg_subtr:
+        bkg_subtr()
 
 main()
