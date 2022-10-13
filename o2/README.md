@@ -61,6 +61,10 @@
   
 - ### New!
   ```ruby
+  python runTableMaker_new.py configTableMakerDataRun3_QC.json -runData table-maker:processMuonOnlyWithCov:true --add_track_prop
+  ```
+  
+  ```ruby
   o2-analysis-dq-table-reader --configuration json://configAnalysisDataRun3_HL.json -b
   ```
   
