@@ -87,10 +87,10 @@ def plot(inputCfg):
             canvas.Update()
             canvas.SaveAs("{}/{}_{}.pdf".format(inputCfg["output"]["output_fig_name"], cut, var))
             # Save the invariant mass spectra for fitting
-            #if "Mass" in var:
-                #print("Entering in the mass plot")
-                #fOut.cd()
-                #hist.Write("Mass_{}".format(cut))
+            if "Mass" in var:
+                print("Entering in the mass plot")
+                fOut.cd()
+                hist.Write("Mass_{}".format(cut))
 
     input()
     fOut.Close()

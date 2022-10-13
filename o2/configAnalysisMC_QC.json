@@ -7,7 +7,7 @@
         "start-value-enumeration": "0",
         "end-value-enumeration": "-1",
         "step-value-enumeration": "1",
-        "aod-file": "reducedAod_LHC21i3g2.root",
+        "aod-file": "reducedAod.root",
         "aod-reader-json": "readerConfiguration_reducedEventMC.json"
     },
     "internal-dpl-injected-dummy-sink": "",
@@ -25,17 +25,17 @@
         "processDummy": "true"
     },
     "analysis-muon-selection": {
-        "cfgMuonCuts": "muonQualityCuts",
-        "cfgMuonMCSignals": "muFromJpsi",
-        "cfgQA": "false",
+        "cfgMuonCuts": "muonTightQualityCutsForTests,matchedGlobal",
+        "cfgMuonMCSignals": "muon,muFromJpsi,dimuon",
+        "cfgQA": "true",
         "processSkimmed": "true",
         "processDummy": "true"
     },
     "analysis-same-event-pairing": {
         "cfgTrackCuts": "jpsiO2MCdebugCuts",
-        "cfgMuonCuts": "muonQualityCuts,matchedGlobal",
+        "cfgMuonCuts": "muonTightQualityCutsForTests,matchedGlobal",
         "cfgBarrelMCRecSignals": "mumuFromJpsi",
-        "cfgBarrelMCGenSignals": "Jpsi,mumuFromJpsi",
+        "cfgBarrelMCGenSignals": "Jpsi,mumuFromJpsi,muFromJpsi",
         "processJpsiToEESkimmed": "false",
         "processJpsiToMuMuSkimmed": "true",
         "processJpsiToMuMuVertexingSkimmed": "false",

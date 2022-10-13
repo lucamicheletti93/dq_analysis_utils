@@ -7,7 +7,7 @@
         "start-value-enumeration": "0",
         "end-value-enumeration": "-1",
         "step-value-enumeration": "1",
-        "aod-file": "AO2D.root"
+        "aod-file": "@data/LHC21i3g2_302004.txt"
     },
     "internal-dpl-aod-spawner": "",
     "internal-dpl-aod-index-builder": "",
@@ -79,6 +79,7 @@
         "pid-he": "-1",
         "pid-al": "-1"
     },
+    "fwd-track-extension": "",
     "event-selection-task": {
         "syst": "pp",
         "muonSelection": "0",
@@ -96,10 +97,10 @@
     "table-maker-m-c": {
         "cfgEventCuts": "eventStandardNoINT7",
         "cfgBarrelTrackCuts": "jpsiO2MCdebugCuts",
-        "cfgMuonCuts": "matchedGlobal,matchedFwd,mchTrack",
+        "cfgMuonCuts": "matchedGlobal,muonTightQualityCutsForTests",
         "cfgBarrelLowPt": "1.0",
         "cfgMuonLowPt": "1.0",
-        "cfgMCsignals": "muFromJpsi",
+        "cfgMCsignals": "Jpsi,mumuFromJpsi,promptJpsi,nonPromptJpsi",
         "cfgIsRun2": "false",
         "cfgNoQA": "false",
         "cfgDetailedQA": "true",
@@ -110,7 +111,7 @@
         "processBarrelOnlyWithCov": "false",
         "processMuonOnlyWithCov": "false",
         "processMuonOnlyWithCent": "false",
-        "processAmbiguous": "true",
+        "processAmbiguous": "false",
         "processAmbiguousMFT": "false",
         "processOnlyBCs": "true"
     },
