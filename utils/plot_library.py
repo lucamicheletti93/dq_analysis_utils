@@ -24,6 +24,20 @@ def SetLegend(legend):
     legend.SetTextSize(0.03)
     
 def Load_Style():
+    gStyle.SetOptStat(0)
+    gStyle.SetPadLeftMargin(0.15)
+    gStyle.SetPadBottomMargin(0.15)
+    gStyle.SetPadTopMargin(0.05)
+    gStyle.SetPadRightMargin(0.05)
+    gStyle.SetEndErrorSize(0.0)
+    gStyle.SetTitleSize(0.05,"X")
+    gStyle.SetTitleSize(0.045,"Y")
+    gStyle.SetLabelSize(0.045,"X")
+    gStyle.SetLabelSize(0.045,"Y")
+    gStyle.SetTitleOffset(1.2,"X")
+    gStyle.SetTitleOffset(1.35,"Y")
+
+def Load_Style_Full():
     font = 42
     TGaxis.SetMaxDigits(2)
     gStyle.SetFrameBorderMode(0)

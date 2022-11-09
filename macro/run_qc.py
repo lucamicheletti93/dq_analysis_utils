@@ -33,14 +33,16 @@ def plot(inputCfg):
     fOut = TFile.Open("%s/%s" % (inputCfg["output"]["output_dir_name"], inputCfg["output"]["output_file_name"]), "RECREATE")
     fIn = TFile.Open(inputCfg["input"]["input_file_name"])
     fIn.ls()
-    hlistTM = fIn.Get(inputCfg["input"]["table_maker"])
 
+    # Table Maker
+    hlistTM = fIn.Get(inputCfg["input"]["table_maker"])
     for cut in inputCfg["input"]["table_maker_dir"]:
         print("---------->", cut)
         listTM = hlistTM.FindObject(cut)
         for var in inputCfg["input"]["table_maker_obj"]:
             print("---------->", var)
             hist = listTM.FindObject(var)
+            hist.SetDirectory(0)
             print(var)
             canvas = TCanvas("canvas", "canvas", 600, 600)
             if "TPC" in var:
@@ -58,6 +60,9 @@ def plot(inputCfg):
             canvas.Update()
             canvas.SaveAs("{}/{}_{}.pdf".format(inputCfg["output"]["output_fig_name"], cut, var))
 
+    # Table Reader
+    pt_min = inputCfg["input"]["table_reader_pt_min"]
+    pt_max = inputCfg["input"]["table_reader_pt_max"]
     hlistTR = fIn.Get(inputCfg["input"]["table_reader"])
     for cut in inputCfg["input"]["table_reader_dir"]:
         print("---------->", cut)
@@ -65,6 +70,7 @@ def plot(inputCfg):
         for var in inputCfg["input"]["table_reader_obj"]:
             print("---------->", var)
             hist = listTR.FindObject(var)
+            hist.SetDirectory(0)
             canvas = TCanvas("canvas", "canvas", 600, 600)
             hist.SetMarkerStyle(20)
             hist.SetMarkerSize(0.5)
@@ -72,25 +78,39 @@ def plot(inputCfg):
             hist.SetLineColor(kBlack)
             hist.GetXaxis().SetRangeUser(0, 5)
             hist.GetXaxis().SetTitleSize(0.05)
-            if "Mass" in var:
+            #if "Mass" in var:
                 #hist.GetXaxis().SetRangeUser(2, 5)
-                hist.GetXaxis().SetTitle("#it{m} (Gev/#it{c}^{2})")
-                hist.GetYaxis().SetTitle("dN / d#it{m} (GeV/#it{c}^{2})^{-1}")
-                print("Entering in the mass plot")
-                fOut.cd()
-                hist.Write("Mass_{}".format(cut))
+                #hist.GetXaxis().SetTitle("#it{m} (Gev/#it{c}^{2})")
+                #hist.GetYaxis().SetTitle("dN / d#it{m} (GeV/#it{c}^{2})^{-1}")
+                #print("Entering in the mass plot")
+                #fOut.cd()
+                #hist.Write("Mass_{}".format(cut))
             hist.GetYaxis().SetTitleSize(0.05)
             hist.GetXaxis().SetLabelSize(0.05)
             hist.GetYaxis().SetLabelSize(0.05)
             gPad.SetLogy(1)
-            hist.Draw("EPsame")
+            if not var == "Mass_Pt":
+                hist.Draw("EPsame")
+            else:
+                hist.Draw("COLZ")
+                # Project histogram
+                for iPt in range(0, len(pt_min)):
+                    pt_bin_min = hist.GetYaxis().FindBin(pt_min[iPt])
+                    pt_bin_max = hist.GetYaxis().FindBin(pt_max[iPt])
+                    histProj = hist.ProjectionX("{}_{}_Proj_{}_Pt_{}".format(cut, var, pt_min[iPt], pt_max[iPt]), pt_bin_min, pt_bin_max)
+                    canvasProj = TCanvas("canvasProj", "canvasProj", 600, 600)
+                    histProj.Draw("EP")
+                    canvasProj.SaveAs("{}/{}_{}_Proj_{}_Pt_{}.pdf".format(inputCfg["output"]["output_fig_name"], cut, var, pt_min[iPt], pt_max[iPt]))
+                    fOut.cd()
+                    histProj.Write("{}_{}_Proj_{}_Pt_{}".format(cut, var, pt_min[iPt], pt_max[iPt]))
+                
             canvas.Update()
             canvas.SaveAs("{}/{}_{}.pdf".format(inputCfg["output"]["output_fig_name"], cut, var))
             # Save the invariant mass spectra for fitting
-            if "Mass" in var:
-                print("Entering in the mass plot")
-                fOut.cd()
-                hist.Write("Mass_{}".format(cut))
+            #if "Mass" in var:
+                #print("Entering in the mass plot")
+                #fOut.cd()
+                #hist.Write("{}_{}".format(var, cut))
 
     input()
     fOut.Close()
@@ -489,6 +509,122 @@ def bkg_subtr():
     canvas.Update()
     input()
 
+###
+def qa(inputCfg):
+    Load_Style()
+    prods = ["LHC22m", "LHC22f", "LHC22o"]
+    colors = [ROOT.kRed +1, ROOT.kBlue + 1, ROOT.kGreen+1]
+    ref = "Muons_matchedMchMid"
+    cuts = ["Muons_muonQualityCuts"]
+    vars = ["Pt", "Eta", "Phi"]
+    labels = ["#it{p}_{T} (GeV/#it{c})", "#eta", "#phi"]
+    histVar = []
+    for prod in prods:
+        fIn = TFile.Open("../o2/output/AnalysisResults_TR_{}_apass1_bis_HL_muons.root".format(prod))
+        # Table Maker
+        hlistTM = fIn.Get(inputCfg["input"]["table_maker"])
+        for cut in cuts:
+            listTM = hlistTM.FindObject(cut)
+            for var in vars:
+                hist = listTM.FindObject(var)
+                hist.SetDirectory(0)
+                hist.SetLineColor(colors[prods.index(prod)])
+                hist.SetMarkerColor(colors[prods.index(prod)])
+                hist.SetTitle("")
+                hist.SetLineWidth(2)
+                hist.SetTitleSize(0.05,"X")
+                hist.SetTitleSize(0.045,"Y")
+                hist.SetLabelSize(0.045,"X")
+                hist.SetLabelSize(0.045,"Y")
+                hist.SetTitleOffset(1.2,"X")
+                hist.SetTitleOffset(1.35,"Y")
+                if var == "Pt":
+                    if not hist.GetNbinsX() == 200:
+                        hist.Rebin(10)
+                hist.Rebin(5)
+                if var == "Eta":
+                    hist.GetXaxis().SetRangeUser(-4.2, -1)
+                if var == "Phi":
+                    hist.GetXaxis().SetRangeUser(-ROOT.TMath.Pi(), ROOT.TMath.Pi())
+                    hist.GetYaxis().SetRangeUser(1e-7, 0.1)
+                hist.Scale(1. / hist.Integral())
+                hist.SetName("{}_{}".format(prod, var))
+                hist.GetXaxis().SetTitle(labels[vars.index(var)])
+                histVar.append(hist)
+
+    legend = ROOT.TLegend(0.65, 0.60, 0.85, 0.89, " ", "brNDC")
+    legend.SetBorderSize(0)
+    legend.SetFillColor(10)
+    legend.SetFillStyle(1)
+    legend.SetLineStyle(0)
+    legend.SetLineColor(0)
+    legend.SetTextFont(42)
+    legend.SetTextSize(0.04)
+
+    for prod in prods:
+        for hist in histVar:
+            if prod in hist.GetName():
+                legend.AddEntry(hist, prod, "L")
+                break
+
+    for var in vars:
+        canvas = TCanvas("canvas", "canvas", 800, 600)
+        canvas.SetLeftMargin(0.15)
+        gPad.SetLogy(1)
+        for hist in histVar:
+            if var in hist.GetName():
+                hist.Draw("same")
+        legend.Draw("same")
+        canvas.Update()
+        canvas.SaveAs("figures/qc/summary/{}_distrib_comparison.pdf".format(var))
+
+
+
+    fIn = TFile.Open("../o2/output/AnalysisResults_TR_LHC22f_apass1_bis_HL_muons.root")
+
+    hlistTMAmbi = fIn.Get(inputCfg["input"]["table_maker"])
+    listTMAmbi = hlistTMAmbi.FindObject("Ambiguous_{}".format(cuts[0]))
+    histAmbi = listTMAmbi.FindObject("Pt")
+    histAmbi.Rebin(10)
+    histAmbi.Rebin(5)
+    histAmbi.SetDirectory(0)
+
+    hlistTMAll = fIn.Get(inputCfg["input"]["table_maker"])
+    listTMAll = hlistTMAll.FindObject("{}".format(cuts[0]))
+    histAll = listTMAll.FindObject("Pt")
+    histAll.Rebin(10)
+    histAll.Rebin(5)
+    histAll.SetDirectory(0)
+
+    histRatioAmbi = histAmbi.Clone("histRatioAmbi")
+    histRatioAmbi.Divide(histAll)
+    histRatioAmbi.SetTitle("")
+    histRatioAmbi.SetLineWidth(2)
+    histRatioAmbi.SetTitleSize(0.05,"X")
+    histRatioAmbi.SetTitleSize(0.045,"Y")
+    histRatioAmbi.SetLabelSize(0.045,"X")
+    histRatioAmbi.SetLabelSize(0.045,"Y")
+    histRatioAmbi.SetTitleOffset(1.2,"X")
+    histRatioAmbi.SetTitleOffset(1.35,"Y")
+    histRatioAmbi.GetXaxis().SetTitle("#it{p}_{T} (GeV/#it{c})")
+    histRatioAmbi.GetYaxis().SetTitle("Ambiguous / All")
+
+    letexText = ROOT.TLatex()
+    letexText.SetTextSize(0.045)
+    letexText.SetNDC()
+    letexText.SetTextFont(42)
+
+    canvasRatioAmbi = TCanvas("canvasRatioAmbi", "canvasRatioAmbi", 800, 600)
+    canvasRatioAmbi.SetLeftMargin(0.15)
+    gPad.SetLogy(1)
+    histRatioAmbi.Draw()
+    letexText.DrawLatex(0.20, 0.85, "pp #sqrt{s} = 13 TeV, LHC22f")
+    letexText.DrawLatex(0.20, 0.78, "MCH + MID matched tracks")
+    canvasRatioAmbi.Update()
+    canvasRatioAmbi.SaveAs("figures/qc/summary/Pt_ratio_ambiguous.pdf")
+
+    input()
+
 ### ### ###
 def main():
     parser = argparse.ArgumentParser(description='Arguments to pass')
@@ -502,6 +638,7 @@ def main():
     parser.add_argument("--comp_eff", help="compare efficiency", action="store_true")
     parser.add_argument("--ambi_tracks", help="Study ambiguous tracks", action="store_true")
     parser.add_argument("--bkg_subtr", help="Subtract bkg", action="store_true")
+    parser.add_argument("--qa", help="Quality assurance", action="store_true")
     args = parser.parse_args()
 
     print('Loading task configuration: ...', end='\r')
@@ -527,5 +664,7 @@ def main():
         ambi_tracks(inputCfg)
     if args.bkg_subtr:
         bkg_subtr()
+    if args.qa:
+        qa(inputCfg)
 
 main()
