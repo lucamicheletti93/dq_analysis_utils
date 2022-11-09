@@ -72,3 +72,9 @@
   ```ruby
   python runTableMaker_QC_fddconverter.py configTableMakerDataRun3_QC.json runData table-maker:processBarrelOnlyWithCov:true
   ```
+  
+- ### MFT ambiguous tracks
+- Run this framework to re-assaign the tracks to the best collision according to the DCA
+  ```ruby
+  o2-analysis-mm-vertexing-fwd --configuration json://config.json -b
+  ```
