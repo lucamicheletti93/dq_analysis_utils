@@ -2,8 +2,9 @@ input:
     input_file_name: ../o2/output/AnalysisResults_TM_LHC21i3d2.root
     input_trigger_file_name: ../o2/output/AnalysisResults_ppFilter_OCT_apass3_HL.root
   
-    input_table_maker_file_name: ../o2/output/AnalysisResults_TM_LHC21i3d2_BcId.root
+    input_table_maker_file_name: ../o2/output/AnalysisResults_TM_LHC21i3d2.root
     table_maker: table-maker-m-c/output
+    table_maker_dir: ["Muons_muonQualityCuts"]
     table_maker_gen_dir: ["MCTruth_muFromJpsi"]
     table_maker_rec_dir: ["Muons_matchedGlobal_muFromJpsi"]
     table_maker_obj: ["Pt"]
@@ -11,15 +12,20 @@ input:
     input_ambiguous_table_maker_file_name: ../o2/output/AnalysisResults_LHC21i3d2_ambiguous.root
     ambiguous_table_maker: table-maker-m-c
     ambiguous_table_maker_obj: ["XvtxPos", "YvtxPos", "ZvtxPos", "TracksDCAX", "TracksDCAY", "NumberOfContributors", "NumberOfContributors"]
-
+  
     input_table_reader_file_name: ../o2/output/AnalysisResults_TR_LHC21i3d2.root
     table_reader: analysis-same-event-pairing/output
-    table_reader_gen_dir: ["MCTruthGenPair_mumuFromJpsi"]
+    table_reader_dir: ["PairsMuonSEPM_muonQualityCuts"]
+    table_reader_gen_dir: ["MCTruthGen_Jpsi"]
     table_reader_rec_dir: ["PairsMuonSEPM_muonQualityCuts_mumuFromJpsi"]
-    table_reader_obj: ["Pt"]
+    table_reader_gen_obj: ["Pt"]
+    table_reader_obj: ["Mass", "Mass_Pt"]
+    table_reader_pt_min: [0, 2, 6]
+    table_reader_pt_max: [2, 6, 20]
 
 output:
     output_fig_name: figures/qc/LHC21i3d2
     output_dir_name: output/MC
+    output_file_name_acceff: LHC21i3d2_acceff.root
     output_file_name: LHC21i3d2.root
   

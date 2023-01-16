@@ -1,20 +1,20 @@
 input:
-    input_file_name: ../o2/output/AnalysisResults_TR_LHC22m_apass1_bis_HL_muons.root
+    input_file_name: ../o2/output/AnalysisResults_TR_LHC22m_apass2_HL_muons.root
   
-    input_table_maker_file_name: ../o2/output/AnalysisResults_TR_LHC22m_apass1_bis_HL_muons.root
+    input_table_maker_file_name: ../o2/output/AnalysisResults_TR_LHC22m_apass2_HL_muons.root
     table_maker: table-maker/output
-    table_maker_dir: ["Muons_mchTrack", "Muons_muonLowPt", "Muons_matchedMchMid", "Muons_muonQualityCuts"]
+    table_maker_dir: ["Muons_muonLowPt"]
     table_maker_obj: ["Pt"]
 
-    input_table_reader_file_name: ../o2/output/AnalysisResults_TR_LHC22m_apass1_bis_HL_muons.root
+    input_table_reader_file_name: ../o2/output/AnalysisResults_TR_LHC22m_apass2_HL_muons.root
     table_reader: analysis-same-event-pairing/output
-    table_reader_dir: ["PairsMuonSEPM_mchTrack", "PairsMuonSEPM_muonLowPt", "PairsMuonSEPM_matchedMchMid", "PairsMuonSEPM_muonQualityCuts"]
+    table_reader_dir: ["PairsMuonSEPM_muonLowPt"]
     table_reader_obj: ["Mass", "Mass_Pt"]
     table_reader_pt_min: [0, 2, 6]
     table_reader_pt_max: [2, 6, 20]
 
 output:
-    output_fig_name: figures/qc/LHC22m_apass1_bis
+    output_fig_name: figures/qc/LHC22m_apass2
     output_dir_name: output/Data
-    output_file_name: LHC22m_apass1_bis_muons.root
+    output_file_name: LHC22m_apass2_muons.root
   

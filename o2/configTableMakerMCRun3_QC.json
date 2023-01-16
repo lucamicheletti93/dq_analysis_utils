@@ -113,7 +113,9 @@
         "processMuonOnlyWithCent": "false",
         "processAmbiguous": "false",
         "processAmbiguousMFT": "false",
-        "processOnlyBCs": "true"
+        "processOnlyBCs": "true",
+        "cfgQA": "true",
+        "cfgAddMuonHistogram": "Chi2,pdca,RAtAbsorberEnd"
     },
     "multiplicity-table": {
         "processRun2": "false",

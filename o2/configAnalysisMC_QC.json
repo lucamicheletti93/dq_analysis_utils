@@ -37,8 +37,8 @@
         "cfgBarrelMCRecSignals": "mumuFromJpsi",
         "cfgBarrelMCGenSignals": "Jpsi,mumuFromJpsi,muFromJpsi",
         "processJpsiToEESkimmed": "false",
-        "processJpsiToMuMuSkimmed": "true",
-        "processJpsiToMuMuVertexingSkimmed": "false",
+        "processJpsiToMuMuSkimmed": "false",
+        "processJpsiToMuMuVertexingSkimmed": "true",
         "processElectronMuonSkimmed": "false",
         "processDummy": "false"
     },

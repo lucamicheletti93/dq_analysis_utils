@@ -31,11 +31,13 @@ def plot(inputCfg):
     Load_Style()
 
     fOut = TFile.Open("%s/%s" % (inputCfg["output"]["output_dir_name"], inputCfg["output"]["output_file_name"]), "RECREATE")
-    fIn = TFile.Open(inputCfg["input"]["input_file_name"])
-    fIn.ls()
+    fInTM = TFile.Open(inputCfg["input"]["input_table_maker_file_name"])
+    fInTM.ls()
+    fInTR = TFile.Open(inputCfg["input"]["input_table_reader_file_name"])
+    fInTR.ls()
 
     # Table Maker
-    hlistTM = fIn.Get(inputCfg["input"]["table_maker"])
+    hlistTM = fInTM.Get(inputCfg["input"]["table_maker"])
     for cut in inputCfg["input"]["table_maker_dir"]:
         print("---------->", cut)
         listTM = hlistTM.FindObject(cut)
@@ -63,7 +65,7 @@ def plot(inputCfg):
     # Table Reader
     pt_min = inputCfg["input"]["table_reader_pt_min"]
     pt_max = inputCfg["input"]["table_reader_pt_max"]
-    hlistTR = fIn.Get(inputCfg["input"]["table_reader"])
+    hlistTR = fInTR.Get(inputCfg["input"]["table_reader"])
     for cut in inputCfg["input"]["table_reader_dir"]:
         print("---------->", cut)
         listTR = hlistTR.FindObject(cut)
@@ -107,10 +109,10 @@ def plot(inputCfg):
             canvas.Update()
             canvas.SaveAs("{}/{}_{}.pdf".format(inputCfg["output"]["output_fig_name"], cut, var))
             # Save the invariant mass spectra for fitting
-            #if "Mass" in var:
-                #print("Entering in the mass plot")
-                #fOut.cd()
-                #hist.Write("{}_{}".format(var, cut))
+            if "Mass" in var:
+                print("Entering in the mass plot")
+                fOut.cd()
+                hist.Write("{}_{}".format(var, cut))
 
     input()
     fOut.Close()
@@ -260,7 +262,7 @@ def eval_eff(inputCfg):
     
     for cut in inputCfg["input"]["table_reader_gen_dir"]:
         listTR = hlistTR.FindObject(cut)
-        for var in inputCfg["input"]["table_reader_obj"]:
+        for var in inputCfg["input"]["table_reader_gen_obj"]:
             hist = listTR.FindObject("{}MC".format(var))
             hist.Rebin(5)
             hist_gen_tr.append(hist)
@@ -275,7 +277,7 @@ def eval_eff(inputCfg):
 
     for cut in inputCfg["input"]["table_reader_rec_dir"]:
         listTR = hlistTR.FindObject(cut)
-        for var in inputCfg["input"]["table_reader_obj"]:
+        for var in inputCfg["input"]["table_reader_gen_obj"]:
             hist = listTR.FindObject("{}".format(var))
             hist.Rebin(5)
             hist_rec_tr.append(hist)
@@ -304,7 +306,7 @@ def eval_eff(inputCfg):
         hist_rec_tr[i].SetName("hist_rec_tr_Pt".format(var_tr[i]))
         hist_eff_tr[i].SetName("hist_eff_tr_Pt".format(var_tr[i]))
 
-    fOut = TFile.Open("%s/%s" % (inputCfg["output"]["output_dir_name"], inputCfg["output"]["output_file_name"]), "RECREATE")
+    fOut = TFile.Open("%s/%s" % (inputCfg["output"]["output_dir_name"], inputCfg["output"]["output_file_name_acceff"]), "RECREATE")
     for i in range(0, len(hist_eff_tm)):
         hist_gen_tm[i].Write("hist_gen_tm_Pt".format(var_tm[i]))
         hist_rec_tm[i].Write("hist_rec_tm_Pt".format(var_tm[i]))
@@ -512,26 +514,81 @@ def bkg_subtr():
 ###
 def qa(inputCfg):
     Load_Style()
-    prods = ["LHC22m", "LHC22f", "LHC22o"]
-    colors = [ROOT.kRed +1, ROOT.kBlue + 1, ROOT.kGreen+1]
-    ref = "Muons_matchedMchMid"
-    cuts = ["Muons_muonQualityCuts"]
-    vars = ["Pt", "Eta", "Phi"]
-    labels = ["#it{p}_{T} (GeV/#it{c})", "#eta", "#phi"]
-    histVar = []
+
+    #//prods = ["LHC22m_apass1_bis", "LHC22f_apass1_bis", "LHC22o_apass1_bis"]
+    #//prods = ["LHC22m_apass1_tris", "LHC22f_apass2", "LHC22o_apass1_tris", "LHC22s_apass1"]
+    #//prods = ["LHC22f_apass2", "LHC22o_apass1_tris", "LHC22s_apass1", "LHC22s_apass3"]
+    #//prodNames = ["LHC22f_apass2", "LHC22o_apass1", "LHC22s_apass1", "LHC22s_apass3"]
+    prods = ["LHC22p_apass1", "LHC22q_apass1", "LHC22r_apass1"]
+    prodNames = ["LHC22p_apass1", "LHC22q_apass1", "LHC22r_apass1"]
+    colors = [ROOT.kRed +1, ROOT.kAzure+2, ROOT.kGreen+1, ROOT.kMagenta+1]
+    #dirs_tm = [
+        #"analysis-muon-selection/output",
+        #"analysis-muon-selection/output",
+        #"analysis-muon-selection/output",
+        #"d-q-muons-selection/output"
+    #]
+    dirs_tm = [
+        "table-maker/output",
+        "table-maker/output",
+        "table-maker/output"
+    ]
+    #//ref = "Muons_matchedMchMid"
+    # Table maker
+    #//cuts_tm = ["Muons_muonQualityCuts"]
+    #//cuts_tm = ["Muons_mchTrack"]
+    #//cuts_tm = ["Muons_muonLowPt"]
+    # Muon selection
+    #//cuts_tm = ["TrackMuon_muonQualityCuts"]
+    #//cuts_tm = ["TrackMuon_muonLowPt"]
+
+    #cuts_tm = ["Muons_muonLowPt"]
+    #cuts_tm = ["Muons_muonQualityCuts"]
+    cuts_tm = ["Muons_matchedGlobal"]
+
+    #vars_tm = ["Pt", "Eta", "Phi", "Chi2MCHMID", "pdca", "RAtAbsorberEnd"]
+    #labels_tm = ["#it{p}_{T} (GeV/#it{c})", "#eta", "#phi", "#chi^{2}_{MCH-MID}", "p #times DCA", "R_{Abs}"]
+    vars_tm = ["Pt", "Eta", "Phi"]
+    labels_tm = ["#it{p}_{T} (GeV/#it{c})", "#eta", "#phi"]
+    lepton = "muons"
+
+    ##---------------------------------------##
+    #prods = ["LHC22s_apass1", "LHC22s_apass2"]
+    #prodNames = ["LHC22s_apass1", "LHC22s_apass2"]
+    #colors = [ROOT.kRed +1, ROOT.kAzure+2]
+    #dir = "analysis-track-selection/output"
+    # Muon selection
+    #cuts_tm = ["TrackBarrel_BeforeCuts"]
+    #vars_tm = ["Pt", "Eta", "Phi", "TPCnSigEle_pIN"]
+    #labels_tm = ["#it{p}_{T} (GeV/#it{c})", "#eta", "#phi", "TPC n. #sigma e"]
+    #lepton = "electrons"
+
+
+    histVar_tm = []
     for prod in prods:
-        fIn = TFile.Open("../o2/output/AnalysisResults_TR_{}_apass1_bis_HL_muons.root".format(prod))
+        fIn = TFile.Open("../o2/output/AnalysisResults_TR_{}_HL_{}.root".format(prod, lepton))
+        fIn.ls()
         # Table Maker
-        hlistTM = fIn.Get(inputCfg["input"]["table_maker"])
-        for cut in cuts:
+        dir = dirs_tm[prods.index(prod)]
+        hlistTM = fIn.Get(dir)
+        #hlistTM.ls()
+        for cut in cuts_tm:
+            if dir == "d-q-muons-selection/output":
+                cut = cut.replace("Track", "")
+            print(prod, dir, cut)
             listTM = hlistTM.FindObject(cut)
-            for var in vars:
-                hist = listTM.FindObject(var)
+            #listTM.ls()
+            for var in vars_tm:
+                if "TPC" in var:
+                    hist2D = listTM.FindObject(var)
+                    hist = hist2D.ProjectionX()
+                else:
+                    hist = listTM.FindObject(var)
                 hist.SetDirectory(0)
                 hist.SetLineColor(colors[prods.index(prod)])
                 hist.SetMarkerColor(colors[prods.index(prod)])
                 hist.SetTitle("")
-                hist.SetLineWidth(2)
+                hist.SetLineWidth(1)
                 hist.SetTitleSize(0.05,"X")
                 hist.SetTitleSize(0.045,"Y")
                 hist.SetLabelSize(0.045,"X")
@@ -540,19 +597,26 @@ def qa(inputCfg):
                 hist.SetTitleOffset(1.35,"Y")
                 if var == "Pt":
                     if not hist.GetNbinsX() == 200:
-                        hist.Rebin(10)
-                hist.Rebin(5)
+                        hist.Rebin(20)
+                #hist.Rebin(5)
                 if var == "Eta":
-                    hist.GetXaxis().SetRangeUser(-4.2, -1)
+                    if lepton == "muons":
+                        hist.GetXaxis().SetRangeUser(-4.2, -1)
+                    else:
+                        hist.GetXaxis().SetRangeUser(-2, 2)
                 if var == "Phi":
+                    hist.Rebin(2)
+                    #hist.GetXaxis().SetRangeUser(-2*ROOT.TMath.Pi(), 2*ROOT.TMath.Pi())
                     hist.GetXaxis().SetRangeUser(-ROOT.TMath.Pi(), ROOT.TMath.Pi())
-                    hist.GetYaxis().SetRangeUser(1e-7, 0.1)
+                    hist.GetYaxis().SetRangeUser(1e-7, 100)
+                if "Chi2" in var:
+                    hist.GetXaxis().SetRangeUser(0, 16)
                 hist.Scale(1. / hist.Integral())
                 hist.SetName("{}_{}".format(prod, var))
-                hist.GetXaxis().SetTitle(labels[vars.index(var)])
-                histVar.append(hist)
+                hist.GetXaxis().SetTitle(labels_tm[vars_tm.index(var)])
+                histVar_tm.append(hist)
 
-    legend = ROOT.TLegend(0.65, 0.60, 0.85, 0.89, " ", "brNDC")
+    legend = ROOT.TLegend(0.25, 0.20, 0.45, 0.49, " ", "brNDC")
     legend.SetBorderSize(0)
     legend.SetFillColor(10)
     legend.SetFillStyle(1)
@@ -561,25 +625,87 @@ def qa(inputCfg):
     legend.SetTextFont(42)
     legend.SetTextSize(0.04)
 
-    for prod in prods:
-        for hist in histVar:
-            if prod in hist.GetName():
-                legend.AddEntry(hist, prod, "L")
+    for prodName in prodNames:
+        for hist in histVar_tm:
+            if prodName in hist.GetName():
+                legend.AddEntry(hist, prodName, "L")
                 break
 
-    for var in vars:
+    for var in vars_tm:
         canvas = TCanvas("canvas", "canvas", 800, 600)
         canvas.SetLeftMargin(0.15)
-        gPad.SetLogy(1)
-        for hist in histVar:
+        if not "TPC" in var:
+            gPad.SetLogy(1)
+        for hist in histVar_tm:
             if var in hist.GetName():
                 hist.Draw("same")
         legend.Draw("same")
         canvas.Update()
-        canvas.SaveAs("figures/qc/summary/{}_distrib_comparison.pdf".format(var))
+        canvas.SaveAs("figures/qc/summary/{}_{}_{}_distrib_comparison.pdf".format(var, lepton, cuts_tm[0]))
+
+    dirs_tr = [
+        "analysis-same-event-pairing/output",
+        "analysis-same-event-pairing/output",
+        "analysis-same-event-pairing/output"
+    ]
+
+    #cuts_tr = ["PairsMuonSEPM_muonLowPt"]
+    #cuts_tr = ["PairsMuonSEPM_muonQualityCuts"]
+    cuts_tr = ["PairsMuonSEPM_matchedGlobal"]
+
+    vars_tr = ["Mass", "Pt", "Rapidity"]
+    labels_tr = ["#it{M} (GeV/#it{c}^{2})", "#it{p}_{T} (GeV/#it{c})", "#it{y}"]
+
+    histVar_tr = []
+    for prod in prods:
+        fIn = TFile.Open("../o2/output/AnalysisResults_TR_{}_HL_{}.root".format(prod, lepton))
+        # Table Maker
+        dir = dirs_tr[prods.index(prod)]
+        hlistTR = fIn.Get(dir)
+        for cut in cuts_tr:
+            print(prod, dir, cut)
+            listTR = hlistTR.FindObject(cut)
+            for var in vars_tr:
+                hist = listTR.FindObject(var)
+                hist.SetDirectory(0)
+                hist.SetLineColor(colors[prods.index(prod)])
+                hist.SetMarkerColor(colors[prods.index(prod)])
+                hist.SetMarkerStyle(20)
+                hist.SetMarkerSize(0.3)
+                hist.SetTitle("")
+                hist.SetLineWidth(1)
+                hist.SetTitleSize(0.05,"X")
+                hist.SetTitleSize(0.045,"Y")
+                hist.SetLabelSize(0.045,"X")
+                hist.SetLabelSize(0.045,"Y")
+                hist.SetTitleOffset(1.2,"X")
+                hist.SetTitleOffset(1.35,"Y")
+
+                hist.Scale(1. / hist.Integral())
+                hist.SetName("{}_{}".format(prod, var))
+                hist.GetXaxis().SetTitle(labels_tr[vars_tr.index(var)])
+                histVar_tr.append(hist)
+
+    for var in vars_tr:
+        canvas = TCanvas("canvas", "canvas", 800, 600)
+        canvas.SetLeftMargin(0.15)
+        gPad.SetLogy(1)
+        for hist in histVar_tr:
+            if var in hist.GetName():
+                if var == "Mass":
+                    hist.GetXaxis().SetRangeUser(2,5)
+                hist.Draw("EPsame")
+        legend.Draw("same")
+        canvas.Update()
+        canvas.SaveAs("figures/qc/summary/{}_di{}_{}_distrib_comparison.pdf".format(var, lepton, cuts_tr[0]))
 
 
 
+
+
+
+
+    exit()
     fIn = TFile.Open("../o2/output/AnalysisResults_TR_LHC22f_apass1_bis_HL_muons.root")
 
     hlistTMAmbi = fIn.Get(inputCfg["input"]["table_maker"])
