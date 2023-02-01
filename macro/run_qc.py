@@ -65,6 +65,10 @@ def plot(inputCfg):
     # Table Reader
     pt_min = inputCfg["input"]["table_reader_pt_min"]
     pt_max = inputCfg["input"]["table_reader_pt_max"]
+    rap_min = inputCfg["input"]["table_reader_rap_min"]
+    rap_max = inputCfg["input"]["table_reader_rap_max"]
+    reso_min = inputCfg["input"]["table_reader_reso_min"]
+    reso_max = inputCfg["input"]["table_reader_reso_max"]
     hlistTR = fInTR.Get(inputCfg["input"]["table_reader"])
     for cut in inputCfg["input"]["table_reader_dir"]:
         print("---------->", cut)
@@ -91,9 +95,23 @@ def plot(inputCfg):
             hist.GetXaxis().SetLabelSize(0.05)
             hist.GetYaxis().SetLabelSize(0.05)
             gPad.SetLogy(1)
-            if not var == "Mass_Pt":
-                hist.Draw("EPsame")
-            else:
+
+            #if not var == "Mass_Pt":
+                #hist.Draw("EPsame")
+            #else:
+                #hist.Draw("COLZ")
+                # Project histogram
+                #for iPt in range(0, len(pt_min)):
+                    #pt_bin_min = hist.GetYaxis().FindBin(pt_min[iPt])
+                    #pt_bin_max = hist.GetYaxis().FindBin(pt_max[iPt])
+                    #histProj = hist.ProjectionX("{}_{}_Proj_{}_Pt_{}".format(cut, var, pt_min[iPt], pt_max[iPt]), pt_bin_min, pt_bin_max)
+                    #canvasProj = TCanvas("canvasProj", "canvasProj", 600, 600)
+                    #histProj.Draw("EP")
+                    #canvasProj.SaveAs("{}/{}_{}_Proj_{}_Pt_{}.pdf".format(inputCfg["output"]["output_fig_name"], cut, var, pt_min[iPt], pt_max[iPt]))
+                    #fOut.cd()
+                    #histProj.Write("{}_{}_Proj_{}_Pt_{}".format(cut, var, pt_min[iPt], pt_max[iPt]))
+
+            if var == "Mass_Pt":
                 hist.Draw("COLZ")
                 # Project histogram
                 for iPt in range(0, len(pt_min)):
@@ -105,6 +123,36 @@ def plot(inputCfg):
                     canvasProj.SaveAs("{}/{}_{}_Proj_{}_Pt_{}.pdf".format(inputCfg["output"]["output_fig_name"], cut, var, pt_min[iPt], pt_max[iPt]))
                     fOut.cd()
                     histProj.Write("{}_{}_Proj_{}_Pt_{}".format(cut, var, pt_min[iPt], pt_max[iPt]))
+            elif var == "Mass_Rapidity":
+                hist.Draw("COLZ")
+                # Project histogram
+                for iRap in range(0, len(rap_min)):
+                    rap_bin_min = hist.GetYaxis().FindBin(rap_min[iRap])
+                    rap_bin_max = hist.GetYaxis().FindBin(rap_max[iRap])
+                    histProj = hist.ProjectionX("{}_{}_Proj_{}_Y_{}".format(cut, var, rap_min[iRap], rap_max[iRap]), rap_bin_min, rap_bin_max)
+                    canvasProj = TCanvas("canvasProj", "canvasProj", 600, 600)
+                    histProj.Draw("EP")
+                    canvasProj.SaveAs("{}/{}_{}_Proj_{}_Y_{}.pdf".format(inputCfg["output"]["output_fig_name"], cut, var, rap_min[iRap], rap_max[iRap]))
+                    fOut.cd()
+                    histProj.Write("{}_{}_Proj_{}_Y_{}".format(cut, var, rap_min[iRap], rap_max[iRap]))
+            elif var == "Mass_DeltaPtotTracks":
+                    hist.Draw("COLZ")
+                    # Project histogram
+                    for iReso in range(0, len(reso_min)):
+                        reso_bin_min_1 = hist.GetYaxis().FindBin(+reso_min[iReso])
+                        reso_bin_max_1 = hist.GetYaxis().FindBin(+reso_max[iReso])
+                        reso_bin_min_2 = hist.GetYaxis().FindBin(-reso_max[iReso])
+                        reso_bin_max_2 = hist.GetYaxis().FindBin(-reso_min[iReso])
+                        histProj1 = hist.ProjectionX("{}_{}_Proj_{}_Reso_{}_1".format(cut, var, reso_min[iReso], reso_max[iReso]), reso_bin_min_1, reso_bin_max_1)
+                        histProj2 = hist.ProjectionX("{}_{}_Proj_{}_Reso_{}_2".format(cut, var, reso_min[iReso], reso_max[iReso]), reso_bin_min_2, reso_bin_max_2)
+                        histProj = histProj1.Clone("{}_{}_Proj_{}_Reso_{}".format(cut, var, reso_min[iReso], reso_max[iReso]))
+                        histProj.Add(histProj2)
+                        fOut.cd()
+                        histProj1.Write("{}_{}_Proj_{}_Reso_{}_1".format(cut, var, reso_min[iReso], reso_max[iReso]))
+                        histProj2.Write("{}_{}_Proj_{}_Reso_{}_2".format(cut, var, reso_min[iReso], reso_max[iReso]))
+                        histProj.Write("{}_{}_Proj_{}_Reso_{}".format(cut, var, reso_min[iReso], reso_max[iReso]))
+            else:
+                hist.Draw("EPsame")
                 
             canvas.Update()
             canvas.SaveAs("{}/{}_{}.pdf".format(inputCfg["output"]["output_fig_name"], cut, var))
@@ -699,12 +747,6 @@ def qa(inputCfg):
         canvas.Update()
         canvas.SaveAs("figures/qc/summary/{}_di{}_{}_distrib_comparison.pdf".format(var, lepton, cuts_tr[0]))
 
-
-
-
-
-
-
     exit()
     fIn = TFile.Open("../o2/output/AnalysisResults_TR_LHC22f_apass1_bis_HL_muons.root")
 
@@ -751,6 +793,220 @@ def qa(inputCfg):
 
     input()
 
+def init_trending(inputCfg):
+    print("----- Download and save files in %s -----" % (inputCfg["input"]["output_dir_name"]))
+    os.system("mkdir -p {}".format(inputCfg["input"]["output_dir_name"]))
+    for iRun in range(0, len(inputCfg["input"]["run_list"])):
+        os.system("alien_cp alien://%s/AnalysisResults.root file:%s/AnalysisResults_%i.root" % (inputCfg["input"]["alien_input_path"][iRun], inputCfg["input"]["output_dir_name"], inputCfg["input"]["run_list"][iRun]))
+        #print("alien_cp alien://%s/AnalysisResults.root file:%s/AnalysisResults_%i.root" % (inputCfg["input"]["alien_input_path"][iRun], inputCfg["input"]["output_dir_name"], inputCfg["input"]["run_list"][iRun]))
+
+    print("----- Process downloaded files -----")
+    os.system("mkdir -p {}".format(inputCfg["output"]["output_dir_name"]))
+    for iRun in range(0, len(inputCfg["input"]["run_list"])):
+        deleteOutput = False
+        if not os.path.isfile("%s/AnalysisResults_%i.root" % (inputCfg["input"]["output_dir_name"], inputCfg["input"]["run_list"][iRun])):
+            continue
+        
+        fIn = TFile.Open("%s/AnalysisResults_%i.root" % (inputCfg["input"]["output_dir_name"], inputCfg["input"]["run_list"][iRun]), "READ")
+        fOut = TFile.Open("%s/%s_%i.root" % (inputCfg["output"]["output_dir_name"], inputCfg["output"]["output_file_name"], inputCfg["input"]["run_list"][iRun]), "RECREATE")
+        print("%s/%s_%i.root" % (inputCfg["output"]["output_dir_name"], inputCfg["output"]["output_file_name"], inputCfg["input"]["run_list"][iRun]))
+
+        hlistTM = fIn.Get(inputCfg["input"]["table_maker"])
+        for cut in inputCfg["input"]["table_maker_dir"]:
+            listTM = hlistTM.FindObject(cut)
+            for var in inputCfg["input"]["table_maker_obj"]:
+                hist = listTM.FindObject(var)
+                hist.SetDirectory(0)
+                hist.Write("{}_{}".format(var, cut))
+
+        pt_min = inputCfg["input"]["table_reader_pt_min"]
+        pt_max = inputCfg["input"]["table_reader_pt_max"]
+        rap_min = inputCfg["input"]["table_reader_rap_min"]
+        rap_max = inputCfg["input"]["table_reader_rap_max"]
+        reso_min = inputCfg["input"]["table_reader_reso_min"]
+        reso_max = inputCfg["input"]["table_reader_reso_max"]
+        hlistTR = fIn.Get(inputCfg["input"]["table_reader"])
+        for cut in inputCfg["input"]["table_reader_dir"]:
+            listTR = hlistTR.FindObject(cut)
+            for var in inputCfg["input"]["table_reader_obj"]:
+                hist = listTR.FindObject(var)
+                hist.SetDirectory(0)
+                if hist.GetEntries() == 0:
+                    deleteOutput = True
+                if var == "Mass_Pt":
+                    for iPt in range(0, len(pt_min)):
+                        pt_bin_min = hist.GetYaxis().FindBin(pt_min[iPt])
+                        pt_bin_max = hist.GetYaxis().FindBin(pt_max[iPt])
+                        histProj = hist.ProjectionX("{}_{}_Proj_{}_Pt_{}".format(cut, var, pt_min[iPt], pt_max[iPt]), pt_bin_min, pt_bin_max)
+                        fOut.cd()
+                        histProj.Write("{}_{}_Proj_{}_Pt_{}".format(cut, var, pt_min[iPt], pt_max[iPt]))
+                elif var == "Mass_Rapidity":
+                    for iRap in range(0, len(rap_min)):
+                        rap_bin_min = hist.GetYaxis().FindBin(rap_min[iRap])
+                        rap_bin_max = hist.GetYaxis().FindBin(rap_max[iRap])
+                        histProj = hist.ProjectionX("{}_{}_Proj_{}_Y_{}".format(cut, var, rap_min[iRap], rap_max[iRap]), rap_bin_min, rap_bin_max)
+                        fOut.cd()
+                        histProj.Write("{}_{}_Proj_{}_Y_{}".format(cut, var, rap_min[iRap], rap_max[iRap]))
+                elif var == "Mass_DeltaPtotTracks":
+                    for iReso in range(0, len(reso_min)):
+                        reso_bin_min_1 = hist.GetYaxis().FindBin(+reso_min[iReso])
+                        reso_bin_max_1 = hist.GetYaxis().FindBin(+reso_max[iReso])
+                        reso_bin_min_2 = hist.GetYaxis().FindBin(-reso_max[iReso])
+                        reso_bin_max_2 = hist.GetYaxis().FindBin(-reso_min[iReso])
+                        histProj1 = hist.ProjectionX("{}_{}_Proj_{}_Reso_{}_1".format(cut, var, reso_min[iReso], reso_max[iReso]), reso_bin_min_1, reso_bin_max_1)
+                        histProj2 = hist.ProjectionX("{}_{}_Proj_{}_Reso_{}_2".format(cut, var, reso_min[iReso], reso_max[iReso]), reso_bin_min_2, reso_bin_max_2)
+                        histProj = histProj1.Clone("{}_{}_Proj_{}_Reso_{}".format(cut, var, reso_min[iReso], reso_max[iReso]))
+                        histProj.Add(histProj2)
+                        fOut.cd()
+                        histProj1.Write("{}_{}_Proj_{}_Reso_{}_1".format(cut, var, reso_min[iReso], reso_max[iReso]))
+                        histProj2.Write("{}_{}_Proj_{}_Reso_{}_2".format(cut, var, reso_min[iReso], reso_max[iReso]))
+                        histProj.Write("{}_{}_Proj_{}_Reso_{}".format(cut, var, reso_min[iReso], reso_max[iReso]))
+                else:
+                    fOut.cd()
+                    hist.Write("{}_{}".format(var, cut))
+        fOut.Close()
+        if deleteOutput:
+            os.system("rm %s/%s_%i.root" % (inputCfg["output"]["output_dir_name"], inputCfg["output"]["output_file_name"], inputCfg["input"]["run_list"][iRun]))
+
+def do_trending(inputCfg):
+    Load_Style()
+    gStyle.SetPalette(ROOT.kBlueRedYellow)
+
+    #period = "LHC22m"
+    #run_list = [523142, 523182, 523186, 523306, 523308, 523309, 523401, 523779]
+    period = "LHC22o"
+    run_list = [526463, 526486, 526606, 527237, 527523, 527850, 527864, 527895, 527902, 527979, 528036, 528105,526465, 526505, 526612, 527345, 527826, 527852, 527869, 527898, 527976, 528021, 528094,526467, 526525, 526638, 527518, 527828, 527863, 527871, 527899, 527978, 528026, 528097]
+
+    fIn_path_qa = "/Users/lucamicheletti/GITHUB/dq_analysis_utils/macro/output/Data/trending_{}".format(period)
+
+    hist_chi2 = []
+    hist_chi2MCHMID = []
+
+    hist_mean_chi2 = ROOT.TH1F("hist_mean_chi2", "", len(run_list), 0, len(run_list))
+    hist_mean_chi2.GetYaxis().SetRangeUser(0.01, 50)
+    hist_mean_chi2.GetYaxis().SetTitle("#chi^{2}")
+    hist_mean_chi2.SetMarkerStyle(24)
+    hist_mean_chi2.SetMarkerColor(ROOT.kAzure+2)
+    hist_mean_chi2.SetLineColor(ROOT.kAzure+2)
+    hist_mean_chi2.SetLineWidth(2)
+
+    for iRun in range(0, len(run_list)):
+        fIn_qa = TFile.Open("{}/{}_apass2_muons_{}.root".format(fIn_path_qa, period, run_list[iRun]))
+        
+        tmp_hist_chi2 = fIn_qa.Get("Chi2_Muons_muonLowPt")
+        tmp_hist_chi2.Scale(1. / tmp_hist_chi2.Integral())
+        #tmp_hist_chi2.SetLineColor(iRun+1)
+        tmp_hist_chi2.SetLineWidth(2)
+        tmp_hist_chi2.SetDirectory(0)
+        tmp_hist_chi2.SetTitle("{}".format(run_list[iRun]))
+        hist_chi2.append(tmp_hist_chi2)
+
+        hist_mean_chi2.SetBinContent(iRun+1, tmp_hist_chi2.GetMean())
+        hist_mean_chi2.SetBinError(iRun+1, 0)
+        hist_mean_chi2.GetXaxis().SetBinLabel(iRun+1, str(run_list[iRun]))
+
+        tmp_hist_chi2MCHMID = fIn_qa.Get("Chi2MCHMID_Muons_muonLowPt")
+        tmp_hist_chi2MCHMID.Scale(1. / tmp_hist_chi2MCHMID.Integral())
+        #tmp_hist_chi2MCHMID.SetLineColor(iRun+1)
+        tmp_hist_chi2MCHMID.SetLineWidth(2)
+        tmp_hist_chi2MCHMID.SetDirectory(0)
+        tmp_hist_chi2MCHMID.SetTitle("{}".format(run_list[iRun]))
+        hist_chi2MCHMID.append(tmp_hist_chi2MCHMID)
+
+
+    canvas_chi2 = ROOT.TCanvas("canvas_chi2", "", 800, 600)
+    gPad.SetLogy(1)
+    gPad.SetTitle("")
+    for iRun in range(0, len(run_list)):
+        hist_chi2[iRun].Draw("H SAME PLC")
+    gPad.BuildLegend(0.78,0.35,0.980,0.935,"","L")
+    canvas_chi2.Update()
+    canvas_chi2.SaveAs("trending_track_chi2_{}.pdf".format(period))
+
+
+    canvas_chi2MCHMID = ROOT.TCanvas("canvas_chi2MCHMID", "", 800, 600)
+    gPad.SetLogy(1)
+    for iRun in range(0, len(run_list)):
+        hist_chi2MCHMID[iRun].Draw("H SAME PLC")
+    gPad.BuildLegend(0.78,0.35,0.980,0.935,"","L")
+    canvas_chi2MCHMID.Update()
+    canvas_chi2MCHMID.SaveAs("trending_track_chi2MCHMID_{}.pdf".format(period))
+
+    fIn_path_fit = "/Users/lucamicheletti/GITHUB/dq_fit_library/validation/output/trending_{}_apass2/CB2_VWG".format(period)
+
+    hist_mean_Jpsi_PDG = ROOT.TH1F("hist_mean_Jpsi_PDG", "", len(run_list), 0, len(run_list))
+    hist_mean_Jpsi_PDG.SetLineWidth(3)
+    hist_mean_Jpsi_PDG.SetLineColor(kGray+1)
+    hist_mean_Jpsi_PDG.SetFillColorAlpha(kGray+1, 0.3)
+
+    hist_mean_Jpsi = ROOT.TH1F("hist_mean_Jpsi", "", len(run_list), 0, len(run_list))
+    hist_mean_Jpsi.GetYaxis().SetRangeUser(2.9, 3.3)
+    hist_mean_Jpsi.GetYaxis().SetTitle("#it{m}_{J/#psi} (GeV/#it{c}^{2})")
+    hist_mean_Jpsi.SetMarkerStyle(24)
+    hist_mean_Jpsi.SetMarkerColor(ROOT.kAzure+2)
+    hist_mean_Jpsi.SetLineColor(ROOT.kAzure+2)
+    hist_mean_Jpsi.SetLineWidth(2)
+
+    hist_width_Jpsi = ROOT.TH1F("hist_mean_Jpsi", "", len(run_list), 0, len(run_list))
+    hist_width_Jpsi.GetYaxis().SetRangeUser(0.06, 0.12)
+    hist_width_Jpsi.GetYaxis().SetTitle("#it{#sigma}_{J/#psi} (GeV/#it{c}^{2})")
+    hist_width_Jpsi.SetMarkerStyle(24)
+    hist_width_Jpsi.SetMarkerColor(ROOT.kAzure+2)
+    hist_width_Jpsi.SetLineColor(ROOT.kAzure+2)
+    hist_width_Jpsi.SetLineWidth(2)
+
+    for iRun in range(0, len(run_list)):
+        fIn_fit = TFile.Open("{}_{}/Mass_PairsMuonSEPM_muonLowPt.root".format(fIn_path_fit, run_list[iRun]))
+        hist = fIn_fit.Get("fit_results_CB2_VWG__2_5")
+        for iBin in range(0, hist.GetNbinsX()):
+            if hist.GetXaxis().GetBinLabel(iBin+1) == "mean_Jpsi":
+                hist_mean_Jpsi.SetBinContent(iRun+1, hist.GetBinContent(iBin+1))
+                hist_mean_Jpsi.SetBinError(iRun+1, hist.GetBinError(iBin+1))
+                hist_mean_Jpsi.GetXaxis().SetBinLabel(iRun+1, str(run_list[iRun]))
+
+                hist_mean_Jpsi_PDG.SetBinContent(iRun+1, 3.096)
+                hist_mean_Jpsi_PDG.SetBinError(iRun+1, ROOT.TMath.Sqrt(0.002 * 0.002 + 0.006 * 0.006))
+
+            if hist.GetXaxis().GetBinLabel(iBin+1) == "width_Jpsi":
+                print(run_list[iRun], ") ", hist.GetBinContent(iBin+1), " +/- ", hist.GetBinError(iBin+1))
+                hist_width_Jpsi.SetBinContent(iRun+1, hist.GetBinContent(iBin+1))
+                hist_width_Jpsi.SetBinError(iRun+1, hist.GetBinError(iBin+1))
+                hist_width_Jpsi.GetXaxis().SetBinLabel(iRun+1, str(run_list[iRun]))
+
+
+    legend = ROOT.TLegend(0.7, 0.30, 0.9, 0.50, " ", "brNDC")
+    legend.SetBorderSize(0)
+    legend.SetFillColor(10)
+    legend.SetFillStyle(1)
+    legend.SetLineStyle(0)
+    legend.SetLineColor(0)
+    legend.SetTextFont(42)
+    legend.SetTextSize(0.035)
+    legend.AddEntry(hist_mean_Jpsi, "Data", "PL")
+    legend.AddEntry(hist_mean_Jpsi_PDG, "PDG", "F")
+
+    canvas_mean_Jpsi = ROOT.TCanvas("canvas_mean_Jpsi", "", 1200, 600)
+    hist_mean_Jpsi.Draw("EP")
+    hist_mean_Jpsi_PDG.Draw("E2same")
+    legend.Draw("same")
+    canvas_mean_Jpsi.Update()
+    canvas_mean_Jpsi.SaveAs("trending_mean_Jpsi_{}.pdf".format(period))
+
+    canvas_width_Jpsi = ROOT.TCanvas("canvas_width_Jpsi", "", 1200, 600)
+    hist_width_Jpsi.Draw("EP")
+    canvas_width_Jpsi.Update()
+    canvas_width_Jpsi.SaveAs("trending_width_Jpsi_{}.pdf".format(period))
+
+    canvas_mean_chi2 = ROOT.TCanvas("canvas_mean_chi2_{}".format(period), "", 1200, 600)
+    gPad.SetLogy()
+    hist_mean_chi2.Draw("EP")
+    canvas_mean_chi2.Update()
+    canvas_mean_chi2.SaveAs("trending_mean_chi2_{}.pdf".format(period))
+
+    input()
+
+
+
 ### ### ###
 def main():
     parser = argparse.ArgumentParser(description='Arguments to pass')
@@ -765,6 +1021,8 @@ def main():
     parser.add_argument("--ambi_tracks", help="Study ambiguous tracks", action="store_true")
     parser.add_argument("--bkg_subtr", help="Subtract bkg", action="store_true")
     parser.add_argument("--qa", help="Quality assurance", action="store_true")
+    parser.add_argument("--init_trending", help="Enable trending vs run number", action="store_true")
+    parser.add_argument("--do_trending", help="Do trending vs run number", action="store_true")
     args = parser.parse_args()
 
     print('Loading task configuration: ...', end='\r')
@@ -792,5 +1050,9 @@ def main():
         bkg_subtr()
     if args.qa:
         qa(inputCfg)
+    if args.init_trending:
+        init_trending(inputCfg)
+    if args.do_trending:
+        do_trending(inputCfg)
 
 main()

@@ -9,9 +9,13 @@ input:
     input_table_reader_file_name: ../o2/output/AnalysisResults_TR_LHC22m_apass2_HL_muons.root
     table_reader: analysis-same-event-pairing/output
     table_reader_dir: ["PairsMuonSEPM_muonLowPt"]
-    table_reader_obj: ["Mass", "Mass_Pt"]
+    table_reader_obj: ["Mass", "Mass_Pt", "Mass_Rapidity", "Mass_DeltaPtotTracks"]
     table_reader_pt_min: [0, 2, 6]
     table_reader_pt_max: [2, 6, 20]
+    table_reader_rap_min: [2.5, 3, 3.5]
+    table_reader_rap_max: [3, 3.5, 4]
+    table_reader_reso_min: [0, 20, 40, 60]
+    table_reader_reso_max: [20, 40, 60, 100]
 
 output:
     output_fig_name: figures/qc/LHC22m_apass2
