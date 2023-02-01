@@ -78,3 +78,5 @@
   ```ruby
   o2-analysis-mm-vertexing-fwd --configuration json://config.json -b
   ```
+- ### link to the latest command from tutorial
+https://indico.cern.ch/event/1220887/contributions/5168721/attachments/2565795/4423412/IArsene_DQO2analysis_2022December13.pdf
