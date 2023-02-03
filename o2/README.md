@@ -34,11 +34,6 @@
   python runTableMaker_new.py configTableMakerMCRun3_QC.json -runMC table-maker-m-c:processMuonOnlyWithCov:true --add_track_prop
   ```
   
-- For ambiguous tracks studies
-  ```ruby
-  python runTableMaker.py configTableMakerDataRun3.json -runData --arg table-maker:processAmbiguousMuonOnlyWithCov:true --add_track_prop --add_col_conv
-  ```
-  
 - Run dq Efficiency:
   ```ruby
   o2-analysis-dq-efficiency --configuration json://configAnalysisMC_QC.json -b
@@ -79,6 +74,10 @@
   ```
   
 - For ambiguous tracks studies
+  ```ruby
+  python runTableMaker.py configTableMakerDataRun3.json -runData --arg table-maker:processAmbiguousMuonOnlyWithCov:true --add_track_prop --add_col_conv
+  ```
+  
   ```ruby
   python3 runAnalysis.py configAnalysisData.json -runData --aod-writer-json writerConfiguration_dileptons.json
   ```
