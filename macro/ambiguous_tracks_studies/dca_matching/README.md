@@ -1,19 +1,11 @@
-# Useful info
-- tableReader configuration: the cuts have to be the same in "analysis-muon-selection" and "analysis-same-event-pairing"
-
 # List of commands to run
 
-## General MC processing
-- TableMaker:
+- To produce control histograms:
   ```ruby
-  python runTableMaker.py configTableMakerMCRun3.json runMC table-maker-m-c:processMuonOnlyWithCov:true
-  ```
-- TableMaker with converter (if mcparticles_001 not found)
-  ```ruby
-  python runTableMaker2.py configTableMakerMCRun3.json runMCwithConverter table-maker-m-c:processMuonOnlyWithCov:true
+  o2-analysis-timestamp --configuration json://configData.json -b | o2-analysis-collision-converter --configuration json://configData.json -b | o2-analysis-mm-vertexing-fwd --aod-file AO2D_mc.root -b
   ```
 
-- TableReader:
+- To produce tables to process:
   ```ruby
-  o2-analysis-dq-efficiency --configuration json://configAnalysisMC.json --aod-writer-json writerConfiguration_dileptons.json -b
+  o2-analysis-mm-track-propagation --configuration json://configData.json -b | o2-analysis-timestamp --configuration json://configData.json -b | o2-analysis-collision-converter --configuration json://configData.json -b
   ```
