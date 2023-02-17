@@ -1,0 +1,30 @@
+input:
+    output_dir_name: "data/LHC22p"
+    run_list: [
+      528602,
+      528781,
+      528783,
+      528617,
+      528798,
+      528801,
+      528604,
+      528784,
+      528782
+    ]
+
+    alien_input_path: [
+      "/alice/data/2022/LHC22p/528602/apass2/2020/hy_144341/AOD",
+      "/alice/data/2022/LHC22p/528781/apass2/0000/hy_144344/AOD",
+      "/alice/data/2022/LHC22p/528783/apass2/0040/hy_144346/AOD",
+      "/alice/data/2022/LHC22p/528617/apass2/1040/hy_144343/AOD",
+      "/alice/data/2022/LHC22p/528798/apass2/1010/hy_144348/AOD",
+      "/alice/data/2022/LHC22p/528801/apass2/1220/hy_144349/AOD",
+      "/alice/data/2022/LHC22p/528604/apass2/2140/hy_144342/AOD",
+      "/alice/data/2022/LHC22p/528784/apass2/0240/hy_144347/AOD",
+      "/alice/data/2022/LHC22p/528782/apass2/0030/hy_144345/AOD",
+    ]
+
+    file_type: "*/AO2D.root"
+
+
+  

@@ -1,0 +1,70 @@
+input:
+    output_dir_name: "data/LHC22m"
+    run_list: [
+      523141,
+      523142,
+      523148,
+      523669,
+      523897,
+      523182,
+      523186,
+      523559,
+      523671,
+      523728,
+      523779,
+      523783,
+      523786,
+      523788,
+      523789,
+      523792,
+      523298,
+      523306,
+      523308,
+      523309,
+      523397,
+      523399,
+      523401,
+      523677,
+      523441,
+      523541,
+      523797,
+      523821,
+      523731
+    ]
+
+    alien_input_path: [
+      "/alice/data/2022/LHC22m/523141/apass2/2150/hy_144312/AOD",
+      "/alice/data/2022/LHC22m/523142/apass2/2220/hy_144313/AOD",
+      "/alice/data/2022/LHC22m/523148/apass2/0800/hy_144314/AOD",
+      "/alice/data/2022/LHC22m/523669/apass2/1320/hy_144327/AOD",
+      "/alice/data/2022/LHC22m/523897/apass2/0730/hy_144340/AOD",
+      "/alice/data/2022/LHC22m/523182/apass2/2210/hy_144315/AOD",
+      "/alice/data/2022/LHC22m/523186/apass2/0700/hy_144316/AOD",
+      "/alice/data/2022/LHC22m/523559/apass2/1740/hy_144326/AOD",
+      "/alice/data/2022/LHC22m/523671/apass2/1520/hy_144328/AOD",
+      "/alice/data/2022/LHC22m/523728/apass2/1730/hy_144330/AOD",
+      "/alice/data/2022/LHC22m/523779/apass2/1420/hy_144332/AOD",
+      "/alice/data/2022/LHC22m/523783/apass2/1530/hy_144333/AOD",
+      "/alice/data/2022/LHC22m/523786/apass2/1610/hy_144334/AOD",
+      "/alice/data/2022/LHC22m/523788/apass2/1710/hy_144335/AOD",
+      "/alice/data/2022/LHC22m/523789/apass2/1740/hy_144336/AOD",
+      "/alice/data/2022/LHC22m/523792/apass2/1900/hy_144337/AOD",
+      "/alice/data/2022/LHC22m/523298/apass2/1650/hy_144317/AOD",
+      "/alice/data/2022/LHC22m/523306/apass2/0010/hy_144318/AOD",
+      "/alice/data/2022/LHC22m/523308/apass2/0130/hy_144319/AOD",
+      "/alice/data/2022/LHC22m/523309/apass2/0440/hy_144320/AOD",
+      "/alice/data/2022/LHC22m/523397/apass2/0940/hy_144321/AOD",
+      "/alice/data/2022/LHC22m/523399/apass2/1100/hy_144322/AOD",
+      "/alice/data/2022/LHC22m/523401/apass2/1340/hy_144323/AOD",
+      "/alice/data/2022/LHC22m/523677/apass2/1820/hy_144329/AOD",
+      "/alice/data/2022/LHC22m/523441/apass2/2300/hy_144324/AOD",
+      "/alice/data/2022/LHC22m/523541/apass2/0900/hy_144325/AOD",
+      "/alice/data/2022/LHC22m/523797/apass2/1930/hy_144338/AOD",
+      "/alice/data/2022/LHC22m/523821/apass2/2350/hy_144339/AOD",
+      "/alice/data/2022/LHC22m/523731/apass2/1900/hy_144331/AOD"
+    ]
+
+    file_type: "*/AO2D.root"
+
+
+  
