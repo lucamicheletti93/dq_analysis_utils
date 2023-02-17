@@ -73,15 +73,6 @@
   python runTableMaker_QC_fddconverter.py configTableMakerDataRun3_QC.json runData table-maker:processBarrelOnlyWithCov:true
   ```
   
-- For ambiguous tracks studies
-  ```ruby
-  python runTableMaker.py configTableMakerDataRun3.json -runData --arg table-maker:processAmbiguousMuonOnlyWithCov:true --add_track_prop --add_col_conv
-  ```
-  
-  ```ruby
-  python3 runAnalysis.py configAnalysisData.json -runData --aod-writer-json writerConfiguration_dileptons.json
-  ```
-  
 - ### MFT ambiguous tracks
 - Run this framework to re-assaign the tracks to the best collision according to the DCA
   ```ruby
@@ -89,3 +80,26 @@
   ```
 - ### link to the latest command from tutorial
 https://indico.cern.ch/event/1220887/contributions/5168721/attachments/2565795/4423412/IArsene_DQO2analysis_2022December13.pdf
+
+- For ambiguous tracks studies
+  - Data w/o collision re-association
+  ```ruby
+  python runTableMaker.py configTableMakerDataRun3.json -runData --arg table-maker:processAmbiguousMuonOnlyWithCov:true --add_track_prop --add_col_conv
+  ```
+  - Data with collision re-association
+  ```ruby
+  python runTableMaker.py configTableMakerDataRun3.json -runData --arg table-maker:processAmbiguousMuonOnlyWithCovBestCollision:true --add_track_prop --add_col_conv --add_best_coll
+  ```
+  
+  ```ruby
+  python3 runAnalysis.py configAnalysisData.json -runData --aod-writer-json writerConfiguration_dileptons.json
+  ```
+  
+  - MC w/o collision re-association
+  ```ruby
+  python runTableMaker.py configTableMakerMCRun3.json -runMC --arg table-maker-m-c:processAmbiguousMuonOnlyWithCov:true --add_track_prop --add_col_conv
+  ```
+  - MC with collision re-association
+  ```ruby
+  python runTableMaker.py configTableMakerMCRun3.json -runMC --arg table-maker-m-c:processAmbiguousMuonOnlyWithCovBestCollision:true --add_track_prop --add_col_conv --add_best_coll
+  ```
