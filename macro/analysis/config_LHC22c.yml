@@ -1,0 +1,40 @@
+
+input:
+    output_dir_name: "/Users/lucamicheletti/cernbox/JPSI/Run3/2022/apass3/LHC22c"
+    run_list: [
+      517767,
+      517758,
+      517753,
+      517751,
+      517748,
+      517737,
+      517693,
+      517690,
+      517685,
+      517679,
+      517678,
+      517677,
+      517623,
+      517620,
+      517619
+    ]
+
+    alien_input_path: [
+      	"/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_168211",
+        "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_168210",
+        "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_168209",
+        "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_168208",
+        "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_168207",
+        "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_168206",
+        "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_168205",
+        "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_168204",
+        "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_168203",
+        "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_168202",
+        "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_168201",
+        "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_168200",
+        "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_168199",
+        "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_168198",
+        "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_168197"
+    ]
+
+    file_type: "AO2D.root"

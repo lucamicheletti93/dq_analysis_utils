@@ -10,16 +10,27 @@ import ROOT
 from os import path
 
 def download(inputCfg):
+    if os.path.isfile(("{}/run_list.txt").format(inputCfg["input"]["output_dir_name"])):
+        os.system(("rm {}/run_list.txt").format(inputCfg["input"]["output_dir_name"]))
+
+    fOut = open(("{}/run_list.txt").format(inputCfg["input"]["output_dir_name"]), 'x')
+
+    output_dir = inputCfg["input"]["output_dir_name"]
+    if not os.path.isdir("%s" % (output_dir)):
+        os.system("mkdir -p %s" % (output_dir))
+
     print("----- Download and save files in %s -----" % (inputCfg["input"]["output_dir_name"]))
     for iRun in range(0, len(inputCfg["input"]["run_list"])):
 
         file_type = inputCfg["input"]["file_type"]
         run = inputCfg["input"]["run_list"][iRun]
         alien_path = inputCfg["input"]["alien_input_path"][iRun]
-        output_dir = inputCfg["input"]["output_dir_name"]
-        
+
         os.system("mkdir -p %s/%s" % (output_dir, run))
-        os.system("alien_cp alien://%s/%s file:%s/%s/." % (alien_path, file_type, output_dir, run))
+        
+        os.system("alien_cp alien://%s/*/%s file:%s/%s/." % (alien_path, file_type, output_dir, run))
+        fOut.write("{}\n".format(run))
+    fOut.close()
 
 
 ### ### ###

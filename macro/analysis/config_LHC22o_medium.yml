@@ -1,0 +1,34 @@
+
+input:
+    output_dir_name: "/Users/lucamicheletti/cernbox/JPSI/Run3/2022/apass3/LHC22o_medium"
+    run_list: [
+      528232,
+      528231,
+      528110,
+      528109,
+      528105,
+      528097,
+      528094,
+      528093,
+      528026,
+      528021,
+      527979,
+      527978
+    ]
+
+    alien_input_path: [
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_166732/AOD",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_166733/AOD",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_166734/AOD",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_166735/AOD",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_166736/AOD",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_166740/AOD",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_166741/AOD",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_166737/AOD",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_166738/AOD",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_166739/AOD",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_166742/AOD",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_166743/AOD"
+    ]
+
+    file_type: "AO2D.root"

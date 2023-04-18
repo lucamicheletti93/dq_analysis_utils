@@ -1,0 +1,36 @@
+input:
+    output_dir_name: "/Users/lucamicheletti/cernbox/JPSI/Run3/2022/apass3/LHC22q"
+    run_list: [
+      528991,
+      529035,
+      529038,
+      528997,
+      529003,
+      529005,
+      529006,
+      529009,
+      529015,
+      529037,
+      529039,
+      529043
+    ]
+
+    alien_input_path: [
+      "/alice/data/2022/LHC22q/528991/apass3/0230/hy_154775/AOD",
+      "/alice/data/2022/LHC22q/529035/apass3/2050/hy_154782/AOD",
+      "/alice/data/2022/LHC22q/529038/apass3/0220/hy_154784/AOD",
+      "/alice/data/2022/LHC22q/528997/apass3/0400/hy_154776/AOD",
+      "/alice/data/2022/LHC22q/529003/apass3/0430/hy_154777/AOD",
+      "/alice/data/2022/LHC22q/529005/apass3/0720/hy_154778/AOD",
+      "/alice/data/2022/LHC22q/529006/apass3/1010/hy_154779/AOD",
+      "/alice/data/2022/LHC22q/529009/apass3/1220/hy_154780/AOD",
+      "/alice/data/2022/LHC22q/529015/apass3/1730/hy_154781/AOD",
+      "/alice/data/2022/LHC22q/529037/apass3/2120/hy_154783/AOD",
+      "/alice/data/2022/LHC22q/529039/apass3/0830/hy_154785/AOD",
+      "/alice/data/2022/LHC22q/529043/apass3/1730/hy_154786/AOD"
+    ]
+
+    file_type: "*/AO2D.root"
+
+
+  

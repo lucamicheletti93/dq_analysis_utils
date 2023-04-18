@@ -223,71 +223,118 @@ void run2_comparison(){
     double pAsym[6] = {10, -10, 30, -30, 70, -70};
     double err_pAsym[6] = {10, 10, 10, 10, 30, 30};
 
+    string apass_reco = "apass3";
+
+    // Trending
     //string period = "LHC22m";
     //int run_list[] = {523142, 523182, 523186, 523306, 523308, 523309, 523401, 523779};
 
-    string period = "LHC22o";
-    int run_list[] = {526463, 526486, 526606, 527237, 527523, 527850, 527864, 527895, 527902, 527979, 528036, 528105,526465, 526505, 526612, 527345, 527826, 527852, 527869, 527898, 527976, 528021, 528094,526467, 526525, 526638, 527518, 527828, 527863, 527871, 527899, 527978, 528026, 528097};
+    //string period = "LHC22o";
+    //int run_list[] = {526463, 526486, 526606, 527237, 527523, 527850, 527864, 527895, 527902, 527979, 528036, 528105,526465, 526505, 526612, 527345, 527826, 527852, 527869, 527898, 527976, 528021, 528094,526467, 526525, 526638, 527518, 527828, 527863, 527871, 527899, 527978, 528026, 528097};
+
+    //string period = "LHC22r";
+    //int run_list[] = {529067, 529210, 529248, 529317, 529320, 529324, 529338, 529341};
+
+    string period = "LHC22q";
+    int run_list[] = {529038};
+
+
+    // Full period
+    string fIn_path = Form("/Users/lucamicheletti/GITHUB/dq_fit_library/validation/output/%s_%s_CB2_VWG", period.c_str(), apass_reco.c_str()); 
+    const int nAsymBins = 6;
+    string asymBins[] = {"0_Reso_20_1", "0_Reso_20_2", "20_Reso_40_1", "20_Reso_40_2", "40_Reso_100_1", "40_Reso_100_2"};
+    double mean_Jpsi[6];
+    double err_mean_Jpsi[6];
+
+    for (int i = 0;i < nAsymBins;i++) {
+        TFile *fIn = new TFile(Form("%s/PairsMuonSEPM_muonLowPt_Mass_DeltaPtotTracks_Proj_%s.root", fIn_path.c_str(), asymBins[i].c_str()));
+        TH1F *hist = (TH1F*) fIn -> Get("fit_results_CB2_VWG__2_5");
+        for (int iBin = 0;iBin < hist -> GetNbinsX();iBin++) {
+            if (strcmp(hist -> GetXaxis() -> GetBinLabel(iBin+1), "mean_Jpsi") == 0) {
+                mean_Jpsi[i] = hist -> GetBinContent(iBin+1);
+                err_mean_Jpsi[i] = hist -> GetBinError(iBin+1);
+            }
+        }
+    }
+
+    double integrated_mean_Jpsi = 0;
+    TFile *fIn = new TFile(Form("%s/Mass_PairsMuonSEPM_muonLowPt.root", fIn_path.c_str()));
+    TH1F *hist_integrated = (TH1F*) fIn -> Get("fit_results_CB2_VWG__2_5");
+    for (int iBin = 0;iBin < hist_integrated -> GetNbinsX();iBin++) {
+        if (strcmp(hist_integrated -> GetXaxis() -> GetBinLabel(iBin+1), "mean_Jpsi") == 0) {
+            integrated_mean_Jpsi = hist_integrated -> GetBinContent(iBin+1);
+        }
+    }
+
+    TLine *line_integrated_mean_Jpsi = new TLine(-100, integrated_mean_Jpsi, 100, integrated_mean_Jpsi);
+    line_integrated_mean_Jpsi -> SetLineColor(kRed+1);
+    line_integrated_mean_Jpsi -> SetLineWidth(2);
+
+    TH2D *hist_grid_mean_Jpsi_vs_pAsym = new TH2D("hist_grid_mean_Jpsi_vs_pAsym", "", 100, -100, 100, 100, 2.9, 3.3);
+    hist_grid_mean_Jpsi_vs_pAsym -> SetTitleSize(0.05,"X");
+    hist_grid_mean_Jpsi_vs_pAsym -> SetTitleSize(0.045,"Y");
+    hist_grid_mean_Jpsi_vs_pAsym -> SetLabelSize(0.045,"X");
+    hist_grid_mean_Jpsi_vs_pAsym -> SetLabelSize(0.045,"Y");
+    hist_grid_mean_Jpsi_vs_pAsym -> SetTitleOffset(1.2,"X");
+    hist_grid_mean_Jpsi_vs_pAsym -> SetTitleOffset(1.35,"Y");
+    hist_grid_mean_Jpsi_vs_pAsym -> GetXaxis() -> SetTitle("#it{p}^{#mu+} - #it{p}^{#mu-}");
+    hist_grid_mean_Jpsi_vs_pAsym -> GetYaxis() -> SetTitle("#it{m}_{J/#psi} (GeV/#it{c}^{2})");
+
+    TLatex *letexText = new TLatex();
+    letexText -> SetTextSize(0.045);
+    letexText -> SetNDC();
+    letexText -> SetTextFont(42);
+
+    TGraphErrors *gra_mean_Jpsi_vs_pAsym = new TGraphErrors(6, pAsym, mean_Jpsi, err_pAsym, err_mean_Jpsi);
+    gra_mean_Jpsi_vs_pAsym -> SetMarkerStyle(24);
+    gra_mean_Jpsi_vs_pAsym -> SetMarkerColor(kBlack);
+    gra_mean_Jpsi_vs_pAsym -> SetLineColor(kBlack);
+    gra_mean_Jpsi_vs_pAsym -> SetLineWidth(2);
+
+    TCanvas *canvas_mean_Jpsi_vs_pAsym = new TCanvas("canvas_mean_Jpsi_vs_pAsym", "", 800, 600);
+    hist_grid_mean_Jpsi_vs_pAsym -> Draw();
+    line_integrated_mean_Jpsi -> Draw("same");
+    gra_mean_Jpsi_vs_pAsym -> Draw("EPsame");
+    letexText -> DrawLatex(0.20, 0.85, Form("%s", period.c_str()));
+        
+    canvas_mean_Jpsi_vs_pAsym -> SaveAs(Form("%s/mean_Jpsi_vs_pAsym.pdf", period.c_str()));
+    delete canvas_mean_Jpsi_vs_pAsym;
 
     for (auto& iRun : run_list) {
-        string fIn_path = Form("/Users/lucamicheletti/GITHUB/dq_fit_library/validation/output/trending_%s_apass2/CB2_VWG", period.c_str());
-        const int nAsymBins = 6;
-        string asymBins[] = {"0_Reso_20_1", "0_Reso_20_2", "20_Reso_40_1", "20_Reso_40_2", "40_Reso_100_1", "40_Reso_100_2"};
-        double mean_Jpsi[6];
-        double err_mean_Jpsi[6];
-
+        string fIn_path_runs = Form("/Users/lucamicheletti/GITHUB/dq_fit_library/validation/output/trending_%s_%s/CB2_VWG", period.c_str(), apass_reco.c_str());
         for (int i = 0;i < nAsymBins;i++) {
-            TFile *fIn = new TFile(Form("%s_%i/PairsMuonSEPM_muonLowPt_Mass_DeltaPtotTracks_Proj_%s.root", fIn_path.c_str(), iRun, asymBins[i].c_str()));
-            TH1F *hist = (TH1F*) fIn -> Get("fit_results_CB2_VWG__2_5");
-            for (int iBin = 0;iBin < hist -> GetNbinsX();iBin++) {
-                if (strcmp(hist -> GetXaxis() -> GetBinLabel(iBin+1), "mean_Jpsi") == 0) {
-                    mean_Jpsi[i] = hist -> GetBinContent(iBin+1);
-                    err_mean_Jpsi[i] = hist -> GetBinError(iBin+1);
+            TFile *fIn_runs = new TFile(Form("%s_%i/PairsMuonSEPM_muonLowPt_Mass_DeltaPtotTracks_Proj_%s.root", fIn_path_runs.c_str(), iRun, asymBins[i].c_str()));
+            TH1F *hist_runs = (TH1F*) fIn_runs -> Get("fit_results_CB2_VWG__2_5");
+            for (int iBin = 0;iBin < hist_runs -> GetNbinsX();iBin++) {
+                if (strcmp(hist_runs -> GetXaxis() -> GetBinLabel(iBin+1), "mean_Jpsi") == 0) {
+                    mean_Jpsi[i] = hist_runs -> GetBinContent(iBin+1);
+                    err_mean_Jpsi[i] = hist_runs -> GetBinError(iBin+1);
                 }
             }
         }
 
-        double integrated_mean_Jpsi = 0;
-        TFile *fIn = new TFile(Form("%s_%i/Mass_PairsMuonSEPM_muonLowPt.root", fIn_path.c_str(), iRun));
-        TH1F *hist_integrated = (TH1F*) fIn -> Get("fit_results_CB2_VWG__2_5");
-        for (int iBin = 0;iBin < hist_integrated -> GetNbinsX();iBin++) {
-            if (strcmp(hist_integrated -> GetXaxis() -> GetBinLabel(iBin+1), "mean_Jpsi") == 0) {
-                integrated_mean_Jpsi = hist_integrated -> GetBinContent(iBin+1);
+        integrated_mean_Jpsi = 0;
+        TFile *fIn_runs = new TFile(Form("%s_%i/Mass_PairsMuonSEPM_muonLowPt.root", fIn_path_runs.c_str(), iRun));
+        TH1F *hist_integrated_runs = (TH1F*) fIn_runs -> Get("fit_results_CB2_VWG__2_5");
+        for (int iBin = 0;iBin < hist_integrated_runs -> GetNbinsX();iBin++) {
+            if (strcmp(hist_integrated_runs -> GetXaxis() -> GetBinLabel(iBin+1), "mean_Jpsi") == 0) {
+                integrated_mean_Jpsi = hist_integrated_runs -> GetBinContent(iBin+1);
             }
         }
 
-        TLine *line_integrated_mean_Jpsi = new TLine(-100, integrated_mean_Jpsi, 100, integrated_mean_Jpsi);
-        line_integrated_mean_Jpsi -> SetLineColor(kRed+1);
-        line_integrated_mean_Jpsi -> SetLineWidth(2);
+        TGraphErrors *gra_mean_Jpsi_vs_pAsym_runs = new TGraphErrors(6, pAsym, mean_Jpsi, err_pAsym, err_mean_Jpsi);
+        gra_mean_Jpsi_vs_pAsym_runs -> SetMarkerStyle(24);
+        gra_mean_Jpsi_vs_pAsym_runs -> SetMarkerColor(kBlack);
+        gra_mean_Jpsi_vs_pAsym_runs -> SetLineColor(kBlack);
+        gra_mean_Jpsi_vs_pAsym_runs -> SetLineWidth(2);
 
-        TH2D *hist_grid_mean_Jpsi_vs_pAsym = new TH2D("hist_grid_mean_Jpsi_vs_pAsym", "", 100, -100, 100, 100, 2.9, 3.3);
-        hist_grid_mean_Jpsi_vs_pAsym -> SetTitleSize(0.05,"X");
-        hist_grid_mean_Jpsi_vs_pAsym -> SetTitleSize(0.045,"Y");
-        hist_grid_mean_Jpsi_vs_pAsym -> SetLabelSize(0.045,"X");
-        hist_grid_mean_Jpsi_vs_pAsym -> SetLabelSize(0.045,"Y");
-        hist_grid_mean_Jpsi_vs_pAsym -> SetTitleOffset(1.2,"X");
-        hist_grid_mean_Jpsi_vs_pAsym -> SetTitleOffset(1.35,"Y");
-        hist_grid_mean_Jpsi_vs_pAsym -> GetXaxis() -> SetTitle("#it{p}^{#mu+} - #it{p}^{#mu-}");
-        hist_grid_mean_Jpsi_vs_pAsym -> GetYaxis() -> SetTitle("#it{m}_{J/#psi} (GeV/#it{c}^{2})");
-
-        TGraphErrors *gra_mean_Jpsi_vs_pAsym = new TGraphErrors(6, pAsym, mean_Jpsi, err_pAsym, err_mean_Jpsi);
-        gra_mean_Jpsi_vs_pAsym -> SetMarkerStyle(24);
-        gra_mean_Jpsi_vs_pAsym -> SetMarkerColor(kBlack);
-        gra_mean_Jpsi_vs_pAsym -> SetLineColor(kBlack);
-        gra_mean_Jpsi_vs_pAsym -> SetLineWidth(2);
-
-        TLatex *letexText = new TLatex();
-        letexText -> SetTextSize(0.045);
-        letexText -> SetNDC();
-        letexText -> SetTextFont(42);
-
-        TCanvas *canvas_mean_Jpsi_vs_pAsym = new TCanvas("canvas_mean_Jpsi_vs_pAsym", "", 800, 600);
+        TCanvas *canvas_mean_Jpsi_vs_pAsym_runs = new TCanvas("canvas_mean_Jpsi_vs_pAsym_runs", "", 800, 600);
         hist_grid_mean_Jpsi_vs_pAsym -> Draw();
         line_integrated_mean_Jpsi -> Draw("same");
-        gra_mean_Jpsi_vs_pAsym -> Draw("EPsame");
+        gra_mean_Jpsi_vs_pAsym_runs -> Draw("EPsame");
         letexText -> DrawLatex(0.20, 0.85, Form("%s, run %i", period.c_str(), iRun));
         
-        canvas_mean_Jpsi_vs_pAsym -> SaveAs(Form("%s/mean_Jpsi_vs_pAsym_%i.pdf", period.c_str(), iRun));
-        delete canvas_mean_Jpsi_vs_pAsym;
+        canvas_mean_Jpsi_vs_pAsym_runs -> SaveAs(Form("%s/mean_Jpsi_vs_pAsym_%i.pdf", period.c_str(), iRun));
+        delete canvas_mean_Jpsi_vs_pAsym_runs;
     }
 }

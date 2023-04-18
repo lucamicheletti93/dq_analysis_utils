@@ -1,0 +1,34 @@
+
+input:
+    output_dir_name: "/Users/lucamicheletti/cernbox/JPSI/Run3/2022/apass3/LHC22o_small"
+    run_list: [
+      528232,
+      528231,
+      528110,
+      528109,
+      528105,
+      528097,
+      528094,
+      528093,
+      528026,
+      528021,
+      527979,
+      527978
+    ]
+
+    alien_input_path: [
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_160377",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_160376",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_160375",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_160374",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_160373",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_160372",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_160371",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_160370",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_160369",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_160368",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_160367",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0016/hy_160366"
+    ]
+
+    file_type: "AnalysisResults.root"

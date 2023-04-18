@@ -876,8 +876,14 @@ def do_trending(inputCfg):
     #run_list = [523142, 523182, 523186, 523306, 523308, 523309, 523401, 523779]
     #period = "LHC22o"
     #run_list = [526463, 526486, 526606, 527237, 527523, 527850, 527864, 527895, 527902, 527979, 528036, 528105,526465, 526505, 526612, 527345, 527826, 527852, 527869, 527898, 527976, 528021, 528094,526467, 526525, 526638, 527518, 527828, 527863, 527871, 527899, 527978, 528026, 528097]
-    period = "LHC22p"
-    run_list = [528602, 528617, 528783, 528798, 528604, 528781, 528784, 528801]
+    #period = "LHC22p"
+    #run_list = [528602, 528617, 528783, 528798, 528604, 528781, 528784, 528801]
+    #period = "LHC22q"
+    #run_list = [528997, 529005, 529038, 529039, 529043, 529003, 529006, 529009, 529015, 529035]
+    #period = "LHC22r"
+    #run_list = [529066, 529067, 529210, 529248, 529270, 529317, 529320, 529324, 529338, 529341]
+    period = "LHC22o_small"
+    run_list = [528232, 528231, 528110, 528109, 528105, 528097, 528094, 528026, 528021, 527979, 527978]
 
     fIn_path_qa = "/Users/lucamicheletti/GITHUB/dq_analysis_utils/macro/output/Data/trending_{}".format(period)
 
@@ -893,9 +899,9 @@ def do_trending(inputCfg):
     hist_mean_chi2.SetLineWidth(2)
 
     for iRun in range(0, len(run_list)):
-        fIn_qa = TFile.Open("{}/{}_apass2_muons_{}.root".format(fIn_path_qa, period, run_list[iRun]))
+        fIn_qa = TFile.Open("{}/{}_apass3_muons_{}.root".format(fIn_path_qa, period, run_list[iRun]))
         
-        tmp_hist_chi2 = fIn_qa.Get("Chi2_Muons_muonLowPt")
+        tmp_hist_chi2 = fIn_qa.Get("Chi2_Muons_muonQualityCuts")
         tmp_hist_chi2.Scale(1. / tmp_hist_chi2.Integral())
         #tmp_hist_chi2.SetLineColor(iRun+1)
         tmp_hist_chi2.SetLineWidth(2)
@@ -907,7 +913,7 @@ def do_trending(inputCfg):
         hist_mean_chi2.SetBinError(iRun+1, 0)
         hist_mean_chi2.GetXaxis().SetBinLabel(iRun+1, str(run_list[iRun]))
 
-        tmp_hist_chi2MCHMID = fIn_qa.Get("Chi2MCHMID_Muons_muonLowPt")
+        tmp_hist_chi2MCHMID = fIn_qa.Get("Chi2MCHMID_Muons_muonQualityCuts")
         tmp_hist_chi2MCHMID.Scale(1. / tmp_hist_chi2MCHMID.Integral())
         #tmp_hist_chi2MCHMID.SetLineColor(iRun+1)
         tmp_hist_chi2MCHMID.SetLineWidth(2)
@@ -934,7 +940,7 @@ def do_trending(inputCfg):
     canvas_chi2MCHMID.Update()
     canvas_chi2MCHMID.SaveAs("trending_track_chi2MCHMID_{}.pdf".format(period))
 
-    fIn_path_fit = "/Users/lucamicheletti/GITHUB/dq_fit_library/validation/output/trending_{}_apass2/CB2_VWG".format(period)
+    fIn_path_fit = "/Users/lucamicheletti/GITHUB/dq_fit_library/validation/output/trending_{}_apass3/CB2_VWG".format(period)
 
     hist_mean_Jpsi_PDG = ROOT.TH1F("hist_mean_Jpsi_PDG", "", len(run_list), 0, len(run_list))
     hist_mean_Jpsi_PDG.SetLineWidth(3)
@@ -958,8 +964,8 @@ def do_trending(inputCfg):
     hist_width_Jpsi.SetLineWidth(2)
 
     for iRun in range(0, len(run_list)):
-        fIn_fit = TFile.Open("{}_{}/Mass_PairsMuonSEPM_muonLowPt.root".format(fIn_path_fit, run_list[iRun]))
-        hist = fIn_fit.Get("fit_results_CB2_VWG__2_5")
+        fIn_fit = TFile.Open("{}_{}/Mass_PairsMuonSEPM_matchedMchMid.root".format(fIn_path_fit, run_list[iRun]))
+        hist = fIn_fit.Get("fit_results_CB2_CB2_VWG__2_5")
         for iBin in range(0, hist.GetNbinsX()):
             if hist.GetXaxis().GetBinLabel(iBin+1) == "mean_Jpsi":
                 hist_mean_Jpsi.SetBinContent(iRun+1, hist.GetBinContent(iBin+1))

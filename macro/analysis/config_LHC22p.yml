@@ -1,5 +1,5 @@
 input:
-    output_dir_name: "data/LHC22p"
+    output_dir_name: "/Users/lucamicheletti/cernbox/JPSI/Run3/2022/apass3/LHC22p"
     run_list: [
       528602,
       528781,
@@ -24,7 +24,7 @@ input:
       "/alice/data/2022/LHC22p/528782/apass2/0030/hy_144345/AOD",
     ]
 
-    file_type: "*/AO2D.root"
+    file_type: "*/AnalysisResults.root"
 
 
   
