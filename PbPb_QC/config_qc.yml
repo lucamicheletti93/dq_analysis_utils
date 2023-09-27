@@ -1,0 +1,21 @@
+inputs:
+  data: [AnalysisResults_LHC23zx.root, AnalysisResults_LHC23zy.root]
+  labels: [LHC23zx, LHC23zy]
+  colors: [633, 864]
+  normToColls: false
+
+table_maker:
+  directory: [table-maker/output]
+  selections: [Muons_muonQualityCuts]
+  vars: [Pt, Eta, Phi, pdca, Chi2MCHMID, RAtAbsorberEnd]
+  rebins: [2, 2, 2, 2, 1, 2]
+  minRanges: [0, -5, -4, 0, 0, 0]
+  maxRanges: [10, -2, 4, 1000, 40, 100]
+
+table_reader:
+  directory: [analysis-same-event-pairing/output]
+  selections: [PairsMuonSEPM_matchedMchMid]
+  vars: [Mass, Pt, Rapidity, DeltaPtotTracks]
+  rebins: [2, 1, 2, 2]
+  minRanges: [0, 0, 2.5, -100]
+  maxRanges: [6, 10, 4, 100]
