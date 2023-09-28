@@ -6,7 +6,7 @@ inputs:
 
 table_maker:
   directory: [table-maker/output]
-  selections: [Muons_muonQualityCuts]
+  selections: [Muons_BeforeCuts, Muons_muonQualityCuts]
   vars: [Pt, Eta, Phi, pdca, Chi2MCHMID, RAtAbsorberEnd]
   rebins: [2, 2, 2, 2, 1, 2]
   minRanges: [0, -5, -4, 0, 0, 0]
@@ -14,8 +14,17 @@ table_maker:
 
 table_reader:
   directory: [analysis-same-event-pairing/output]
-  selections: [PairsMuonSEPM_matchedMchMid]
+  selections: [PairsMuonSEPM_matchedMchMid, PairsMuonSEPP_matchedMchMid, PairsMuonSEMM_matchedMchMid]
   vars: [Mass, Pt, Rapidity, DeltaPtotTracks]
-  rebins: [2, 1, 2, 2]
+  rebins: [1, 1, 2, 2]
   minRanges: [0, 0, 2.5, -100]
-  maxRanges: [6, 10, 4, 100]
+  maxRanges: [15, 10, 4, 100]
+
+output:
+  name: histograms.root
+
+comb_bkg:
+  input: histograms.root
+  datasets: [LHC23zx, LHC23zy]
+  selections: [matchedMchMid]
+  vars: [Mass]
