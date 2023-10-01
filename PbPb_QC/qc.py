@@ -104,33 +104,49 @@ def qc(inputCfg):
 
 
 def comb_bkg(inputCfg):
+    gStyle.SetOptStat(0)
+    rebins = inputCfg["comb_bkg"]["rebins"]
+    minRanges = inputCfg["comb_bkg"]["minRanges"]
+    maxRanges = inputCfg["comb_bkg"]["maxRanges"]
+
     fInName = inputCfg["comb_bkg"]["input"]
     fIn = TFile(fInName, "READ")
 
     for i_dataset, dataset in enumerate(inputCfg["comb_bkg"]["datasets"]):
         for i_selName, selName in enumerate(inputCfg["comb_bkg"]["selections"]):
-            histMassSEPM = fIn.Get(f'{dataset}_PairsMuonSEPM_{selName}_Mass')
-            histMassSEPP = fIn.Get(f'{dataset}_PairsMuonSEPP_{selName}_Mass')
-            histMassSEMM = fIn.Get(f'{dataset}_PairsMuonSEMM_{selName}_Mass')
+            for i_varName, varName in enumerate(inputCfg["comb_bkg"]["vars"]):
+                histMassSEPM = fIn.Get(f'{dataset}_PairsMuonSEPM_{selName}_{varName}')
+                histMassSEPP = fIn.Get(f'{dataset}_PairsMuonSEPP_{selName}_{varName}')
+                histMassSEMM = fIn.Get(f'{dataset}_PairsMuonSEMM_{selName}_{varName}')
 
-            histSig = TH1F(f'histSig_{dataset}', "", histMassSEPM.GetNbinsX(), 0., 15.); histSig.SetLineColor(kRed+1)
-            histBkg = TH1F(f'histBkg_{dataset}', "", histMassSEPM.GetNbinsX(), 0., 15.); histBkg.SetLineColor(kAzure+4)
-            histSigBkg = TH1F(f'histSigBkg_{dataset}', "", histMassSEPM.GetNbinsX(), 0., 15.); histSigBkg.SetLineColor(kBlack)
+                nBins = histMassSEPM.GetNbinsX()
+                minBin = histMassSEPM.GetBinLowEdge(1)
+                maxBin = histMassSEPM.GetBinLowEdge(nBins+1)
 
-            for iBin in range(0, histMassSEPM.GetNbinsX()):
-                SEPM = histMassSEPM.GetBinContent(iBin+1)
-                SEPP = histMassSEPP.GetBinContent(iBin+1)
-                SEMM = histMassSEMM.GetBinContent(iBin+1)
-                histSigBkg.SetBinContent(iBin+1, SEPM)
-                histBkg.SetBinContent(iBin+1, 2 * TMath.Sqrt(SEPP * SEMM))
-                histSig.SetBinContent(iBin+1, SEPM - 2 * TMath.Sqrt(SEPP * SEMM))
+                histSig = TH1F(f'histSig_{dataset}', "Sig", nBins, minBin, maxBin); histSig.SetLineColor(kRed+1); histSig.SetLineWidth(2)
+                histBkg = TH1F(f'histBkg_{dataset}', "Bkg", nBins, minBin, maxBin); histBkg.SetLineColor(kAzure+4); histBkg.SetLineWidth(2)
+                histSigBkg = TH1F(f'histSigBkg_{dataset}', "Sig + Bkg", nBins, minBin, maxBin); histSigBkg.SetLineColor(kBlack); histSigBkg.SetLineWidth(2)
 
-            canvas = TCanvas(f'canvas_{dataset}', "", 600, 600)
-            gPad.SetLogy(1)
-            histSigBkg.Draw("H")
-            histBkg.Draw("H SAME")
-            histSig.Draw("H SAME")
-            canvas.SaveAs(f'plots/comb_bkg_{dataset}.pdf')
+                for iBin in range(0, histMassSEPM.GetNbinsX()):
+                    SEPM = histMassSEPM.GetBinContent(iBin+1)
+                    SEPP = histMassSEPP.GetBinContent(iBin+1)
+                    SEMM = histMassSEMM.GetBinContent(iBin+1)
+                    histSigBkg.SetBinContent(iBin+1, SEPM)
+                    histBkg.SetBinContent(iBin+1, 2 * TMath.Sqrt(SEPP * SEMM))
+                    histSig.SetBinContent(iBin+1, SEPM - 2 * TMath.Sqrt(SEPP * SEMM))
+
+                histSigBkg.Rebin(rebins[i_varName])
+                histBkg.Rebin(rebins[i_varName])
+                histSig.Rebin(rebins[i_varName])
+
+                canvas = TCanvas(f'canvas_{dataset}', "", 600, 600)
+                gPad.SetLogy(1)
+                histSigBkg.GetXaxis().SetRangeUser(minRanges[i_varName], maxRanges[i_varName])
+                histSigBkg.Draw("H")
+                histBkg.Draw("H SAME")
+                histSig.Draw("H SAME")
+                gPad.BuildLegend(0.78, 0.75, 0.980, 0.935,"","L")
+                canvas.SaveAs(f'plots/comb_bkg_{dataset}.pdf')
 
 def main():
     parser = argparse.ArgumentParser(description='Arguments to pass')

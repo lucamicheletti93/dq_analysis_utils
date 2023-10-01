@@ -1,7 +1,7 @@
 inputs:
-  data: [AnalysisResults_LHC23zx.root, AnalysisResults_LHC23zy.root]
-  labels: [LHC23zx, LHC23zy]
-  colors: [633, 864]
+  data: [AnalysisResults_LHC23zx.root, AnalysisResults_LHC23zy.root, AnalysisResults_LHC23zz.root, AnalysisResults_LHC23zza.root]
+  labels: [LHC23zx, LHC23zy, LHC23zz, LHC23zza]
+  colors: [633, 864, 417, 616]
   normToColls: false
 
 table_maker:
@@ -14,7 +14,10 @@ table_maker:
 
 table_reader:
   directory: [analysis-same-event-pairing/output]
-  selections: [PairsMuonSEPM_matchedMchMid, PairsMuonSEPP_matchedMchMid, PairsMuonSEMM_matchedMchMid]
+  selections: [
+    PairsMuonSEPM_matchedMchMid, PairsMuonSEPP_matchedMchMid, PairsMuonSEMM_matchedMchMid, 
+    PairsMuonSEPM_muonLowPt10SigmaPDCA, PairsMuonSEPP_muonLowPt10SigmaPDCA, PairsMuonSEMM_muonLowPt10SigmaPDCA
+  ]
   vars: [Mass, Pt, Rapidity, DeltaPtotTracks]
   rebins: [1, 1, 2, 2]
   minRanges: [0, 0, 2.5, -100]
@@ -25,6 +28,9 @@ output:
 
 comb_bkg:
   input: histograms.root
-  datasets: [LHC23zx, LHC23zy]
+  datasets: [LHC23zx, LHC23zy, LHC23zz, LHC23zza]
   selections: [matchedMchMid]
   vars: [Mass]
+  rebins: [3]
+  minRanges: [2]
+  maxRanges: [5]
