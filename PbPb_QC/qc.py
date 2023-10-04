@@ -5,7 +5,8 @@ import numpy as np
 import argparse
 import ROOT
 from ROOT import *
-
+sys.path.append('../../dq_fit_library/utils')
+from plot_library import LoadStyle, SetGraStat, SetGraSyst, SetLegend
 
 def qc(inputCfg):
     #gStyle.SetPalette(ROOT.kRainBow)
@@ -25,7 +26,7 @@ def qc(inputCfg):
     minRanges = inputCfg["table_maker"]["minRanges"]
     maxRanges = inputCfg["table_maker"]["maxRanges"]
 
-    histsTM = [[[[None for _ in range(10)] for _ in range(10)] for _ in range(10)] for _ in range(10)]
+    histsTM = [[[[None for _ in range(len(fInNames)+10)] for _ in range(len(dirNames)+10)] for _ in range(len(selNames)+10)] for _ in range(len(varNames)+10)]
 
     for i_fInName, fInName in enumerate(fInNames):
         fIn = TFile(fInName, "READ")
@@ -43,7 +44,8 @@ def qc(inputCfg):
                     histsTM[i_fInName][i_dirName][i_selName][i_varName].SetLineWidth(2)
                     histsTM[i_fInName][i_dirName][i_selName][i_varName].Rebin(rebins[i_fInName])
                     histsTM[i_fInName][i_dirName][i_selName][i_varName].GetXaxis().SetRangeUser(minRanges[i_varName], maxRanges[i_varName])
-                    if inputCfg["inputs"]["normToColls"]: histsTM[i_fInName][i_dirName][i_selName][i_varName].Scale(1. / colCounter[i_fInName])
+                    if inputCfg["table_maker"]["normToColls"]: histsTM[i_fInName][i_dirName][i_selName][i_varName].Scale(1. / colCounter[i_fInName])
+                    if inputCfg["table_maker"]["normToInt"]: histsTM[i_fInName][i_dirName][i_selName][i_varName].Scale(1. / histsTM[i_fInName][i_dirName][i_selName][i_varName].Integral())
         fIn.Close()
 
     for i_dirName, dirName in enumerate(dirNames):
@@ -59,17 +61,16 @@ def qc(inputCfg):
 
 
     # Table Reader
-    indexMassSEPM = [0, 0, 0, 0]
-    indexMassSEPP = [0, 0, 0, 0]
-    indexMassSEMM = [0, 0, 0, 0]
     dirNames = inputCfg["table_reader"]["directory"]
     selNames = inputCfg["table_reader"]["selections"]
     varNames = inputCfg["table_reader"]["vars"]
     rebins = inputCfg["table_reader"]["rebins"]
     minRanges = inputCfg["table_reader"]["minRanges"]
     maxRanges = inputCfg["table_reader"]["maxRanges"]
-    histsTR = [[[[None for _ in range(10)] for _ in range(10)] for _ in range(10)] for _ in range(10)]
+    
+    histsTR = [[[[None for _ in range(len(fInNames)+10)] for _ in range(len(dirNames)+10)] for _ in range(len(selNames)+10)] for _ in range(len(varNames)+10)]
 
+    print(selNames)
     for i_fInName, fInName in enumerate(fInNames):
         fIn = TFile(fInName, "READ")
         for i_dirName, dirName in enumerate(dirNames):
@@ -84,9 +85,9 @@ def qc(inputCfg):
                     histsTR[i_fInName][i_dirName][i_selName][i_varName].SetLineWidth(2)
                     histsTR[i_fInName][i_dirName][i_selName][i_varName].Rebin(rebins[i_varName])
                     histsTR[i_fInName][i_dirName][i_selName][i_varName].GetXaxis().SetRangeUser(minRanges[i_varName], maxRanges[i_varName])
-                    if inputCfg["inputs"]["normToColls"]: histsTR[i_fInName][i_dirName][i_selName][i_varName].Scale(1. / colCounter[i_fInName])
+                    if inputCfg["table_reader"]["normToColls"]: histsTR[i_fInName][i_dirName][i_selName][i_varName].Scale(1. / colCounter[i_fInName])
+                    if inputCfg["table_reader"]["normToInt"]: histsTR[i_fInName][i_dirName][i_selName][i_varName].Scale(1. / histsTR[i_fInName][i_dirName][i_selName][i_varName].Integral())
         fIn.Close()
-
 
     fOut = TFile(fOutName, "RECREATE")
     for i_dirName, dirName in enumerate(dirNames):
@@ -103,18 +104,23 @@ def qc(inputCfg):
     fOut.Close()
 
 
-def comb_bkg(inputCfg):
-    gStyle.SetOptStat(0)
-    rebins = inputCfg["comb_bkg"]["rebins"]
-    minRanges = inputCfg["comb_bkg"]["minRanges"]
-    maxRanges = inputCfg["comb_bkg"]["maxRanges"]
+def analysis(inputCfg):
+    LoadStyle()
+    letexTitle = ROOT.TLatex()
+    letexTitle.SetTextSize(0.040)
+    letexTitle.SetNDC()
+    letexTitle.SetTextFont(42)
+    
+    rebins = inputCfg["analysis"]["rebins"]
+    minRanges = inputCfg["analysis"]["minRanges"]
+    maxRanges = inputCfg["analysis"]["maxRanges"]
 
-    fInName = inputCfg["comb_bkg"]["input"]
+    fInName = inputCfg["analysis"]["input"]
     fIn = TFile(fInName, "READ")
 
-    for i_dataset, dataset in enumerate(inputCfg["comb_bkg"]["datasets"]):
-        for i_selName, selName in enumerate(inputCfg["comb_bkg"]["selections"]):
-            for i_varName, varName in enumerate(inputCfg["comb_bkg"]["vars"]):
+    for i_dataset, dataset in enumerate(inputCfg["analysis"]["datasets"]):
+        for i_selName, selName in enumerate(inputCfg["analysis"]["selections"]):
+            for i_varName, varName in enumerate(inputCfg["analysis"]["vars"]):
                 histMassSEPM = fIn.Get(f'{dataset}_PairsMuonSEPM_{selName}_{varName}')
                 histMassSEPP = fIn.Get(f'{dataset}_PairsMuonSEPP_{selName}_{varName}')
                 histMassSEMM = fIn.Get(f'{dataset}_PairsMuonSEMM_{selName}_{varName}')
@@ -123,36 +129,94 @@ def comb_bkg(inputCfg):
                 minBin = histMassSEPM.GetBinLowEdge(1)
                 maxBin = histMassSEPM.GetBinLowEdge(nBins+1)
 
-                histSig = TH1F(f'histSig_{dataset}', "Sig", nBins, minBin, maxBin); histSig.SetLineColor(kRed+1); histSig.SetLineWidth(2)
-                histBkg = TH1F(f'histBkg_{dataset}', "Bkg", nBins, minBin, maxBin); histBkg.SetLineColor(kAzure+4); histBkg.SetLineWidth(2)
-                histSigBkg = TH1F(f'histSigBkg_{dataset}', "Sig + Bkg", nBins, minBin, maxBin); histSigBkg.SetLineColor(kBlack); histSigBkg.SetLineWidth(2)
+                histSig = TH1F(f'histSig_{dataset}_{selName}', "", nBins, minBin, maxBin); histSig.SetLineColor(kRed+1); histSig.SetLineWidth(2)
+                histBkg = TH1F(f'histBkg_{dataset}_{selName}', "", nBins, minBin, maxBin); histBkg.SetLineColor(kAzure+4); histBkg.SetLineWidth(2)
+                histSigBkg = TH1F(f'histSigBkg_{dataset}_{selName}', "", nBins, minBin, maxBin); histSigBkg.SetLineColor(kBlack); histSigBkg.SetLineWidth(2); histSigBkg.SetMarkerStyle(20)
 
                 for iBin in range(0, histMassSEPM.GetNbinsX()):
                     SEPM = histMassSEPM.GetBinContent(iBin+1)
                     SEPP = histMassSEPP.GetBinContent(iBin+1)
                     SEMM = histMassSEMM.GetBinContent(iBin+1)
                     histSigBkg.SetBinContent(iBin+1, SEPM)
+                    histSigBkg.SetBinError(iBin+1, TMath.Sqrt(SEPM))
                     histBkg.SetBinContent(iBin+1, 2 * TMath.Sqrt(SEPP * SEMM))
+                    #histBkg.SetBinError(iBin+1, TMath.Sqrt(2 * TMath.Sqrt(SEPP * SEMM))) #WARNING!
                     histSig.SetBinContent(iBin+1, SEPM - 2 * TMath.Sqrt(SEPP * SEMM))
+                    #histSig.SetBinError(iBin+1, 0.2 * (SEPM - 2 * TMath.Sqrt(SEPP * SEMM))) #WARNING!
 
                 histSigBkg.Rebin(rebins[i_varName])
                 histBkg.Rebin(rebins[i_varName])
                 histSig.Rebin(rebins[i_varName])
 
-                canvas = TCanvas(f'canvas_{dataset}', "", 600, 600)
-                gPad.SetLogy(1)
+                if (dataset in inputCfg["analysis"]["datasetsForFit"]) and (selName in inputCfg["analysis"]["selectionsForFit"]):
+                    mJpsi = ROOT.RooRealVar("Dimuon mass", "#it{m}_{#mu#mu} (GeV/#it{c}^{2})", 2.60, 4.00)
+
+                    dataHistSigBkg = ROOT.RooDataHist("dataHistSigBkg", "dataHistSigBkg", [mJpsi], Import=histSigBkg)
+
+                    meanJpsi  = ROOT.RooRealVar("meanJpsi", "meanJpsi", 3.096, 2.9, 3.3)
+                    sigmaJpsi = ROOT.RooRealVar("sigmaJpsi", "sigmaJpsi", 0.095)
+                    gausPdfJpsi = ROOT.RooGaussian("gausPdfJpsi", "Gaus J/psi", mJpsi, meanJpsi, sigmaJpsi)
+
+                    chebyParsJpsi = [ROOT.RooRealVar(f"cheb_coeff_{i}", f"Coeff_{i}", 0.00, -100, 100) for i in range(3)]
+                    chebyPdfJpsi = ROOT.RooChebychev("chebyPdfJpsi", "Cheby for Bkg1", mJpsi, ROOT.RooArgList(*chebyParsJpsi))
+
+                    nSigJpsi  = ROOT.RooRealVar("nSigJpsi", "Jpsi signal", 1e2, 0., 1e4)
+                    nBkgJpsi  = ROOT.RooRealVar("nBkgJpsi", "Jpsi background", 5e3, 0., 1e6)
+                    modelJpsi = ROOT.RooAddPdf("modelJpsi", "sigJpsi + bkgJpsi", ROOT.RooArgList(gausPdfJpsi, chebyPdfJpsi), ROOT.RooArgList(nSigJpsi, nBkgJpsi))
+
+                    fitResultJpsi = modelJpsi.fitTo(dataHistSigBkg, ROOT.RooFit.PrintLevel(3), ROOT.RooFit.Optimize(1), ROOT.RooFit.Hesse(1), ROOT.RooFit.Minos(1), ROOT.RooFit.Strategy(2), ROOT.RooFit.Save(1))
+
+                    mJpsiframe = mJpsi.frame(Title=" ")
+                    dataHistSigBkg.plotOn(mJpsiframe)
+                    modelJpsi.plotOn(mJpsiframe)
+                    modelJpsi.plotOn(mJpsiframe, Name={"Sig"}, Components={gausPdfJpsi}, LineStyle="--", LineColor=ROOT.kRed+1)
+                    modelJpsi.plotOn(mJpsiframe, Name={"Bkg"}, Components={chebyPdfJpsi}, LineStyle="--", LineColor=ROOT.kAzure+4)
+
+                    canvasFit = ROOT.TCanvas("canvasFit", f'canvasFit_{dataset}_{selName}', 600, 600)
+                    canvasFit.SetTickx(1)
+                    canvasFit.SetTicky(1)
+
+                    mJpsiframe.GetYaxis().SetTitleOffset(1.4)
+                    mJpsiframe.Draw()
+
+                    legendFit = ROOT.TLegend(0.65, 0.55, 0.85, 0.65)
+                    SetLegend(legendFit)
+                    legendFit.AddEntry(mJpsiframe.findObject("Sig"), "J/#psi", "L")
+                    legendFit.AddEntry(mJpsiframe.findObject("Bkg"), "Bkg", "L")
+                    legendFit.Draw()
+
+                    letexTitle.DrawLatex(0.35, 0.88, "ALICE, Pb#minusPb, #sqrt{#it{s}_{NN}} = 5.36 TeV")
+                    letexTitle.DrawLatex(0.35, 0.81, "Inclusive J/#psi #rightarrow #mu^{+}#mu^{-}, 2.5 < #it{y} < 4")
+                    letexTitle.DrawLatex(0.55, 0.74, "#it{N}_{J/#psi} = %1.0f #pm %1.0f" % (nSigJpsi.getVal(), nSigJpsi.getError()))
+                    letexTitle.DrawLatex(0.55, 0.68, "#it{#mu}_{J/#psi} = %4.3f #pm %4.3f" % (meanJpsi.getVal(), meanJpsi.getError()))
+                    canvasFit.SaveAs(f'plots/analysis/fit_{dataset}_{selName}.pdf')
+
+                gStyle.SetOptStat(0)
+                canvasCombBkg = ROOT.TCanvas("canvasCombBkg", f'canvasCombBkg_{dataset}_{selName}', 600, 600)
                 histSigBkg.GetXaxis().SetRangeUser(minRanges[i_varName], maxRanges[i_varName])
-                histSigBkg.Draw("H")
+                histSigBkg.GetXaxis().SetTitle("#it{m}_{#mu#mu} (GeV/#it{c}^{2})")
+                histSigBkg.SetTitle("")
+                histSigBkg.Draw("EP")
                 histBkg.Draw("H SAME")
                 histSig.Draw("H SAME")
-                gPad.BuildLegend(0.78, 0.75, 0.980, 0.935,"","L")
-                canvas.SaveAs(f'plots/comb_bkg_{dataset}.pdf')
+
+                legendFit = ROOT.TLegend(0.60, 0.55, 0.85, 0.75)
+                SetLegend(legendFit)
+                legendFit.AddEntry(histSigBkg, "Data", "EP")
+                legendFit.AddEntry(histSig, "Sig", "L")
+                legendFit.AddEntry(histBkg, "LS Bkg", "L")
+                legendFit.Draw("SAME")
+
+                letexTitle.DrawLatex(0.35, 0.88, "ALICE, Pb#minusPb, #sqrt{#it{s}_{NN}} = 5.36 TeV")
+                letexTitle.DrawLatex(0.35, 0.81, "Inclusive J/#psi #rightarrow #mu^{+}#mu^{-}, 2.5 < #it{y} < 4")
+                          
+                canvasCombBkg.SaveAs(f'plots/analysis/combBkg_{dataset}_{selName}.pdf')
 
 def main():
     parser = argparse.ArgumentParser(description='Arguments to pass')
     parser.add_argument('cfgFileName', metavar='text', default='config.yml', help='config file name')
     parser.add_argument("--do_qc", help="Do simple QC", action="store_true")
-    parser.add_argument("--do_comb_bkg", help="Do simple QC", action="store_true")
+    parser.add_argument("--do_analysis", help="Do simple anaysis", action="store_true")
     args = parser.parse_args()
 
     print('Loading task configuration: ...', end='\r')
@@ -163,7 +227,7 @@ def main():
     if args.do_qc:
         qc(inputCfg)
 
-    if args.do_comb_bkg:
-        comb_bkg(inputCfg)
+    if args.do_analysis:
+        analysis(inputCfg)
 
 main()

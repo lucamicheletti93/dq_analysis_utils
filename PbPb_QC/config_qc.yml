@@ -1,36 +1,45 @@
 inputs:
-  data: [AnalysisResults_LHC23zx.root, AnalysisResults_LHC23zy.root, AnalysisResults_LHC23zz.root, AnalysisResults_LHC23zza.root]
-  labels: [LHC23zx, LHC23zy, LHC23zz, LHC23zza]
-  colors: [633, 864, 417, 616]
-  normToColls: false
+  data: [AnalysisResults_LHC23zx.root, AnalysisResults_LHC23zy.root, AnalysisResults_LHC23zz.root, AnalysisResults_LHC23zza.root, AnalysisResults_LHC23zzb.root, AnalysisResults_LHC23zzc.root]
+  labels: [LHC23zx, LHC23zy, LHC23zz, LHC23zza, LHC23zzb, LHC23zzc]
+  colors: [633, 864, 417, 616, 807, 820]
 
 table_maker:
   directory: [table-maker/output]
-  selections: [Muons_BeforeCuts, Muons_muonQualityCuts]
+  selections: [Muons_muonQualityCuts]
   vars: [Pt, Eta, Phi, pdca, Chi2MCHMID, RAtAbsorberEnd]
   rebins: [2, 2, 2, 2, 1, 2]
   minRanges: [0, -5, -4, 0, 0, 0]
   maxRanges: [10, -2, 4, 1000, 40, 100]
+  normToColls: false
+  normToInt: true
 
 table_reader:
   directory: [analysis-same-event-pairing/output]
   selections: [
     PairsMuonSEPM_matchedMchMid, PairsMuonSEPP_matchedMchMid, PairsMuonSEMM_matchedMchMid, 
-    PairsMuonSEPM_muonLowPt10SigmaPDCA, PairsMuonSEPP_muonLowPt10SigmaPDCA, PairsMuonSEMM_muonLowPt10SigmaPDCA
+    PairsMuonSEPM_muonLowPt210SigmaPDCA, PairsMuonSEPP_muonLowPt210SigmaPDCA, PairsMuonSEMM_muonLowPt210SigmaPDCA,
+    PairsMuonSEPM_muonLowPt510SigmaPDCA, PairsMuonSEPP_muonLowPt510SigmaPDCA, PairsMuonSEMM_muonLowPt510SigmaPDCA
   ]
   vars: [Mass, Pt, Rapidity, DeltaPtotTracks]
   rebins: [1, 1, 2, 2]
   minRanges: [0, 0, 2.5, -100]
   maxRanges: [15, 10, 4, 100]
+  normToColls: false
+  normToInt: false
 
 output:
   name: histograms.root
 
-comb_bkg:
+analysis:
   input: histograms.root
   datasets: [LHC23zx, LHC23zy, LHC23zz, LHC23zza]
-  selections: [matchedMchMid]
+  selections: [matchedMchMid, muonLowPt210SigmaPDCA, muonLowPt510SigmaPDCA]
   vars: [Mass]
   rebins: [3]
-  minRanges: [2]
+  minRanges: [2.5]
   maxRanges: [5]
+  datasetsForFit: [LHC23zy]
+  selectionsForFit: [matchedMchMid, muonLowPt210SigmaPDCA, muonLowPt510SigmaPDCA]
+  minFitRange: [2.6]
+  maxFitRange: [4]
+  varLabels: ["#it{M}_{#mu#mu} GeV/#it{c}"]
