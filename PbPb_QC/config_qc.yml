@@ -1,10 +1,10 @@
 inputs:
   data: [AnalysisResults_LHC23zx.root, AnalysisResults_LHC23zy.root, AnalysisResults_LHC23zz.root, AnalysisResults_LHC23zza.root, AnalysisResults_LHC23zzb.root, AnalysisResults_LHC23zzc.root]
   labels: [LHC23zx, LHC23zy, LHC23zz, LHC23zza, LHC23zzb, LHC23zzc]
-  colors: [633, 864, 417, 616, 807, 820]
+  colors: [633, 864, 417, 616, 807, 923]
 
 table_maker:
-  directory: [table-maker/output]
+  directory: table-maker/output
   selections: [Muons_muonQualityCuts]
   vars: [Pt, Eta, Phi, pdca, Chi2MCHMID, RAtAbsorberEnd]
   rebins: [2, 2, 2, 2, 1, 2]
@@ -14,7 +14,7 @@ table_maker:
   normToInt: true
 
 table_reader:
-  directory: [analysis-same-event-pairing/output]
+  directory: analysis-same-event-pairing/output
   selections: [
     PairsMuonSEPM_matchedMchMid, PairsMuonSEPP_matchedMchMid, PairsMuonSEMM_matchedMchMid, 
     PairsMuonSEPM_muonLowPt210SigmaPDCA, PairsMuonSEPP_muonLowPt210SigmaPDCA, PairsMuonSEMM_muonLowPt210SigmaPDCA,
@@ -25,7 +25,7 @@ table_reader:
   minRanges: [0, 0, 2.5, -100]
   maxRanges: [15, 10, 4, 100]
   normToColls: false
-  normToInt: false
+  normToInt: true
 
 output:
   name: histograms.root

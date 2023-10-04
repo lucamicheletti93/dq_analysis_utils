@@ -19,88 +19,84 @@ def qc(inputCfg):
     fOutName = inputCfg["output"]["name"]
 
     # Table Maker
-    dirNames = inputCfg["table_maker"]["directory"]
+    dirName = inputCfg["table_maker"]["directory"]
     selNames = inputCfg["table_maker"]["selections"]
     varNames = inputCfg["table_maker"]["vars"]
     rebins = inputCfg["table_maker"]["rebins"]
     minRanges = inputCfg["table_maker"]["minRanges"]
     maxRanges = inputCfg["table_maker"]["maxRanges"]
 
-    histsTM = [[[[None for _ in range(len(fInNames)+10)] for _ in range(len(dirNames)+10)] for _ in range(len(selNames)+10)] for _ in range(len(varNames)+10)]
+    histsTM = [[[None for _ in range(len(varNames))] for _ in range(len(selNames))] for _ in range(len(fInNames))]
 
     for i_fInName, fInName in enumerate(fInNames):
         fIn = TFile(fInName, "READ")
         histEvCount = fIn.Get("event-selection-task/hColCounterAcc")
         colCounter.append(histEvCount.GetBinContent(1))
         print(f'N collision accepted = {histEvCount.GetBinContent(1)}')
-        for i_dirName, dirName in enumerate(dirNames):
-            hlistIn = fIn.Get(dirName)
-            for i_selName, selName in enumerate(selNames):
-                listIn = hlistIn.FindObject(selName)
-                for i_varName, varName in enumerate(varNames):
-                    histsTM[i_fInName][i_dirName][i_selName][i_varName] = listIn.FindObject(varName)
-                    histsTM[i_fInName][i_dirName][i_selName][i_varName].SetTitle(labels[i_fInName])
-                    histsTM[i_fInName][i_dirName][i_selName][i_varName].SetLineColor(colors[i_fInName])
-                    histsTM[i_fInName][i_dirName][i_selName][i_varName].SetLineWidth(2)
-                    histsTM[i_fInName][i_dirName][i_selName][i_varName].Rebin(rebins[i_fInName])
-                    histsTM[i_fInName][i_dirName][i_selName][i_varName].GetXaxis().SetRangeUser(minRanges[i_varName], maxRanges[i_varName])
-                    if inputCfg["table_maker"]["normToColls"]: histsTM[i_fInName][i_dirName][i_selName][i_varName].Scale(1. / colCounter[i_fInName])
-                    if inputCfg["table_maker"]["normToInt"]: histsTM[i_fInName][i_dirName][i_selName][i_varName].Scale(1. / histsTM[i_fInName][i_dirName][i_selName][i_varName].Integral())
+        hlistIn = fIn.Get(dirName)
+        for i_selName, selName in enumerate(selNames):
+            listIn = hlistIn.FindObject(selName)
+            for i_varName, varName in enumerate(varNames):
+                histsTM[i_fInName][i_selName][i_varName] = listIn.FindObject(varName)
+                histsTM[i_fInName][i_selName][i_varName].SetTitle(labels[i_fInName])
+                histsTM[i_fInName][i_selName][i_varName].SetLineColor(colors[i_fInName])
+                histsTM[i_fInName][i_selName][i_varName].SetLineWidth(2)
+                histsTM[i_fInName][i_selName][i_varName].Rebin(rebins[i_varName])
+                histsTM[i_fInName][i_selName][i_varName].GetXaxis().SetRangeUser(minRanges[i_varName], maxRanges[i_varName])
+                if inputCfg["table_maker"]["normToColls"]: histsTM[i_fInName][i_selName][i_varName].Scale(1. / colCounter[i_fInName])
+                if inputCfg["table_maker"]["normToInt"]: histsTM[i_fInName][i_selName][i_varName].Scale(1. / histsTM[i_fInName][i_selName][i_varName].Integral())
         fIn.Close()
 
-    for i_dirName, dirName in enumerate(dirNames):
-        for i_selName, selName in enumerate(selNames):
-            for i_varName, varName in enumerate(varNames):
-                canvas = TCanvas(f'canvas_{selName}_{varName}', f'canvas_{selName}_{varName}', 600, 600)
-                gPad.SetLogy(1)
-                for i_fInName, fInName in enumerate(fInNames):
-                    histsTM[i_fInName][i_dirName][i_selName][i_varName].Draw("H SAME")
-                gPad.BuildLegend(0.78, 0.75, 0.980, 0.935,"","L")
-                canvas.Update()
-                canvas.SaveAs(f'plots/{selName}_{varName}.pdf')
+    for i_selName, selName in enumerate(selNames):
+        for i_varName, varName in enumerate(varNames):
+            canvas = TCanvas(f'canvas_{selName}_{varName}', f'canvas_{selName}_{varName}', 600, 600)
+            gPad.SetLogy(1)
+            for i_fInName, fInName in enumerate(fInNames):
+                histsTM[i_fInName][i_selName][i_varName].Draw("H SAME")
+            gPad.BuildLegend(0.78, 0.75, 0.980, 0.935,"","L")
+            canvas.Update()
+            canvas.SaveAs(f'plots/{selName}_{varName}.pdf')
 
 
     # Table Reader
-    dirNames = inputCfg["table_reader"]["directory"]
+    dirName = inputCfg["table_reader"]["directory"]
     selNames = inputCfg["table_reader"]["selections"]
     varNames = inputCfg["table_reader"]["vars"]
     rebins = inputCfg["table_reader"]["rebins"]
     minRanges = inputCfg["table_reader"]["minRanges"]
     maxRanges = inputCfg["table_reader"]["maxRanges"]
-    
-    histsTR = [[[[None for _ in range(len(fInNames)+10)] for _ in range(len(dirNames)+10)] for _ in range(len(selNames)+10)] for _ in range(len(varNames)+10)]
+
+    histsTR = [[[None for _ in range(len(varNames))] for _ in range(len(selNames))] for _ in range(len(fInNames))]
 
     print(selNames)
     for i_fInName, fInName in enumerate(fInNames):
         fIn = TFile(fInName, "READ")
-        for i_dirName, dirName in enumerate(dirNames):
-            hlistIn = fIn.Get(dirName)
-            for i_selName, selName in enumerate(selNames):
-                listIn = hlistIn.FindObject(selName)
-                for i_varName, varName in enumerate(varNames):
-                    histsTR[i_fInName][i_dirName][i_selName][i_varName] = listIn.FindObject(varName)
-                    histsTR[i_fInName][i_dirName][i_selName][i_varName].SetTitle(labels[i_fInName])
-                    histsTR[i_fInName][i_dirName][i_selName][i_varName].SetName(f'{labels[i_fInName]}_{selName}_{varName}')
-                    histsTR[i_fInName][i_dirName][i_selName][i_varName].SetLineColor(colors[i_fInName])
-                    histsTR[i_fInName][i_dirName][i_selName][i_varName].SetLineWidth(2)
-                    histsTR[i_fInName][i_dirName][i_selName][i_varName].Rebin(rebins[i_varName])
-                    histsTR[i_fInName][i_dirName][i_selName][i_varName].GetXaxis().SetRangeUser(minRanges[i_varName], maxRanges[i_varName])
-                    if inputCfg["table_reader"]["normToColls"]: histsTR[i_fInName][i_dirName][i_selName][i_varName].Scale(1. / colCounter[i_fInName])
-                    if inputCfg["table_reader"]["normToInt"]: histsTR[i_fInName][i_dirName][i_selName][i_varName].Scale(1. / histsTR[i_fInName][i_dirName][i_selName][i_varName].Integral())
+        hlistIn = fIn.Get(dirName)
+        for i_selName, selName in enumerate(selNames):
+            listIn = hlistIn.FindObject(selName)
+            for i_varName, varName in enumerate(varNames):
+                histsTR[i_fInName][i_selName][i_varName] = listIn.FindObject(varName)
+                histsTR[i_fInName][i_selName][i_varName].SetTitle(labels[i_fInName])
+                histsTR[i_fInName][i_selName][i_varName].SetName(f'{labels[i_fInName]}_{selName}_{varName}')
+                histsTR[i_fInName][i_selName][i_varName].SetLineColor(colors[i_fInName])
+                histsTR[i_fInName][i_selName][i_varName].SetLineWidth(2)
+                histsTR[i_fInName][i_selName][i_varName].Rebin(rebins[i_varName])
+                histsTR[i_fInName][i_selName][i_varName].GetXaxis().SetRangeUser(minRanges[i_varName], maxRanges[i_varName])
+                if inputCfg["table_reader"]["normToColls"]: histsTR[i_fInName][i_selName][i_varName].Scale(1. / colCounter[i_fInName])
+                if inputCfg["table_reader"]["normToInt"]: histsTR[i_fInName][i_selName][i_varName].Scale(1. / histsTR[i_fInName][i_selName][i_varName].Integral())
         fIn.Close()
 
     fOut = TFile(fOutName, "RECREATE")
-    for i_dirName, dirName in enumerate(dirNames):
-        for i_selName, selName in enumerate(selNames):
-            for i_varName, varName in enumerate(varNames):
-                canvas = TCanvas(f'canvas_{selName}_{varName}', f'canvas_{selName}_{varName}', 600, 600)
-                gPad.SetLogy(1)
-                for i_fInName, fInName in enumerate(fInNames):
-                    histsTR[i_fInName][i_dirName][i_selName][i_varName].Draw("H SAME")
-                    histsTR[i_fInName][i_dirName][i_selName][i_varName].Write()
-                gPad.BuildLegend(0.78, 0.75, 0.980, 0.935,"","L")
-                canvas.Update()
-                canvas.SaveAs(f'plots/{selName}_{varName}.pdf')
+    for i_selName, selName in enumerate(selNames):
+        for i_varName, varName in enumerate(varNames):
+            canvas = TCanvas(f'canvas_{selName}_{varName}', f'canvas_{selName}_{varName}', 600, 600)
+            gPad.SetLogy(1)
+            for i_fInName, fInName in enumerate(fInNames):
+                histsTR[i_fInName][i_selName][i_varName].Draw("H SAME")
+                histsTR[i_fInName][i_selName][i_varName].Write()
+            gPad.BuildLegend(0.78, 0.75, 0.980, 0.935,"","L")
+            canvas.Update()
+            canvas.SaveAs(f'plots/{selName}_{varName}.pdf')
     fOut.Close()
 
 
