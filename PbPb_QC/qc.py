@@ -65,10 +65,11 @@ def qc(inputCfg):
     rebins = inputCfg["table_reader"]["rebins"]
     minRanges = inputCfg["table_reader"]["minRanges"]
     maxRanges = inputCfg["table_reader"]["maxRanges"]
+    var2dNames = inputCfg["table_reader"]["vars2D"]
 
     histsTR = [[[None for _ in range(len(varNames))] for _ in range(len(selNames))] for _ in range(len(fInNames))]
+    hists2dTR = [[[None for _ in range(len(var2dNames))] for _ in range(len(selNames))] for _ in range(len(fInNames))]
 
-    print(selNames)
     for i_fInName, fInName in enumerate(fInNames):
         fIn = TFile(fInName, "READ")
         hlistIn = fIn.Get(dirName)
@@ -84,6 +85,11 @@ def qc(inputCfg):
                 histsTR[i_fInName][i_selName][i_varName].GetXaxis().SetRangeUser(minRanges[i_varName], maxRanges[i_varName])
                 if inputCfg["table_reader"]["normToColls"]: histsTR[i_fInName][i_selName][i_varName].Scale(1. / colCounter[i_fInName])
                 if inputCfg["table_reader"]["normToInt"]: histsTR[i_fInName][i_selName][i_varName].Scale(1. / histsTR[i_fInName][i_selName][i_varName].Integral())
+            
+            for i_var2dName, var2dName in enumerate(var2dNames):
+                hists2dTR[i_fInName][i_selName][i_var2dName] = listIn.FindObject(var2dName)
+                if inputCfg["table_reader"]["normToColls"]: histsTR[i_fInName][i_selName][i_var2dName].Scale(1. / colCounter[i_fInName])
+                if inputCfg["table_reader"]["normToInt"]: histsTR[i_fInName][i_selName][i_var2dName].Scale(1. / histsTR[i_fInName][i_selName][i_var2dName].Integral())
         fIn.Close()
 
     fOut = TFile(fOutName, "RECREATE")
@@ -97,6 +103,27 @@ def qc(inputCfg):
             gPad.BuildLegend(0.78, 0.75, 0.980, 0.935,"","L")
             canvas.Update()
             canvas.SaveAs(f'plots/{selName}_{varName}.pdf')
+
+        for i_fInName, fInName in enumerate(fInNames):
+            for i_var2dName, var2dName in enumerate(var2dNames):
+                minCuts = inputCfg["table_reader"]["minCuts"]
+                maxCuts = inputCfg["table_reader"]["maxCuts"]
+                for i_cut in range(0, len(minCuts[i_var2dName])):
+                    hist2d = hists2dTR[i_fInName][i_selName][i_var2dName]
+                    print(hist2d.GetNbinsX(), hist2d.GetNbinsY())
+                    binWidth = hist2d.GetYaxis().GetBinWidth(1)
+                    minCut = minCuts[i_var2dName][i_cut]
+                    maxCut = maxCuts[i_var2dName][i_cut]
+                    if i_cut == 0:
+                        minBinCut = hist2d.GetYaxis().FindBin(minCut)
+                        maxBinCut = hist2d.GetYaxis().FindBin(maxCut)
+                    else:
+                        minBinCut = hist2d.GetYaxis().FindBin(minCut+binWidth)
+                        maxBinCut = hist2d.GetYaxis().FindBin(maxCut)
+                    print(minCut, maxCut)
+                    print(minBinCut, maxBinCut)
+                    histProj = hist2d.ProjectionX(f'{labels[i_fInName]}_projMass_{var2dName}_{selName}_{minBinCut}_{maxBinCut}', minBinCut, maxBinCut)
+                    histProj.Write()
     fOut.Close()
 
 
@@ -150,7 +177,7 @@ def analysis(inputCfg):
                     dataHistSigBkg = ROOT.RooDataHist("dataHistSigBkg", "dataHistSigBkg", [mJpsi], Import=histSigBkg)
 
                     meanJpsi  = ROOT.RooRealVar("meanJpsi", "meanJpsi", 3.096, 2.9, 3.3)
-                    sigmaJpsi = ROOT.RooRealVar("sigmaJpsi", "sigmaJpsi", 0.095)
+                    sigmaJpsi = ROOT.RooRealVar("sigmaJpsi", "sigmaJpsi", 0.085)
                     gausPdfJpsi = ROOT.RooGaussian("gausPdfJpsi", "Gaus J/psi", mJpsi, meanJpsi, sigmaJpsi)
 
                     chebyParsJpsi = [ROOT.RooRealVar(f"cheb_coeff_{i}", f"Coeff_{i}", 0.00, -100, 100) for i in range(3)]
