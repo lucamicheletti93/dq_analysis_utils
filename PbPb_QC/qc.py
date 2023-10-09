@@ -25,14 +25,20 @@ def qc(inputCfg):
     rebins = inputCfg["table_maker"]["rebins"]
     minRanges = inputCfg["table_maker"]["minRanges"]
     maxRanges = inputCfg["table_maker"]["maxRanges"]
+    outputDirName = inputCfg["table_maker"]["outputDir"]
+
+    if os.path.exists(outputDirName):
+        print(f'{outputDirName} already exists!')
+    else:
+        os.mkdir(outputDirName)
 
     histsTM = [[[None for _ in range(len(varNames))] for _ in range(len(selNames))] for _ in range(len(fInNames))]
 
     for i_fInName, fInName in enumerate(fInNames):
         fIn = TFile(fInName, "READ")
         histEvCount = fIn.Get("event-selection-task/hColCounterAcc")
-        colCounter.append(histEvCount.GetBinContent(1))
-        print(f'N collision accepted = {histEvCount.GetBinContent(1)}')
+        colCounter.append(histEvCount.GetEntries())
+        print(f'{labels[i_fInName]} - N collision accepted = {histEvCount.GetEntries()}')
         hlistIn = fIn.Get(dirName)
         for i_selName, selName in enumerate(selNames):
             listIn = hlistIn.FindObject(selName)
@@ -55,7 +61,54 @@ def qc(inputCfg):
                 histsTM[i_fInName][i_selName][i_varName].Draw("H SAME")
             gPad.BuildLegend(0.78, 0.75, 0.980, 0.935,"","L")
             canvas.Update()
-            canvas.SaveAs(f'plots/{selName}_{varName}.pdf')
+            canvas.SaveAs(f'{outputDirName}/{selName}_{varName}.pdf')
+
+
+    # Muon Selection
+    dirName = inputCfg["muon_selection"]["directory"]
+    selNames = inputCfg["muon_selection"]["selections"]
+    varNames = inputCfg["muon_selection"]["vars"]
+    rebins = inputCfg["muon_selection"]["rebins"]
+    minRanges = inputCfg["muon_selection"]["minRanges"]
+    maxRanges = inputCfg["muon_selection"]["maxRanges"]
+    outputDirName = inputCfg["muon_selection"]["outputDir"]
+
+    if os.path.exists(outputDirName):
+        print(f'{outputDirName} already exists!')
+    else:
+        os.mkdir(outputDirName)
+
+    histsMS = [[[None for _ in range(len(varNames))] for _ in range(len(selNames))] for _ in range(len(fInNames))]
+
+    for i_fInName, fInName in enumerate(fInNames):
+        fIn = TFile(fInName, "READ")
+        histEvCount = fIn.Get("event-selection-task/hColCounterAcc")
+        colCounter.append(histEvCount.GetEntries())
+        print(f'{labels[i_fInName]} - N collision accepted = {histEvCount.GetEntries()}')
+        hlistIn = fIn.Get(dirName)
+        for i_selName, selName in enumerate(selNames):
+            listIn = hlistIn.FindObject(selName)
+            for i_varName, varName in enumerate(varNames):
+                histsMS[i_fInName][i_selName][i_varName] = listIn.FindObject(varName)
+                histsMS[i_fInName][i_selName][i_varName].SetTitle(labels[i_fInName])
+                histsMS[i_fInName][i_selName][i_varName].SetLineColor(colors[i_fInName])
+                histsMS[i_fInName][i_selName][i_varName].SetLineWidth(2)
+                histsMS[i_fInName][i_selName][i_varName].Rebin(rebins[i_varName])
+                histsMS[i_fInName][i_selName][i_varName].GetXaxis().SetRangeUser(minRanges[i_varName], maxRanges[i_varName])
+                if inputCfg["muon_selection"]["normToColls"]: histsMS[i_fInName][i_selName][i_varName].Scale(1. / colCounter[i_fInName])
+                if inputCfg["muon_selection"]["normToInt"]: histsMS[i_fInName][i_selName][i_varName].Scale(1. / histsMS[i_fInName][i_selName][i_varName].Integral())
+        fIn.Close()
+
+    for i_selName, selName in enumerate(selNames):
+        for i_varName, varName in enumerate(varNames):
+            canvas = TCanvas(f'canvas_{selName}_{varName}', f'canvas_{selName}_{varName}', 600, 600)
+            gPad.SetLogy(1)
+            for i_fInName, fInName in enumerate(fInNames):
+                histsMS[i_fInName][i_selName][i_varName].Draw("H SAME")
+            gPad.BuildLegend(0.78, 0.75, 0.980, 0.935,"","L")
+            canvas.Update()
+            canvas.SaveAs(f'{outputDirName}/{selName}_{varName}.pdf')
+
 
 
     # Table Reader
@@ -66,6 +119,12 @@ def qc(inputCfg):
     minRanges = inputCfg["table_reader"]["minRanges"]
     maxRanges = inputCfg["table_reader"]["maxRanges"]
     var2dNames = inputCfg["table_reader"]["vars2D"]
+    outputDirName = inputCfg["table_reader"]["outputDir"]
+
+    if os.path.exists(outputDirName):
+        print(f'{outputDirName} already exists!')
+    else:
+        os.mkdir(outputDirName)
 
     histsTR = [[[None for _ in range(len(varNames))] for _ in range(len(selNames))] for _ in range(len(fInNames))]
     hists2dTR = [[[None for _ in range(len(var2dNames))] for _ in range(len(selNames))] for _ in range(len(fInNames))]
@@ -102,7 +161,7 @@ def qc(inputCfg):
                 histsTR[i_fInName][i_selName][i_varName].Write()
             gPad.BuildLegend(0.78, 0.75, 0.980, 0.935,"","L")
             canvas.Update()
-            canvas.SaveAs(f'plots/{selName}_{varName}.pdf')
+            canvas.SaveAs(f'{outputDirName}/{selName}_{varName}.pdf')
 
         for i_fInName, fInName in enumerate(fInNames):
             for i_var2dName, var2dName in enumerate(var2dNames):
@@ -110,7 +169,6 @@ def qc(inputCfg):
                 maxCuts = inputCfg["table_reader"]["maxCuts"]
                 for i_cut in range(0, len(minCuts[i_var2dName])):
                     hist2d = hists2dTR[i_fInName][i_selName][i_var2dName]
-                    print(hist2d.GetNbinsX(), hist2d.GetNbinsY())
                     binWidth = hist2d.GetYaxis().GetBinWidth(1)
                     minCut = minCuts[i_var2dName][i_cut]
                     maxCut = maxCuts[i_var2dName][i_cut]
@@ -120,8 +178,6 @@ def qc(inputCfg):
                     else:
                         minBinCut = hist2d.GetYaxis().FindBin(minCut+binWidth)
                         maxBinCut = hist2d.GetYaxis().FindBin(maxCut)
-                    print(minCut, maxCut)
-                    print(minBinCut, maxBinCut)
                     histProj = hist2d.ProjectionX(f'{labels[i_fInName]}_projMass_{var2dName}_{selName}_{minBinCut}_{maxBinCut}', minBinCut, maxBinCut)
                     histProj.Write()
     fOut.Close()
@@ -177,13 +233,13 @@ def analysis(inputCfg):
                     dataHistSigBkg = ROOT.RooDataHist("dataHistSigBkg", "dataHistSigBkg", [mJpsi], Import=histSigBkg)
 
                     meanJpsi  = ROOT.RooRealVar("meanJpsi", "meanJpsi", 3.096, 2.9, 3.3)
-                    sigmaJpsi = ROOT.RooRealVar("sigmaJpsi", "sigmaJpsi", 0.085)
+                    sigmaJpsi = ROOT.RooRealVar("sigmaJpsi", "sigmaJpsi", 0.095)
                     gausPdfJpsi = ROOT.RooGaussian("gausPdfJpsi", "Gaus J/psi", mJpsi, meanJpsi, sigmaJpsi)
 
                     chebyParsJpsi = [ROOT.RooRealVar(f"cheb_coeff_{i}", f"Coeff_{i}", 0.00, -100, 100) for i in range(3)]
                     chebyPdfJpsi = ROOT.RooChebychev("chebyPdfJpsi", "Cheby for Bkg1", mJpsi, ROOT.RooArgList(*chebyParsJpsi))
 
-                    nSigJpsi  = ROOT.RooRealVar("nSigJpsi", "Jpsi signal", 1e2, 0., 1e4)
+                    nSigJpsi  = ROOT.RooRealVar("nSigJpsi", "Jpsi signal", 1e2, 0., 1e5)
                     nBkgJpsi  = ROOT.RooRealVar("nBkgJpsi", "Jpsi background", 5e3, 0., 1e6)
                     modelJpsi = ROOT.RooAddPdf("modelJpsi", "sigJpsi + bkgJpsi", ROOT.RooArgList(gausPdfJpsi, chebyPdfJpsi), ROOT.RooArgList(nSigJpsi, nBkgJpsi))
 
