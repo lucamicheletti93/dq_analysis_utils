@@ -1,7 +1,19 @@
 inputs:
-  data: [AnalysisResults_LHC23zx.root, AnalysisResults_LHC23zy.root, AnalysisResults_LHC23zz.root, AnalysisResults_LHC23zza.root, AnalysisResults_LHC23zzg.root, AnalysisResults_LHC23_full.root]
-  labels: [LHC23zx, LHC23zy, LHC23zz, LHC23zza, LHC23zzg, LHC23_full]
-  colors: [633, 864, 417, 616, 923, 880]
+  histos: [
+    #data/AnalysisResults_LHC23zx.root, 
+    #data/AnalysisResults_LHC23zy.root, 
+    #data/AnalysisResults_LHC23zz.root, 
+    #data/AnalysisResults_LHC23zza.root, 
+    data/AnalysisResults_LHC23zzg.root, 
+    data/AnalysisResults_LHC23zzh.root, 
+    data/AnalysisResults_LHC23zzi.root, 
+    data/AnalysisResults_LHC23zzk.root, 
+    #data/AnalysisResults_LHC23_full.root
+  ]
+  #labels: [LHC23zx, LHC23zy, LHC23zz, LHC23zza, LHC23zzg, LHC23_full]
+  #colors: [633, 864, 417, 616, 923, 880]
+  labels: [LHC23zzg, LHC23zzh, LHC23zzi, LHC23zzk]
+  colors: [633, 864, 417, 616]
 
 table_maker:
   directory: table-maker/output
@@ -18,7 +30,7 @@ muon_selection:
   directory: analysis-muon-selection/output
   selections: [TrackMuon_matchedMchMid, TrackMuon_muonLowPt10SigmaPDCA, TrackMuon_muonLowPt210SigmaPDCA, TrackMuon_muonLowPt510SigmaPDCA]
   vars: [Pt, Eta, Phi]
-  rebins: [2, 2, 2, 2, 1, 2]
+  rebins: [10, 2, 2, 2, 1, 2]
   minRanges: [0, -5, -4, 0, 0, 0]
   maxRanges: [10, -2, 4, 1000, 40, 100]
   normToColls: false
@@ -44,10 +56,10 @@ table_reader:
   outputDir: plots/table_reader
 
 output:
-  name: histograms.root
+  name: data/histograms_muon_tracks.root
 
 analysis:
-  input: histograms.root
+  input: data/histograms_muon_tracks.root
   datasets: [LHC23zy, LHC23zz, LHC23_full, LHC23zzg]
   selections: [matchedMchMid, muonLowPt210SigmaPDCA, muonLowPt510SigmaPDCA]
   vars: [Mass]

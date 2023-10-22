@@ -1,0 +1,91 @@
+inputs:
+  trees: [
+    #/Users/lucamicheletti/cernbox/QM2023_DQ_performance/LHC22o/528379/001/AO2D_reduced.root
+    /Users/lucamicheletti/cernbox/JPSI/Run3/2023/pp/AO2D_LHC23zs.root
+  ]
+  histos: [
+    #/Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zx/AnalysisResults.root,
+    #/Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zy/AnalysisResults.root,
+    #/Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zz/AnalysisResults.root,
+    #/Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zza/AnalysisResults.root,
+    #/Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zzb/AnalysisResults.root,
+    #/Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zze/AnalysisResults.root,
+    #/Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zzf/AnalysisResults.root,
+    #/Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zzg/AnalysisResults.root,
+    /Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zx/AnalysisResults_LHC23zx.root,
+    /Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zy/AnalysisResults_LHC23zy.root,
+    /Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zz/AnalysisResults_LHC23zz.root,
+    /Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zza/AnalysisResults_LHC23zza.root,
+    /Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zzb/AnalysisResults_LHC23zzb.root,
+    /Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zze/AnalysisResults_LHC23zze.root,
+    /Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zzf/AnalysisResults_LHC23zzf.root,
+    /Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zzg/AnalysisResults_LHC23zzg.root,
+  ]
+  labels: [LHC223zs]
+  colors: [633, 864, 417, 616, 923, 880, 432, 807]
+
+table_maker:
+  directory: table-maker/output
+  selections: [Muons_matchedQualityCuts]
+  vars: [Pt, Eta, Phi, pdca, Chi2MCHMID, Chi2MCHMFT, RAtAbsorberEnd]
+  rebins: [2, 2, 2, 2, 1, 1, 2]
+  minRanges: [0, -5, -4, 0, 0, 0, 0]
+  maxRanges: [10, -2, 4, 1000, 40, 200, 100]
+  normToColls: false
+  normToInt: true
+  outputDir: plots/table_maker
+
+muon_selection:
+  directory: analysis-muon-selection/output
+  selections: [TrackMuon_matchedGlobal]
+  vars: [Pt, Eta, Phi]
+  rebins: [2, 2, 2, 2, 1, 2]
+  minRanges: [0, -5, -4, 0, 0, 0]
+  maxRanges: [10, -2, 4, 1000, 40, 100]
+  normToColls: false
+  normToInt: true
+  outputDir: plots/track_selection
+
+table_reader:
+  directory: analysis-same-event-pairing/output
+  selections: [
+    PairsMuonSEPM_matchedGlobal, PairsMuonSEPP_matchedGlobal, PairsMuonSEMM_matchedGlobal
+  ]
+  vars: [Mass, Pt, Rapidity, DeltaPtotTracks]
+  rebins: [1, 1, 2, 2]
+  minRanges: [0, 0, 2.5, -100]
+  maxRanges: [15, 10, 4, 100]
+  normToColls: false
+  normToInt: false
+  vars2D: [Mass_Pt, Mass_Rapidity]
+  minCuts: [[0, 1, 3],[2.5]]
+  maxCuts: [[1, 3, 30],[4]]
+  outputDir: plots/table_reader
+
+dimuonall:
+  cuts: "!(fMass < 2.5 || fMass > 4 || 
+        abs(fEta) < 2.5 || abs(fEta) > 4.0 || 
+        abs(fEta1) < 2.5 || abs(fEta1) > 4.0 || 
+        abs(fEta2) < 2.5 || abs(fEta2) > 4.0 || 
+        (fChi2MatchMCHMFT1 > 45 || fChi2MatchMCHMFT2 > 45) || 
+        fPt < 0 || fPt > 1000 || 
+        fPt1 < 0 || fPt2 < 0 || 
+        abs(fTauz) > 0.1 )"
+  output: output/histograms_global_tracks_pp_dimuonall_LHC23zs.root
+
+analysis:
+  input: data/histograms_global_tracks_pt1_chi2MCHMFT_20.root
+  datasets: [LHC23zy, LHC23zz, LHC23zza, LHC23zze, LHC23zzf, LHC23zzg, LHC23_full]
+  selections: [matchedGlobal]
+  vars: [Mass]
+  rebins: [1]
+  minRanges: [2.5]
+  maxRanges: [5]
+  datasetsForFit: [LHC23zy, LHC23zz, LHC23zzg, LHC23_full]
+  selectionsForFit: [matchedGlobal]
+  minFitRange: [2.6]
+  maxFitRange: [4]
+  varLabels: ["#it{M}_{#mu#mu} GeV/#it{c}"]
+
+output:
+  name: data/histograms_global_tracks_pt1_chi2MCHMFT_20.root
