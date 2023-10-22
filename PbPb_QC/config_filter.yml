@@ -1,0 +1,7 @@
+---
+inputs:
+  prompt: [/Users/lucamicheletti/cernbox/summer_student_quarkonia_run3/data/MC_prompt_jpsi_update.root]
+  nonprompt: [/Users/lucamicheletti/cernbox/summer_student_quarkonia_run3/data/MC_non_prompt_jpsi_update.root]
+  data: [/Users/lucamicheletti/cernbox/summer_student_quarkonia_run3/data/LHC22o/AO2D.root]
+
+selections: null
