@@ -1,0 +1,73 @@
+inputs:
+  histos: [
+    #data/AnalysisResults_LHC23zx.root, 
+    #data/AnalysisResults_LHC23zy.root, 
+    #data/AnalysisResults_LHC23zz.root, 
+    #data/AnalysisResults_LHC23zza.root, 
+    data/AnalysisResults_LHC23zzg.root, 
+    data/AnalysisResults_LHC23zzh.root, 
+    data/AnalysisResults_LHC23zzi.root, 
+    data/AnalysisResults_LHC23zzk.root, 
+    #data/AnalysisResults_LHC23_full.root
+  ]
+  #labels: [LHC23zx, LHC23zy, LHC23zz, LHC23zza, LHC23zzg, LHC23_full]
+  #colors: [633, 864, 417, 616, 923, 880]
+  labels: [LHC23zzg, LHC23zzh, LHC23zzi, LHC23zzk]
+  colors: [633, 864, 417, 616]
+
+table_maker:
+  directory: table-maker/output
+  selections: [Muons_muonQualityCuts]
+  vars: [Pt, Eta, Phi, pdca, Chi2MCHMID, RAtAbsorberEnd]
+  rebins: [2, 2, 2, 2, 1, 2]
+  minRanges: [0, -5, -4, 0, 0, 0]
+  maxRanges: [10, -2, 4, 1000, 40, 100]
+  normToColls: false
+  normToInt: true
+  outputDir: plots/table_maker
+
+muon_selection:
+  directory: analysis-muon-selection/output
+  selections: [TrackMuon_matchedMchMid, TrackMuon_muonLowPt10SigmaPDCA, TrackMuon_muonLowPt210SigmaPDCA, TrackMuon_muonLowPt510SigmaPDCA]
+  vars: [Pt, Eta, Phi]
+  rebins: [10, 2, 2, 2, 1, 2]
+  minRanges: [0, -5, -4, 0, 0, 0]
+  maxRanges: [10, -2, 4, 1000, 40, 100]
+  normToColls: false
+  normToInt: true
+  outputDir: plots/track_selection
+
+table_reader:
+  directory: analysis-same-event-pairing/output
+  selections: [
+    PairsMuonSEPM_matchedMchMid, PairsMuonSEPP_matchedMchMid, PairsMuonSEMM_matchedMchMid, 
+    PairsMuonSEPM_muonLowPt210SigmaPDCA, PairsMuonSEPP_muonLowPt210SigmaPDCA, PairsMuonSEMM_muonLowPt210SigmaPDCA,
+    PairsMuonSEPM_muonLowPt510SigmaPDCA, PairsMuonSEPP_muonLowPt510SigmaPDCA, PairsMuonSEMM_muonLowPt510SigmaPDCA
+  ]
+  vars: [Mass, Pt, Rapidity, DeltaPtotTracks]
+  rebins: [1, 1, 2, 2]
+  minRanges: [0, 0, 2.5, -100]
+  maxRanges: [15, 10, 4, 100]
+  normToColls: false
+  normToInt: false
+  vars2D: [Mass_Pt, Mass_Rapidity]
+  minCuts: [[0, 1, 3],[2.5]]
+  maxCuts: [[1, 3, 30],[4]]
+  outputDir: plots/table_reader
+
+output:
+  name: data/histograms_muon_tracks.root
+
+analysis:
+  input: data/histograms_muon_tracks.root
+  datasets: [LHC23zy, LHC23zz, LHC23_full, LHC23zzg]
+  selections: [matchedMchMid, muonLowPt210SigmaPDCA, muonLowPt510SigmaPDCA]
+  vars: [Mass]
+  rebins: [3]
+  minRanges: [2.5]
+  maxRanges: [5]
+  datasetsForFit: [LHC23zy, LHC23zz, LHC23_full, LHC23zzg]
+  selectionsForFit: [matchedMchMid, muonLowPt210SigmaPDCA, muonLowPt510SigmaPDCA]
+  minFitRange: [2.6]
+  maxFitRange: [4]
+  varLabels: ["#it{M}_{#mu#mu} GeV/#it{c}"]
