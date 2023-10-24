@@ -35,6 +35,7 @@ def qc(inputCfg):
 
     for i_fInName, fInName in enumerate(fInNames):
         fIn = TFile(fInName, "READ")
+        fIn.ls()
         histEvCount = fIn.Get("event-selection-task/hColCounterAcc")
         colCounter.append(histEvCount.GetEntries())
         print(f'{labels[i_fInName]} - N collision accepted = {histEvCount.GetEntries()}')
@@ -342,6 +343,9 @@ def process_tree(inputCfg):
     hDcax1PhiFullPM = ROOT.TH2F("LHC23_full_PairsMuonSEPM_matchedQualityCuts_Dcax1Phi","Dimuon Dca x1 - #varphi SEPM ;DCA X1;#varphi", 500, -1, 1, 500, -4, 4)
     hDcay1PhiFullPM = ROOT.TH2F("LHC23_full_PairsMuonSEPM_matchedQualityCuts_Dcay1Phi","Dimuon Dca y1 - #varphi SEPM ;DCA Y1;#varphi", 500, -1, 1, 500, -4, 4)
 
+    hDcax1Chi2MatchMCHMFTFullPM = ROOT.TH2F("LHC23_full_PairsMuonSEPM_matchedQualityCuts_Dcax1Chi2MatchMCHMFT","Dimuon Dca x1 - #chi^{2}_{MCH-MFT} SEPM ;DCA X1;#chi^{2}_{MCH-MFT}", 500, -1, 1, 500, 0, 100)
+    hDcay1Chi2MatchMCHMFTFullPM = ROOT.TH2F("LHC23_full_PairsMuonSEPM_matchedQualityCuts_Dcay1Chi2MatchMCHMFT","Dimuon Dca y1 - #chi^{2}_{MCH-MFT} SEPM ;DCA Y1;#chi^{2}_{MCH-MFT}", 500, -1, 1, 500, 0, 100)
+
     hDcax1EtaFullPM = ROOT.TH2F("LHC23_full_PairsMuonSEPM_matchedQualityCuts_Dcax1Eta","Dimuon Dca x1 - #eta SEPM ;DCA X1;#eta", 500, -1, 1, 500, -4.5, -2.)
     hDcay1EtaFullPM = ROOT.TH2F("LHC23_full_PairsMuonSEPM_matchedQualityCuts_Dcay1Eta","Dimuon Dca y1 - #eta SEPM ;DCA Y1;#eta", 500, -1, 1, 500, -4.5, -2.)
 
@@ -427,6 +431,8 @@ def process_tree(inputCfg):
             'fFwdDcaX2': [],
             'fFwdDcaY1': [],
             'fFwdDcaY2': [],
+            'fChi2MatchMCHMFT1': [],
+            'fChi2MatchMCHMFT2': [],
         }
 
         for key in fIn.GetListOfKeys():
@@ -438,7 +444,7 @@ def process_tree(inputCfg):
                 tree = fIn.Get(f'{dirName}/O2rtdimuonall')
                 rdf = ROOT.RDataFrame(tree).Filter(cuts)
 
-                data = rdf.AsNumpy(columns=["fPosX", "fPosY", "fPosZ", "fMass", "fTauz", "fTauxy", "fSign", "fSign1", "fSign2", "fEta", "fEta1", "fEta2", "fPhi", "fPhi1", "fPhi2", "fPt", "fPt1", "fPt2", "fFwdDcaX1", "fFwdDcaX2", "fFwdDcaY1", "fFwdDcaY2"])
+                data = rdf.AsNumpy(columns=["fPosX", "fPosY", "fPosZ", "fMass", "fTauz", "fTauxy", "fSign", "fSign1", "fSign2", "fEta", "fEta1", "fEta2", "fPhi", "fPhi1", "fPhi2", "fPt", "fPt1", "fPt2", "fFwdDcaX1", "fFwdDcaX2", "fFwdDcaY1", "fFwdDcaY2", "fChi2MatchMCHMFT1", "fChi2MatchMCHMFT2"])
                 accumulatedData['fPosX'].extend(data["fPosX"])
                 accumulatedData['fPosY'].extend(data["fPosY"])
                 accumulatedData['fPosZ'].extend(data["fPosZ"])
@@ -461,8 +467,10 @@ def process_tree(inputCfg):
                 accumulatedData['fFwdDcaX2'].extend(data["fFwdDcaX2"])
                 accumulatedData['fFwdDcaY1'].extend(data["fFwdDcaY1"])
                 accumulatedData['fFwdDcaY2'].extend(data["fFwdDcaY2"])
+                accumulatedData['fChi2MatchMCHMFT1'].extend(data["fChi2MatchMCHMFT1"])
+                accumulatedData['fChi2MatchMCHMFT2'].extend(data["fChi2MatchMCHMFT2"])
 
-        for posx, posy, posz, mass, tauz, tauxy, sign, sign1, sign2, eta, eta1, eta2, phi, phi1, phi2, pt, pt1, pt2, dcax1, dcax2, dcay1, dcay2 in zip(
+        for posx, posy, posz, mass, tauz, tauxy, sign, sign1, sign2, eta, eta1, eta2, phi, phi1, phi2, pt, pt1, pt2, dcax1, dcax2, dcay1, dcay2, chi2mchmft1, chi2mchmft2 in zip(
             accumulatedData['fPosX'], 
             accumulatedData['fPosY'], 
             accumulatedData['fPosZ'], 
@@ -484,7 +492,9 @@ def process_tree(inputCfg):
             accumulatedData['fFwdDcaX1'], 
             accumulatedData['fFwdDcaX2'], 
             accumulatedData['fFwdDcaY1'], 
-            accumulatedData['fFwdDcaY2']):
+            accumulatedData['fFwdDcaY2'],
+            accumulatedData['fChi2MatchMCHMFT1'], 
+            accumulatedData['fChi2MatchMCHMFT2']):
                 if sign == 0:
                     hMassPM.Fill(mass)
                     hTauzPM.Fill(tauz)
@@ -530,6 +540,8 @@ def process_tree(inputCfg):
 
                     hDcax1PhiFullPM.Fill(dcax1, phi1)
                     hDcay1PhiFullPM.Fill(dcay1, phi1)
+                    hDcax1Chi2MatchMCHMFTFullPM.Fill(dcax1, chi2mchmft1)
+                    hDcay1Chi2MatchMCHMFTFullPM.Fill(dcay1, chi2mchmft1)
                     hDcax1EtaFullPM.Fill(dcax1, eta1)
                     hDcay1EtaFullPM.Fill(dcay1, eta1)
 
@@ -638,6 +650,8 @@ def process_tree(inputCfg):
     hDiskMap2.Write()
     hDiskMap3.Write()
     hDiskMap4.Write()
+    hDcax1Chi2MatchMCHMFTFullPM.Write()
+    hDcay1Chi2MatchMCHMFTFullPM.Write()
     fOut.Close()
 
 

@@ -1,7 +1,7 @@
 inputs:
   trees: [
     #/Users/lucamicheletti/cernbox/QM2023_DQ_performance/LHC22o/528379/001/AO2D_reduced.root
-    /home/lmichele/GITHUB/dq_analysis_utils/pp_QC/AO2D_reduced_LHC23zs.root
+    /Users/lucamicheletti/cernbox/JPSI/Run3/2023/pp/AO2D_reduced_LHC23zs.root
   ]
   histos: [
     #/Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zx/AnalysisResults.root,
@@ -33,7 +33,7 @@ table_maker:
   maxRanges: [10, -2, 4, 1000, 40, 200, 100]
   normToColls: false
   normToInt: true
-  outputDir: plots/table_maker
+  outputDir: pp_QC/plots/table_maker
 
 muon_selection:
   directory: analysis-muon-selection/output
@@ -44,7 +44,7 @@ muon_selection:
   maxRanges: [10, -2, 4, 1000, 40, 100]
   normToColls: false
   normToInt: true
-  outputDir: plots/track_selection
+  outputDir: pp_QC/plots/track_selection
 
 table_reader:
   directory: analysis-same-event-pairing/output
@@ -60,7 +60,7 @@ table_reader:
   vars2D: [Mass_Pt, Mass_Rapidity]
   minCuts: [[0, 1, 3],[2.5]]
   maxCuts: [[1, 3, 30],[4]]
-  outputDir: plots/table_reader
+  outputDir: pp_QC/plots/table_reader
 
 dimuonall:
   cuts: "!(fMass < 2.5 || fMass > 4 || 
@@ -71,7 +71,7 @@ dimuonall:
         fPt < 0 || fPt > 1000 || 
         fPt1 < 0 || fPt2 < 0 || 
         abs(fTauz) > 0.1 )"
-  output: output/histograms_global_tracks_pp_dimuonall_LHC23zs.root
+  output: pp_QC/output/histograms_global_tracks_pp_dimuonall_LHC23zs.root
 
 analysis:
   input: data/histograms_global_tracks_pt1_chi2MCHMFT_20.root
@@ -88,4 +88,4 @@ analysis:
   varLabels: ["#it{M}_{#mu#mu} GeV/#it{c}"]
 
 output:
-  name: data/histograms_global_tracks_pt1_chi2MCHMFT_20.root
+  name: pp_QC/data/histograms_global_tracks_pt1_chi2MCHMFT_20.root

@@ -35,7 +35,7 @@ inputs:
     /Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zzf/AnalysisResults_LHC23zzf.root,
     /Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zzg/AnalysisResults_LHC23zzg.root,
   ]
-  labels: [LHC23zzg]
+  labels: [LHC23zx, LHC23zy, LHC23zz, LHC23zza, LHC23zzb, LHC23zze, LHC23zzf, LHC23zzg]
   colors: [633, 864, 417, 616, 923, 880, 432, 807]
 
 table_maker:
@@ -47,7 +47,7 @@ table_maker:
   maxRanges: [10, -2, 4, 1000, 40, 200, 100]
   normToColls: false
   normToInt: true
-  outputDir: plots/table_maker
+  outputDir: PbPb_QC/plots/table_maker
 
 muon_selection:
   directory: analysis-muon-selection/output
@@ -58,7 +58,7 @@ muon_selection:
   maxRanges: [10, -2, 4, 1000, 40, 100]
   normToColls: false
   normToInt: true
-  outputDir: plots/track_selection
+  outputDir: PbPb_QC/plots/track_selection
 
 table_reader:
   directory: analysis-same-event-pairing/output
@@ -74,7 +74,7 @@ table_reader:
   vars2D: [Mass_Pt, Mass_Rapidity]
   minCuts: [[0, 1, 3],[2.5]]
   maxCuts: [[1, 3, 30],[4]]
-  outputDir: plots/table_reader
+  outputDir: PbPb_QC/plots/table_reader
 
 dimuonall:
   cuts: "!(fMass < 2.5 || fMass > 4 || 
@@ -85,7 +85,7 @@ dimuonall:
         fPt < 0 || fPt > 1000 || 
         fPt1 < 0 || fPt2 < 0 || 
         abs(fTauz) > 0.1 )"
-  output: output/histograms_global_tracks_PbPb_dimuonall.root
+  output: PbPb_QC/output/histograms_global_tracks_PbPb_dimuonall.root
 
 analysis:
   input: data/histograms_global_tracks_pt1_chi2MCHMFT_20.root
@@ -102,4 +102,4 @@ analysis:
   varLabels: ["#it{M}_{#mu#mu} GeV/#it{c}"]
 
 output:
-  name: data/histograms_global_tracks_pt1_chi2MCHMFT_20.root
+  name: PbPb_QC/data/histograms_global_tracks_pt1_chi2MCHMFT_20.root
