@@ -1,6 +1,6 @@
 #!/bin/bash
-period="LHC23zy"
-run=543467
+period="LHC23zzh"
+run=544116
 pass="cpass0"
 
 alien_path="alien:///alice/data/2023/${period}/${run}/${pass}"

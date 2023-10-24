@@ -36,12 +36,12 @@ def filter_derived_ao2d(config):
             #origin = 2
         #output_df.query(f"({d0_string} or {d0bar_string}) and fOriginMcRec == {origin}",
                         #inplace=True)
-        if input_type == "prompt" or input_type == "nonprompt":
-            output_df.query("fMass > 2 and fMass < 5 and fChi2MatchMCHMFT1 > 0 and fChi2MatchMCHMFT1 < 45 and fChi2MatchMCHMFT2 > 0 and fChi2MatchMCHMFT2 < 45 and abs(fTauz) < 1 and abs(fTauxy) < 1 and fSign == 0 and fEta > -4 and fEta < -2.5 and fEta1 > -4 and fEta1 < -2.5 and fEta2 > -4 and fEta2 < -2.5 and fMcDecision == 1", inplace=True)
-        else:
-            output_df.query("fMass > 2 and fMass < 5 and fChi2MatchMCHMFT1 > 0 and fChi2MatchMCHMFT1 < 45 and fChi2MatchMCHMFT2 > 0 and fChi2MatchMCHMFT2 < 45 and abs(fTauz) < 1 and abs(fTauxy) < 1 and fSign == 0 and fEta > -4 and fEta < -2.5 and fEta1 > -4 and fEta1 < -2.5 and fEta2 > -4 and fEta2 < -2.5", inplace=True)
-        outfile = uproot.recreate(f"tree_Jpsi_{input_type}.root")
-        outfile["treeJpsi"] = output_df
+        #if input_type == "prompt" or input_type == "nonprompt":
+            #output_df.query("fMass > 2 and fMass < 5 and fChi2MatchMCHMFT1 > 0 and fChi2MatchMCHMFT1 < 45 and fChi2MatchMCHMFT2 > 0 and fChi2MatchMCHMFT2 < 45 and abs(fTauz) < 1 and abs(fTauxy) < 1 and fSign == 0 and fEta > -4 and fEta < -2.5 and fEta1 > -4 and fEta1 < -2.5 and fEta2 > -4 and fEta2 < -2.5 and fMcDecision == 1", inplace=True)
+
+        output_df.query("fMass > 2 and fMass < 5 and fChi2MatchMCHMFT1 > 0 and fChi2MatchMCHMFT1 < 45 and fChi2MatchMCHMFT2 > 0 and fChi2MatchMCHMFT2 < 45 and abs(fTauz) < 1 and abs(fTauxy) < 1 and fSign == 0 and fEta > -4 and fEta < -2.5 and fEta1 > -4 and fEta1 < -2.5 and fEta2 > -4 and fEta2 < -2.5", inplace=True)
+        outfile = uproot.recreate(f"AO2D_reduced_{input_type}.root")
+        outfile["DF_000000/O2rtdimuonall"] = output_df
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 inputs:
   trees: [
     #/Users/lucamicheletti/cernbox/QM2023_DQ_performance/LHC22o/528379/001/AO2D_reduced.root
-    /Users/lucamicheletti/cernbox/JPSI/Run3/2023/pp/AO2D_LHC23zs.root
+    /home/lmichele/GITHUB/dq_analysis_utils/pp_QC/AO2D_reduced_LHC23zs.root
   ]
   histos: [
     #/Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zx/AnalysisResults.root,
