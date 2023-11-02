@@ -210,6 +210,12 @@ def analysis(inputCfg):
     rebins = inputCfg["analysis"]["rebins"]
     minRanges = inputCfg["analysis"]["minRanges"]
     maxRanges = inputCfg["analysis"]["maxRanges"]
+    outputDirName = inputCfg["analysis"]["outputDir"]
+
+    if os.path.exists(outputDirName):
+        print(f'{outputDirName} already exists!')
+    else:
+        os.mkdir(outputDirName)
 
     fInName = inputCfg["analysis"]["input"]
     fIn = TFile(fInName, "READ")
@@ -286,7 +292,7 @@ def analysis(inputCfg):
                     letexTitle.DrawLatex(0.55, 0.74, "#it{N}_{J/#psi} = %1.0f #pm %1.0f" % (nSigJpsi.getVal(), nSigJpsi.getError()))
                     letexTitle.DrawLatex(0.55, 0.68, "#it{#mu}_{J/#psi} = %4.3f #pm %4.3f" % (meanJpsi.getVal(), meanJpsi.getError()))
                     letexTitle.DrawLatex(0.55, 0.62, "#it{#sigma}_{J/#psi} = %4.3f #pm %4.3f" % (sigmaJpsi.getVal(), sigmaJpsi.getError()))
-                    canvasFit.SaveAs(f'plots/analysis/fit_{dataset}_{selName}.pdf')
+                    canvasFit.SaveAs(f'{outputDirName}/fit_{dataset}_{selName}.pdf')
 
                 gStyle.SetOptStat(0)
                 canvasCombBkg = ROOT.TCanvas("canvasCombBkg", f'canvasCombBkg_{dataset}_{selName}', 600, 600)
@@ -307,7 +313,7 @@ def analysis(inputCfg):
                 letexTitle.DrawLatex(0.35, 0.88, "ALICE, Pb#minusPb, #sqrt{#it{s}_{NN}} = 5.36 TeV")
                 letexTitle.DrawLatex(0.35, 0.81, "Inclusive J/#psi #rightarrow #mu^{+}#mu^{-}, 2.5 < #it{y} < 4")
                           
-                canvasCombBkg.SaveAs(f'plots/analysis/combBkg_{dataset}_{selName}.pdf')
+                canvasCombBkg.SaveAs(f'{outputDirName}/combBkg_{dataset}_{selName}.pdf')
 
 
 def process_tree(inputCfg):

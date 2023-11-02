@@ -89,6 +89,7 @@ dimuonall:
 
 analysis:
   input: data/histograms_global_tracks_pt1_chi2MCHMFT_20.root
+  outputDir: PbPb_QC/plots/analysis
   datasets: [LHC23zy, LHC23zz, LHC23zza, LHC23zze, LHC23zzf, LHC23zzg, LHC23_full]
   selections: [matchedGlobal]
   vars: [Mass]
