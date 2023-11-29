@@ -1,0 +1,30 @@
+
+input:
+    output_dir_name: "/Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass1/LHC23zzh"
+    run_list: [
+      544124,
+      544123,
+      544122,
+      544121,
+      544116
+    ]
+
+    alien_input_path: [
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0024/hy_246509/AOD",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0024/hy_246508/AOD",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0024/hy_246507/AOD",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0024/hy_246506/AOD",
+      "/alice/cern.ch/user/a/alihyperloop/jobs/0024/hy_246505/AOD"
+    ]
+
+    file_type: "AnalysisResults.root"
+    file_path: "/Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass1/LHC23zzh"
+    table_maker_stat: table-maker/Statistics
+    table_maker: table-maker/output
+    table_maker_dir: ["Muons_muonQualityCuts"]
+    table_maker_obj: ["Pt"]
+
+output:
+    output_fig_name: figures_1/LHC22o_full_stat
+    output_dir_name: output_1/Data
+    output_file_name: LHC22q_apass3_muons.root
