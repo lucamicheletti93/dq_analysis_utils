@@ -15,7 +15,17 @@ inputs:
     #/Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zzb/AO2D_LHC23zzb.root,
     #/Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zze/AO2D_LHC23zze.root,
     #/Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zzf/AO2D_LHC23zzf.root,
-    /Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zzg/AO2D_LHC23zzg.root,
+    #/Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zzg/AO2D_LHC23zzg.root,
+    #/home/lmichele/GITHUB/dq_analysis_utils/quality_control/PbPb_QC/data/LHC23/pass1/544510/001/AO2D.root,
+    #/home/lmichele/GITHUB/dq_analysis_utils/quality_control/PbPb_QC/data/LHC23/pass1/544510/002/AO2D.root,
+    #/home/lmichele/GITHUB/dq_analysis_utils/quality_control/PbPb_QC/data/LHC23/pass1/544510/003/AO2D.root,
+    #/home/lmichele/GITHUB/dq_analysis_utils/quality_control/PbPb_QC/data/LHC23/pass1/544510/004/AO2D.root,
+    #/home/lmichele/GITHUB/dq_analysis_utils/quality_control/PbPb_QC/data/LHC23/pass1/544510/005/AO2D.root,
+    #/home/lmichele/GITHUB/dq_analysis_utils/quality_control/PbPb_QC/data/LHC23/pass1/544510/006/AO2D.root,
+    #/home/lmichele/GITHUB/dq_analysis_utils/quality_control/PbPb_QC/data/LHC23/pass1/544510/007/AO2D.root,
+    #/home/lmichele/GITHUB/dq_analysis_utils/quality_control/PbPb_QC/data/LHC23/pass1/544510/008/AO2D.root,
+    #/home/lmichele/GITHUB/dq_analysis_utils/quality_control/PbPb_QC/data/LHC23/pass1/544510/009/AO2D.root,
+    /home/lmichele/GITHUB/dq_analysis_utils/quality_control/PbPb_QC/data/LHC23/pass1/544510/010/AO2D.root
   ]
   histos: [
     #/Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zx/AnalysisResults.root,
@@ -35,8 +45,8 @@ inputs:
     /Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zzf/AnalysisResults_LHC23zzf.root,
     /Users/lucamicheletti/cernbox/JPSI/Run3/2023/PbPb/cpass0/LHC23zzg/AnalysisResults_LHC23zzg.root,
   ]
-  labels: [LHC23zx, LHC23zy, LHC23zz, LHC23zza, LHC23zzb, LHC23zze, LHC23zzf, LHC23zzg]
-  colors: [633, 864, 417, 616, 923, 880, 432, 807]
+  labels: [LHC23zx, LHC23zy, LHC23zz, LHC23zza, LHC23zzb, LHC23zze, LHC23zzf, LHC23zzg, LHC23zzh, LHC23zzi]
+  colors: [633, 864, 417, 616, 923, 880, 432, 807, 807, 807]
 
 table_maker:
   directory: table-maker/output
@@ -77,6 +87,7 @@ table_reader:
   outputDir: PbPb_QC/plots/table_reader
 
 dimuonall:
+  runByRun: false
   cuts: "!(fMass < 2.5 || fMass > 4 || 
         abs(fEta) < 2.5 || abs(fEta) > 4.0 || 
         abs(fEta1) < 2.5 || abs(fEta1) > 4.0 || 
@@ -85,19 +96,19 @@ dimuonall:
         fPt < 0 || fPt > 1000 || 
         fPt1 < 0 || fPt2 < 0 || 
         abs(fTauz) > 0.1 )"
-  output: PbPb_QC/output/histograms_global_tracks_PbPb_dimuonall.root
+  output: PbPb_QC/output/LHC23_pass1_histograms_global_tracks_PbPb_dimuonall.root
 
 analysis:
-  input: data/histograms_global_tracks_pt1_chi2MCHMFT_20.root
+  input: /home/lmichele/GITHUB/dq_analysis_utils/quality_control/PbPb_QC/output/LHC23_pass1_histograms_global_tracks_PbPb_dimuonall.root
   outputDir: PbPb_QC/plots/analysis
-  datasets: [LHC23zy, LHC23zz, LHC23zza, LHC23zze, LHC23zzf, LHC23zzg, LHC23_full]
-  selections: [matchedGlobal]
+  datasets: [LHC23_full]
+  selections: [matchedQualityCuts]
   vars: [Mass]
   rebins: [1]
-  minRanges: [2.5]
-  maxRanges: [5]
-  datasetsForFit: [LHC23zy, LHC23zz, LHC23zzg, LHC23_full]
-  selectionsForFit: [matchedGlobal]
+  minRanges: [2.6]
+  maxRanges: [4]
+  datasetsForFit: [LHC23_full]
+  selectionsForFit: [matchedQualityCuts]
   minFitRange: [2.6]
   maxFitRange: [4]
   varLabels: ["#it{M}_{#mu#mu} GeV/#it{c}"]

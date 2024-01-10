@@ -317,6 +317,7 @@ def analysis(inputCfg):
 
 
 def process_tree(inputCfg):
+    runByRun = inputCfg["dimuonall"]["runByRun"]
     fInNames = inputCfg["inputs"]["trees"]
     labels = inputCfg["inputs"]["labels"]
     fOutName = inputCfg["dimuonall"]["output"]
@@ -406,13 +407,14 @@ def process_tree(inputCfg):
         print(f'Processing {fInName} ...')
         fIn = ROOT.TFile.Open(fInName)
         
-        # Prepare histograms
-        hMassPM = ROOT.TH1F(f'{labels[i_fInName]}_PairsMuonSEPM_matchedQualityCuts_Mass',"Dimuon mass SEPM ;m (GeV/c^2);#", 100, 2, 5)
-        hMassPP = ROOT.TH1F(f'{labels[i_fInName]}_PairsMuonSEPP_matchedQualityCuts_Mass',"Dimuon mass SEPP ;m (GeV/c^2);#", 100, 2, 5)
-        hMassMM = ROOT.TH1F(f'{labels[i_fInName]}_PairsMuonSEMM_matchedQualityCuts_Mass',"Dimuon mass SEMM ;m (GeV/c^2);#", 100, 2, 5)
-        hTauzPM = ROOT.TH1F(f'{labels[i_fInName]}_PairsMuonSEPM_matchedQualityCuts_Tauz',"Dimuon tauz SEPM ;m (GeV/c^2);#", 1000, -0.1, 0.1)
-        hTauzPP = ROOT.TH1F(f'{labels[i_fInName]}_PairsMuonSEPP_matchedQualityCuts_Tauz',"Dimuon tauz SEPM ;m (GeV/c^2);#", 1000, -0.1, 0.1)
-        hTauzMM = ROOT.TH1F(f'{labels[i_fInName]}_PairsMuonSEMM_matchedQualityCuts_Tauz',"Dimuon tauz SEPM ;m (GeV/c^2);#", 1000, -0.1, 0.1)
+        if runByRun:
+            # Prepare histograms
+            hMassPM = ROOT.TH1F(f'{labels[i_fInName]}_PairsMuonSEPM_matchedQualityCuts_Mass',"Dimuon mass SEPM ;m (GeV/c^2);#", 100, 2, 5)
+            hMassPP = ROOT.TH1F(f'{labels[i_fInName]}_PairsMuonSEPP_matchedQualityCuts_Mass',"Dimuon mass SEPP ;m (GeV/c^2);#", 100, 2, 5)
+            hMassMM = ROOT.TH1F(f'{labels[i_fInName]}_PairsMuonSEMM_matchedQualityCuts_Mass',"Dimuon mass SEMM ;m (GeV/c^2);#", 100, 2, 5)
+            hTauzPM = ROOT.TH1F(f'{labels[i_fInName]}_PairsMuonSEPM_matchedQualityCuts_Tauz',"Dimuon tauz SEPM ;m (GeV/c^2);#", 1000, -0.1, 0.1)
+            hTauzPP = ROOT.TH1F(f'{labels[i_fInName]}_PairsMuonSEPP_matchedQualityCuts_Tauz',"Dimuon tauz SEPM ;m (GeV/c^2);#", 1000, -0.1, 0.1)
+            hTauzMM = ROOT.TH1F(f'{labels[i_fInName]}_PairsMuonSEMM_matchedQualityCuts_Tauz',"Dimuon tauz SEPM ;m (GeV/c^2);#", 1000, -0.1, 0.1)
 
         accumulatedData = {
             'fPosX': [],
@@ -502,8 +504,9 @@ def process_tree(inputCfg):
             accumulatedData['fChi2MatchMCHMFT1'], 
             accumulatedData['fChi2MatchMCHMFT2']):
                 if sign == 0:
-                    hMassPM.Fill(mass)
-                    hTauzPM.Fill(tauz)
+                    if runByRun:
+                        hMassPM.Fill(mass)
+                        hTauzPM.Fill(tauz)
                     hMassFullPM.Fill(mass)
                     hTauzFullPM.Fill(tauz)
                     hTauxyFullPM.Fill(tauxy)
@@ -570,29 +573,32 @@ def process_tree(inputCfg):
 
 
                 if sign > 0:
-                    hMassPP.Fill(mass)
-                    hTauzPP.Fill(tauz)
+                    if runByRun:
+                        hMassPP.Fill(mass)
+                        hTauzPP.Fill(tauz)
                     hMassFullPP.Fill(mass)
                     hTauzFullPP.Fill(tauz)
                     hTauxyFullPP.Fill(tauxy)
                     hDcax1Dcax2FullPP.Fill(dcax1, dcax2)
                     hDcay1Dcay2FullPP.Fill(dcay1, dcay2)
                 if sign < 0:
-                    hMassMM.Fill(mass)
-                    hTauzMM.Fill(tauz)
+                    if runByRun:
+                        hMassMM.Fill(mass)
+                        hTauzMM.Fill(tauz)
                     hMassFullMM.Fill(mass)
                     hTauzFullMM.Fill(tauz)
                     hTauxyFullMM.Fill(tauxy)
                     hDcax1Dcax2FullMM.Fill(dcax1, dcax2)
                     hDcay1Dcay2FullMM.Fill(dcay1, dcay2)
 
-        fOut.cd()
-        hMassPM.Write()
-        hTauzPM.Write()
-        hMassPP.Write()
-        hTauzPP.Write()
-        hMassMM.Write()
-        hTauzMM.Write()
+        if runByRun:
+            fOut.cd()
+            hMassPM.Write()
+            hTauzPM.Write()
+            hMassPP.Write()
+            hTauzPP.Write()
+            hMassMM.Write()
+            hTauzMM.Write()
 
         fIn.Close()
 
